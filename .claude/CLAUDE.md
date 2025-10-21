@@ -171,6 +171,12 @@ When adding new features:
 - **RULE 18**: Implement offline-capable features where feasible
 - **RULE 19**: Cache results to reduce computational resources
 
+### Brand Guidelines
+- **RULE 20**: Use Rubik font as the primary brand font
+- **RULE 21**: Use navy blue (#1e3a8a) as the primary brand color
+- **RULE 22**: ALWAYS implement both light and dark modes
+- **RULE 23**: Ensure all UI components support theme switching
+
 ## Performance Targets
 
 - Traditional methods: <20ms
