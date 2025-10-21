@@ -2,38 +2,45 @@ import Link from 'next/link'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function Home() {
-  const features = [
+  const coreFeatures = [
     {
       name: 'Sentiment Analysis',
-      description: 'Analyze guest reviews and feedback using AI and traditional NLP methods',
+      description: 'Analyze guest reviews using traditional, ML, and hybrid approaches',
       href: '/sentiment',
-      color: 'brand-600'
     },
     {
       name: 'Room Allocation',
-      description: 'Optimize room assignments using rule-based and AI-assisted algorithms',
+      description: 'Optimize room assignments with rule-based and ML algorithms',
       href: '/allocation',
-      color: 'brand-700'
     },
     {
       name: 'Dynamic Pricing',
-      description: 'Smart pricing strategies using traditional algorithms and AI forecasting',
+      description: 'Smart pricing using algorithmic, regression, and neural network models',
       href: '/pricing',
-      color: 'brand-800'
     },
     {
       name: 'Demand Forecast',
-      description: 'Predict occupancy and demand using statistical methods and ML models',
+      description: 'Predict occupancy with statistical and ML time-series methods',
       href: '/forecast',
-      color: 'brand-900'
     },
+  ];
+
+  const newFeatures = [
+    {
+      name: 'No-Show Prediction',
+      description: 'Predict booking no-show risk with rule-based, logistic regression, and gradient boosting',
+      href: '/no-show',
+      status: 'new'
+    },
+  ];
+
+  const utilityFeatures = [
     {
       name: 'ML Benchmarks',
-      description: 'Compare algorithms: cost, latency, and accuracy across all methods',
+      description: 'Compare all algorithms: cost, latency, and accuracy metrics',
       href: '/benchmark',
-      color: 'brand-500'
-    }
-  ]
+    },
+  ];
 
   return (
     <main className="min-h-screen p-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -54,27 +61,72 @@ export default function Home() {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {features.map((feature) => (
-            <Link
-              key={feature.name}
-              href={feature.href}
-              className="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all border-l-4 border-brand-600 dark:border-brand-400 hover:scale-105"
-            >
-              <div className="flex items-start">
-                <div className={`w-12 h-12 rounded-lg bg-${feature.color} dark:bg-brand-500 flex items-center justify-center text-white font-bold text-xl mr-4 shadow-md`}>
-                  {feature.name.charAt(0)}
-                </div>
-                <div>
-                  <h2 className="text-2xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
-                    {feature.name}
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Core Features</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {coreFeatures.map((feature) => (
+              <Link
+                key={feature.name}
+                href={feature.href}
+                className="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all border-l-4 border-brand-600 dark:border-brand-400 hover:scale-105"
+              >
+                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                  {feature.name}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">{feature.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+            New: Additional Use Cases
+            <span className="ml-3 text-sm bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 px-3 py-1 rounded-full">NEW</span>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {newFeatures.map((feature) => (
+              <Link
+                key={feature.name}
+                href={feature.href}
+                className="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all border-l-4 border-green-600 dark:border-green-400 hover:scale-105"
+              >
+                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                  {feature.name}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">{feature.description}</p>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <p className="text-sm text-blue-900 dark:text-blue-200">
+              <strong>9 more use cases available:</strong> Review Response Generator, Housekeeping Routes, Upsell Recommendations,
+              Energy Management, Staff Scheduling, F&B Inventory, Complaint Classification, Maintenance Prediction, Check-in Time Prediction
+              <br />
+              <span className="text-xs text-blue-700 dark:text-blue-300 mt-1 block">
+                Library modules implemented • Demo pages coming soon • See .agent/docs/proposed-ml-demos.md for details
+              </span>
+            </p>
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Utilities</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {utilityFeatures.map((feature) => (
+              <Link
+                key={feature.name}
+                href={feature.href}
+                className="block p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all border-l-4 border-purple-600 dark:border-purple-400 hover:scale-105"
+              >
+                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                  {feature.name}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">{feature.description}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <footer className="mt-12 text-center text-gray-500 dark:text-gray-400 text-sm">
           <p>Built with Next.js, TypeScript, and Vercel AI SDK</p>
