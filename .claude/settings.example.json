@@ -1,0 +1,9 @@
+{
+  "allowedTools": [
+    "Bash",
+    "Write",
+    "WebSearch",
+    "Edit",
+    "Read"
+  ]
+}
