@@ -1,4 +1,4 @@
-import { buildConfig } from 'payload/config'
+import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { seoPlugin } from '@payloadcms/plugin-seo'
@@ -19,6 +19,7 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  secret: process.env.PAYLOAD_SECRET || '',
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
 
   admin: {
