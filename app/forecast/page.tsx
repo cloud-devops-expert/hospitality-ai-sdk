@@ -291,7 +291,7 @@ export default function ForecastPage() {
             ) : (
               <div className="bg-white rounded-lg shadow-lg p-6 text-center text-gray-500">
                 <p className="mb-4">No forecast generated yet</p>
-                <p className="text-sm">Click "Generate Forecast" to predict future occupancy</p>
+                <p className="text-sm">Click &ldquo;Generate Forecast&rdquo; to predict future occupancy</p>
               </div>
             )}
           </div>

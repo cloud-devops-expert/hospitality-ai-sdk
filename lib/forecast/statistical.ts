@@ -142,7 +142,7 @@ export function forecastRange(
   daysAhead: number
 ): ForecastResult[] {
   const forecasts: ForecastResult[] = [];
-  let currentData = [...historicalData];
+  const currentData = [...historicalData];
 
   for (let i = 1; i <= daysAhead; i++) {
     const forecast = forecastNext(currentData, 1);

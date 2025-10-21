@@ -10,10 +10,8 @@ export function allocateRoomRuleBased(
   guest: Guest,
   availableRooms: Room[]
 ): AllocationResult {
-  const reasons: string[] = [];
-
   // Filter rooms by type
-  let candidates = availableRooms.filter(room =>
+  const candidates = availableRooms.filter(room =>
     room.type === booking.requestedRoomType && room.status === 'available'
   );
 

@@ -136,6 +136,41 @@ When adding new features:
 3. Always push after two commits (as per global CLAUDE.md)
 4. Document breaking changes in README
 
+## Hard Rules (from hotel-pro-assistant-monorepo)
+
+### Code Quality & Commits
+- **RULE 1**: Push to remote every 2 commits
+- **RULE 2**: MUST fix all lint errors before committing
+- **RULE 3**: Run lint/typecheck and fix ALL errors before commits
+- **RULE 4**: Never commit code with lint, type, or test errors
+
+### Configuration Standards
+- **RULE 5**: Use `.ts` files for configuration instead of `.mjs` or `.cjs`
+  - Prefer: `eslint.config.ts`, `vite.config.ts`, etc.
+  - Exception: Use `.mjs`/`.cjs` only when tool doesn't support TypeScript
+- **RULE 6**: Maintain configuration consistency across the project
+  - If using specific library/tool, maintain same pattern throughout
+  - Configuration file structures follow consistent patterns
+
+### TypeScript Standards
+- **RULE 7**: TypeScript for all new code
+- **RULE 8**: Clear type definitions required
+- **RULE 9**: No `any` types without explicit justification
+- **RULE 10**: Prefer explicit return types on functions
+
+### Code Organization
+- **RULE 11**: Analysis files go in `.agent/Analysis/` ONLY (never root)
+- **RULE 12**: Documentation goes in `.agent/` subfolders ONLY
+- **RULE 13**: Tests go in `tests/` or `__tests__/` folders
+- **RULE 14**: Demo data goes in `demo/` or `.agent/experiments/` folders
+- **RULE 15**: Keep root folder clean (<30 files, no scattered .sh, .py, .md files)
+
+### Local-First Development
+- **RULE 16**: Process data locally when possible
+- **RULE 17**: Minimize external API calls
+- **RULE 18**: Implement offline-capable features where feasible
+- **RULE 19**: Cache results to reduce computational resources
+
 ## Performance Targets
 
 - Traditional methods: <20ms

@@ -18,7 +18,7 @@ export async function analyzeWithAI(text: string): Promise<SentimentResult> {
     }
 
     return await response.json();
-  } catch (error) {
+  } catch {
     // Fallback to neutral if AI fails
     return {
       score: 0,

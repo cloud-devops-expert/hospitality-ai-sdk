@@ -233,7 +233,7 @@ export default function PricingPage() {
 
             {!result && (
               <div className="bg-white rounded-lg shadow-lg p-6 text-center text-gray-500">
-                <p>Configure parameters and click "Calculate Price" to see results</p>
+                <p>Configure parameters and click &ldquo;Calculate Price&rdquo; to see results</p>
               </div>
             )}
           </div>

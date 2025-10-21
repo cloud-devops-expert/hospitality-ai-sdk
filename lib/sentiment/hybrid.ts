@@ -41,7 +41,7 @@ export async function analyzeHybrid(
       traditionalResult,
       processingTime: Date.now() - startTime
     };
-  } catch (error) {
+  } catch {
     // Fallback to traditional if AI fails
     return {
       ...traditionalResult,
