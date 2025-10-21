@@ -32,6 +32,60 @@ export default function Home() {
       href: '/no-show',
       status: 'new'
     },
+    {
+      name: 'Review Response Generator',
+      description: 'Generate professional responses to guest reviews with sentiment analysis',
+      href: '/review-response',
+      status: 'new'
+    },
+    {
+      name: 'Housekeeping Routes',
+      description: 'Optimize cleaning routes with greedy, TSP, and genetic algorithms',
+      href: '/housekeeping',
+      status: 'new'
+    },
+    {
+      name: 'Upsell Recommendations',
+      description: 'Generate personalized upsell offers based on guest profiles',
+      href: '/upsell',
+      status: 'new'
+    },
+    {
+      name: 'Energy Management',
+      description: 'Optimize HVAC settings to reduce energy costs',
+      href: '/energy',
+      status: 'new'
+    },
+    {
+      name: 'Staff Scheduling',
+      description: 'Optimize staff schedules based on occupancy forecasts',
+      href: '/scheduling',
+      status: 'new'
+    },
+    {
+      name: 'F&B Inventory',
+      description: 'Forecast inventory needs to reduce waste and prevent stockouts',
+      href: '/inventory',
+      status: 'new'
+    },
+    {
+      name: 'Complaint Classification',
+      description: 'Automatically classify and route guest complaints',
+      href: '/complaints',
+      status: 'new'
+    },
+    {
+      name: 'Maintenance Prediction',
+      description: 'Predict equipment maintenance needs to prevent failures',
+      href: '/maintenance',
+      status: 'new'
+    },
+    {
+      name: 'Check-in Time Prediction',
+      description: 'Predict actual guest check-in times to optimize staffing',
+      href: '/checkin',
+      status: 'new'
+    },
   ];
 
   const utilityFeatures = [
@@ -97,16 +151,6 @@ export default function Home() {
                 <p className="text-gray-600 dark:text-gray-300 text-sm">{feature.description}</p>
               </Link>
             ))}
-          </div>
-          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <p className="text-sm text-blue-900 dark:text-blue-200">
-              <strong>9 more use cases available:</strong> Review Response Generator, Housekeeping Routes, Upsell Recommendations,
-              Energy Management, Staff Scheduling, F&B Inventory, Complaint Classification, Maintenance Prediction, Check-in Time Prediction
-              <br />
-              <span className="text-xs text-blue-700 dark:text-blue-300 mt-1 block">
-                Library modules implemented • Demo pages coming soon • See .agent/docs/proposed-ml-demos.md for details
-              </span>
-            </p>
           </div>
         </section>
 
