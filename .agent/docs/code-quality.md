@@ -73,6 +73,12 @@ Before committing code, ensure:
 4. **Demo data** → `demo/` or `.agent/experiments/` folders
 5. **Keep root folder clean** (<30 files, no scattered scripts)
 
+### Brand Guidelines
+1. **Use Rubik font** as the primary brand font (from Google Fonts)
+2. **Use navy blue (#1e3a8a)** as the primary brand color
+3. **ALWAYS implement both light and dark modes**
+4. **Ensure all UI components support theme switching**
+
 ## Local-First Development
 
 Following the project's core philosophy:
