@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# payloadcms
+/payload-types.ts
+/generated-schema.graphql
+/public/media/*
+!/public/media/.gitkeep
