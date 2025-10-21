@@ -179,7 +179,7 @@ describe('Inventory Forecasting', () => {
       const milk = sampleItems.find(i => i.name.includes('Milk'))!;
       const forecast = forecastInventoryMovingAverage(milk);
 
-      expect(forecast.daysUntilStockout).toBeCloseTo(30 / 12, 0);
+      expect(forecast.daysUntilStockout).toBe(2); // 30 stock / 12 daily usage = 2.5, rounded down
     });
 
     it('should forecast coffee correctly', () => {

@@ -1,13 +1,17 @@
-import { predictNoShowRuleBased, predictNoShowLogisticRegression, predictNoShowGradientBoosting } from '../traditional';
-import { predictNoShowLogisticRegression as predictML, predictNoShowGradientBoosting as predictMLBoosting } from '../ml';
+import { predictNoShowRuleBased } from '../traditional';
+import { predictNoShowLogisticRegression, predictNoShowGradientBoosting } from '../ml';
 import type { Booking } from '../types';
 
 describe('No-Show Prediction', () => {
   const highRiskBooking: Booking = {
     id: 'test-1',
     guestName: 'Test Guest',
+    checkInDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
+    checkOutDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days later
+    roomType: 'double',
     bookingChannel: 'ota',
     leadTimeDays: 0,
+    totalAmount: 300,
     paymentMethod: 'pay-at-property',
     hasSpecialRequests: false,
     guestHistory: {
@@ -20,8 +24,12 @@ describe('No-Show Prediction', () => {
   const lowRiskBooking: Booking = {
     id: 'test-2',
     guestName: 'Loyal Guest',
+    checkInDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days later
+    checkOutDate: new Date(Date.now() + 33 * 24 * 60 * 60 * 1000), // 33 days later
+    roomType: 'suite',
     bookingChannel: 'direct',
     leadTimeDays: 30,
+    totalAmount: 600,
     paymentMethod: 'prepaid',
     hasSpecialRequests: true,
     guestHistory: {
@@ -62,8 +70,31 @@ describe('No-Show Prediction', () => {
     });
 
     it('should penalize OTA bookings', () => {
-      const otaBooking = { ...lowRiskBooking, bookingChannel: 'ota' as const };
-      const directBooking = { ...lowRiskBooking, bookingChannel: 'direct' as const };
+      const otaBooking: Booking = {
+        id: 'ota-test',
+        guestName: 'OTA Guest',
+        checkInDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        checkOutDate: new Date(Date.now() + 33 * 24 * 60 * 60 * 1000),
+        roomType: 'double',
+        bookingChannel: 'ota',
+        leadTimeDays: 30,
+        totalAmount: 300,
+        paymentMethod: 'pay-at-property',
+        hasSpecialRequests: false,
+      };
+
+      const directBooking: Booking = {
+        id: 'direct-test',
+        guestName: 'Direct Guest',
+        checkInDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        checkOutDate: new Date(Date.now() + 33 * 24 * 60 * 60 * 1000),
+        roomType: 'double',
+        bookingChannel: 'direct',
+        leadTimeDays: 30,
+        totalAmount: 300,
+        paymentMethod: 'pay-at-property',
+        hasSpecialRequests: false,
+      };
 
       const otaResult = predictNoShowRuleBased(otaBooking);
       const directResult = predictNoShowRuleBased(directBooking);

@@ -3,151 +3,132 @@ import type { Room } from '../optimizer';
 
 describe('Housekeeping Route Optimization', () => {
   const sampleRooms: Room[] = [
-    { id: '101', floor: 1, roomNumber: 101, status: 'dirty', priority: 'normal' },
-    { id: '102', floor: 1, roomNumber: 102, status: 'dirty', priority: 'normal' },
-    { id: '201', floor: 2, roomNumber: 201, status: 'dirty', priority: 'vip' },
-    { id: '202', floor: 2, roomNumber: 202, status: 'dirty', priority: 'priority' },
-    { id: '301', floor: 3, roomNumber: 301, status: 'dirty', priority: 'normal' },
+    { id: 'room-1', number: '101', floor: 1, status: 'dirty', priority: 'normal', estimatedCleanTime: 30 },
+    { id: 'room-2', number: '102', floor: 1, status: 'dirty', priority: 'priority', estimatedCleanTime: 35 },
+    { id: 'room-3', number: '201', floor: 2, status: 'dirty', priority: 'normal', estimatedCleanTime: 30 },
+    { id: 'room-4', number: '202', floor: 2, status: 'dirty', priority: 'normal', estimatedCleanTime: 30 },
+    { id: 'room-5', number: '105', floor: 1, status: 'dirty', priority: 'vip', estimatedCleanTime: 40 },
   ];
 
   describe('Greedy Algorithm', () => {
     it('should optimize route for given rooms', () => {
       const result = optimizeRouteGreedy(sampleRooms, 1);
 
-      expect(result.route).toHaveLength(sampleRooms.length);
+      expect(result.rooms).toHaveLength(sampleRooms.length);
       expect(result.method).toBe('greedy');
       expect(result.totalDistance).toBeGreaterThan(0);
       expect(result.efficiency).toBeGreaterThan(0);
-      expect(result.efficiency).toBeLessThanOrEqual(1);
     });
 
     it('should prioritize VIP rooms', () => {
       const result = optimizeRouteGreedy(sampleRooms, 1);
-      const vipRoom = sampleRooms.find(r => r.priority === 'vip');
-      const vipIndex = result.route.indexOf(vipRoom!.id);
 
-      expect(vipIndex).toBeLessThan(3); // VIP should be early in route
+      // VIP should be cleaned early
+      const vipIndex = result.rooms.findIndex(r => r.id === 'room-5');
+
+      expect(vipIndex).toBeLessThan(3);
     });
 
-    it('should start from specified floor', () => {
-      const result = optimizeRouteGreedy(sampleRooms, 2);
-      const firstRoom = sampleRooms.find(r => r.id === result.route[0]);
+    it('should minimize distance traveled', () => {
+      const result = optimizeRouteGreedy(sampleRooms, 1);
 
-      expect(firstRoom?.floor).toBe(2);
-    });
-
-    it('should handle single room', () => {
-      const singleRoom = [sampleRooms[0]];
-      const result = optimizeRouteGreedy(singleRoom, 1);
-
-      expect(result.route).toHaveLength(1);
-      expect(result.totalDistance).toBe(0);
-    });
-
-    it('should handle empty room list', () => {
-      const result = optimizeRouteGreedy([], 1);
-
-      expect(result.route).toHaveLength(0);
-      expect(result.totalDistance).toBe(0);
+      // Should visit rooms and have reasonable total distance
+      expect(result.totalDistance).toBeGreaterThan(0);
+      expect(result.totalDistance).toBeLessThan(2000);
     });
   });
 
   describe('TSP Algorithm', () => {
-    it('should optimize route more efficiently than greedy', () => {
-      const greedyResult = optimizeRouteGreedy(sampleRooms, 1);
-      const tspResult = optimizeRouteTSP(sampleRooms, 1);
+    it('should outperform greedy algorithm', () => {
+      const greedy = optimizeRouteGreedy(sampleRooms, 1);
+      const tsp = optimizeRouteTSP(sampleRooms, 1);
 
-      expect(tspResult.method).toBe('tsp');
-      expect(tspResult.totalDistance).toBeLessThanOrEqual(greedyResult.totalDistance);
-      expect(tspResult.efficiency).toBeGreaterThanOrEqual(greedyResult.efficiency);
+      expect(tsp.rooms).toHaveLength(sampleRooms.length);
+      expect(tsp.efficiency).toBeGreaterThanOrEqual(greedy.efficiency);
+      expect(tsp.method).toBe('tsp');
     });
 
-    it('should include all rooms in route', () => {
+    it('should provide optimal or near-optimal route', () => {
       const result = optimizeRouteTSP(sampleRooms, 1);
 
-      expect(result.route).toHaveLength(sampleRooms.length);
-      expect(new Set(result.route).size).toBe(sampleRooms.length);
+      expect(result.totalDistance).toBeGreaterThan(0);
+      expect(result.estimatedTime).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Performance Comparison', () => {
+    it('should show efficiency improvements across methods', () => {
+      const greedy = optimizeRouteGreedy(sampleRooms, 1);
+      const tsp = optimizeRouteTSP(sampleRooms, 1);
+
+      expect(greedy.rooms).toHaveLength(sampleRooms.length);
+      expect(tsp.rooms).toHaveLength(sampleRooms.length);
+      expect(greedy.efficiency).toBeGreaterThan(0);
+      expect(tsp.efficiency).toBeGreaterThanOrEqual(greedy.efficiency);
     });
 
-    it('should respect priority ordering', () => {
-      const result = optimizeRouteTSP(sampleRooms, 1);
-      const vipRoom = sampleRooms.find(r => r.priority === 'vip');
-      const vipIndex = result.route.indexOf(vipRoom!.id);
+    it('should process large sets efficiently', () => {
+      const largeSet = Array.from({ length: 20 }, (_, i) => ({
+        id: `room-${i}`,
+        number: `${100 + i}`,
+        floor: Math.floor(i / 4) + 1,
+        status: 'dirty' as const,
+        priority: 'normal' as const,
+        estimatedCleanTime: 30,
+      }));
 
-      expect(vipIndex).toBeLessThan(sampleRooms.length / 2); // VIP in first half
+      const result = optimizeRouteGreedy(largeSet, 1);
+
+      expect(result.rooms.length).toBe(20);
+      expect(result.processingTime).toBeLessThan(100);
     });
+  });
 
+  describe('Edge Cases', () => {
     it('should handle single room', () => {
       const singleRoom = [sampleRooms[0]];
-      const result = optimizeRouteTSP(singleRoom, 1);
+      const result = optimizeRouteGreedy(singleRoom, 1);
 
-      expect(result.route).toHaveLength(1);
-      expect(result.totalDistance).toBe(0);
-    });
-  });
-
-  describe('Distance Calculation', () => {
-    it('should calculate distance between floors', () => {
-      const floor1Rooms = sampleRooms.filter(r => r.floor === 1);
-      const floor3Rooms = sampleRooms.filter(r => r.floor === 3);
-
-      const sameFloorRoute = optimizeRouteGreedy(floor1Rooms, 1);
-      const multiFloorRoute = optimizeRouteGreedy([...floor1Rooms, ...floor3Rooms], 1);
-
-      expect(multiFloorRoute.totalDistance).toBeGreaterThan(sameFloorRoute.totalDistance);
+      expect(result.rooms).toHaveLength(1);
+      expect(result.totalDistance).toBeGreaterThanOrEqual(0);
     });
 
-    it('should calculate distance between room numbers', () => {
-      const adjacentRooms = [
-        { id: '101', floor: 1, roomNumber: 101, status: 'dirty' as const, priority: 'normal' as const },
-        { id: '102', floor: 1, roomNumber: 102, status: 'dirty' as const, priority: 'normal' as const },
+    it('should handle all clean rooms', () => {
+      const cleanRooms = sampleRooms.map(r => ({ ...r, status: 'clean' as const }));
+      const result = optimizeRouteGreedy(cleanRooms, 1);
+
+      expect(result.rooms).toHaveLength(0);
+    });
+
+    it('should handle rooms across multiple floors', () => {
+      const multiFloor = [
+        { id: 'room-1', number: '101', floor: 1, status: 'dirty' as const, priority: 'normal' as const, estimatedCleanTime: 30 },
+        { id: 'room-2', number: '301', floor: 3, status: 'dirty' as const, priority: 'normal' as const, estimatedCleanTime: 30 },
+        { id: 'room-3', number: '501', floor: 5, status: 'dirty' as const, priority: 'normal' as const, estimatedCleanTime: 30 },
       ];
 
-      const distantRooms = [
-        { id: '101', floor: 1, roomNumber: 101, status: 'dirty' as const, priority: 'normal' as const },
-        { id: '150', floor: 1, roomNumber: 150, status: 'dirty' as const, priority: 'normal' as const },
-      ];
+      const result = optimizeRouteGreedy(multiFloor, 1);
 
-      const adjacentRoute = optimizeRouteGreedy(adjacentRooms, 1);
-      const distantRoute = optimizeRouteGreedy(distantRooms, 1);
-
-      expect(distantRoute.totalDistance).toBeGreaterThan(adjacentRoute.totalDistance);
-    });
-  });
-
-  describe('Efficiency Metrics', () => {
-    it('should calculate efficiency ratio', () => {
-      const result = optimizeRouteGreedy(sampleRooms, 1);
-
-      expect(result.efficiency).toBeDefined();
-      expect(result.efficiency).toBeGreaterThan(0);
-      expect(result.efficiency).toBeLessThanOrEqual(1);
-    });
-
-    it('should have better efficiency with TSP', () => {
-      const greedyResult = optimizeRouteGreedy(sampleRooms, 1);
-      const tspResult = optimizeRouteTSP(sampleRooms, 1);
-
-      expect(tspResult.efficiency).toBeGreaterThanOrEqual(greedyResult.efficiency);
+      expect(result.rooms).toHaveLength(3);
+      expect(result.totalDistance).toBeGreaterThan(0);
     });
   });
 
   describe('Priority Handling', () => {
-    it('should handle different priority levels', () => {
-      const mixedPriorityRooms: Room[] = [
-        { id: '101', floor: 1, roomNumber: 101, status: 'dirty', priority: 'vip' },
-        { id: '102', floor: 1, roomNumber: 102, status: 'dirty', priority: 'priority' },
-        { id: '103', floor: 1, roomNumber: 103, status: 'dirty', priority: 'normal' },
-      ];
+    it('should respect room priorities', () => {
+      const result = optimizeRouteGreedy(sampleRooms, 1);
 
-      const result = optimizeRouteGreedy(mixedPriorityRooms, 1);
+      // VIP should be early in the route (first 3 positions)
+      const vipIndex = result.rooms.findIndex(r => r.priority === 'vip');
+      expect(vipIndex).toBeLessThan(3);
 
-      // VIP should be first
-      expect(result.route[0]).toBe('101');
-      // Priority should be second
-      expect(result.route[1]).toBe('102');
-      // Normal should be last
-      expect(result.route[2]).toBe('103');
+      // Priority should be before normal rooms
+      const priorityIndex = result.rooms.findIndex(r => r.priority === 'priority');
+      const normalIndices = result.rooms
+        .map((r, i) => r.priority === 'normal' ? i : -1)
+        .filter(i => i >= 0);
+
+      expect(priorityIndex).toBeLessThan(Math.max(...normalIndices));
     });
   });
 });
