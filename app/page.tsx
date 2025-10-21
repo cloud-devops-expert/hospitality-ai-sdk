@@ -26,6 +26,12 @@ export default function Home() {
       description: 'Predict occupancy and demand using statistical methods and ML models',
       href: '/forecast',
       color: 'brand-900'
+    },
+    {
+      name: 'ML Benchmarks',
+      description: 'Compare algorithms: cost, latency, and accuracy across all methods',
+      href: '/benchmark',
+      color: 'brand-500'
     }
   ]
 

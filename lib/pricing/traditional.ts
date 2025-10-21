@@ -12,6 +12,8 @@ export interface PricingParams {
   seasonalFactor?: number;
 }
 
+export type PricingInput = PricingParams;
+
 export interface PricingResult {
   originalPrice: number;
   finalPrice: number;
@@ -20,7 +22,7 @@ export interface PricingResult {
     amount: number;
     percentage: number;
   }>;
-  method: 'traditional' | 'ai';
+  method: 'traditional' | 'ai' | 'linear-regression' | 'neural-network';
 }
 
 const SEASONAL_PATTERNS = {

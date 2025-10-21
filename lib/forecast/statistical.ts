@@ -13,7 +13,7 @@ export interface ForecastResult {
   predicted: number;
   confidence: number; // 0-1
   trend: 'increasing' | 'decreasing' | 'stable';
-  method: 'moving-average' | 'exponential-smoothing' | 'trend-analysis';
+  method: 'moving-average' | 'exponential-smoothing' | 'trend-analysis' | 'arima' | 'prophet' | 'lstm';
 }
 
 /**

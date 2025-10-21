@@ -42,7 +42,7 @@ export interface AllocationResult {
   assignedRoom: Room | null;
   score: number; // 0-100
   reasons: string[];
-  method: 'rule-based' | 'ai-assisted';
+  method: 'rule-based' | 'ai-assisted' | 'ml-based';
 }
 
 export interface AllocationConstraints {

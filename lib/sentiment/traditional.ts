@@ -8,7 +8,8 @@ export interface SentimentResult {
   sentiment: 'positive' | 'negative' | 'neutral';
   confidence: number; // 0 to 1
   keywords: string[];
-  method: 'traditional' | 'ai';
+  method: 'traditional' | 'ai' | 'browser-ml';
+  processingTime?: number;
 }
 
 const POSITIVE_KEYWORDS = [
