@@ -2,13 +2,17 @@
 
 import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
+import { analyzeTraditional, SentimentResult } from '@/lib/sentiment/traditional';
+import { analyzeBrowserML } from '@/lib/sentiment/ml-browser';
 import { analyzeHybrid, HybridAnalysisResult } from '@/lib/sentiment/hybrid';
+
+type AlgorithmType = 'traditional' | 'browser-ml' | 'hybrid';
 
 export default function SentimentPage() {
   const [text, setText] = useState('');
-  const [result, setResult] = useState<HybridAnalysisResult | null>(null);
+  const [result, setResult] = useState<HybridAnalysisResult | SentimentResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [forceAI, setForceAI] = useState(false);
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState<AlgorithmType>('traditional');
 
   const examples = [
     "The room was absolutely amazing! Clean, comfortable, and the staff were incredibly helpful. Would definitely recommend!",
@@ -22,12 +26,34 @@ export default function SentimentPage() {
 
     setLoading(true);
     try {
-      const analysis = await analyzeHybrid(text, forceAI);
+      let analysis;
+      switch (selectedAlgorithm) {
+        case 'traditional':
+          analysis = analyzeTraditional(text);
+          break;
+        case 'browser-ml':
+          analysis = await analyzeBrowserML(text);
+          break;
+        case 'hybrid':
+          analysis = await analyzeHybrid(text);
+          break;
+      }
       setResult(analysis);
     } catch (error) {
       console.error('Analysis failed:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getAlgorithmInfo = (algo: AlgorithmType) => {
+    switch (algo) {
+      case 'traditional':
+        return { cost: '$0', latency: '~5ms', accuracy: '72%', description: 'Keyword-based analysis' };
+      case 'browser-ml':
+        return { cost: '$0', latency: '~50ms', accuracy: '75%', description: 'Browser-based ML model' };
+      case 'hybrid':
+        return { cost: '$0-0.50/1K', latency: '~180ms avg', accuracy: '84%', description: 'Smart escalation' };
     }
   };
 
@@ -45,8 +71,38 @@ export default function SentimentPage() {
         <Navigation title="Sentiment Analysis" />
 
         <p className="text-gray-600 dark:text-gray-400 mb-8">
-          Analyze guest reviews using hybrid approach: traditional keyword analysis + optional AI
+          Analyze guest reviews using different algorithms - compare traditional, ML, and hybrid approaches
         </p>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Select Algorithm</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {(['traditional', 'browser-ml', 'hybrid'] as const).map((algo) => {
+              const info = getAlgorithmInfo(algo);
+              return (
+                <button
+                  key={algo}
+                  onClick={() => setSelectedAlgorithm(algo)}
+                  className={`p-4 rounded-lg border-2 transition-all text-left ${
+                    selectedAlgorithm === algo
+                      ? 'border-brand-600 dark:border-brand-400 bg-brand-50 dark:bg-brand-900/20'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-brand-400 dark:hover:border-brand-500'
+                  }`}
+                >
+                  <div className="font-semibold text-gray-900 dark:text-gray-100 capitalize mb-2">
+                    {algo.replace('-', ' ')}
+                  </div>
+                  <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
+                    <div><strong>Cost:</strong> {info.cost}</div>
+                    <div><strong>Latency:</strong> {info.latency}</div>
+                    <div><strong>Accuracy:</strong> {info.accuracy}</div>
+                    <div className="text-gray-500 dark:text-gray-500 mt-2">{info.description}</div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
           <div className="mb-4">
@@ -59,18 +115,6 @@ export default function SentimentPage() {
               className="w-full h-32 p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
               placeholder="Enter guest review or feedback here..."
             />
-          </div>
-
-          <div className="mb-4">
-            <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={forceAI}
-                onChange={(e) => setForceAI(e.target.checked)}
-                className="rounded"
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300">Force AI analysis (requires API key)</span>
-            </label>
           </div>
 
           <button
@@ -132,14 +176,16 @@ export default function SentimentPage() {
               </div>
             </div>
 
-            <div className="mb-4">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Method Used</p>
-              <span className={`px-3 py-1 rounded text-sm font-medium ${
-                result.usedAI ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-              }`}>
-                {result.usedAI ? 'AI-Powered' : 'Traditional (Cost-Effective)'}
-              </span>
-            </div>
+            {'usedAI' in result && (
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Method Used</p>
+                <span className={`px-3 py-1 rounded text-sm font-medium ${
+                  result.usedAI ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                }`}>
+                  {result.usedAI ? 'AI-Powered' : 'Traditional (Cost-Effective)'}
+                </span>
+              </div>
+            )}
 
             {result.keywords && result.keywords.length > 0 && (
               <div>
@@ -154,7 +200,7 @@ export default function SentimentPage() {
               </div>
             )}
 
-            {result.traditionalResult && (
+            {'traditionalResult' in result && result.traditionalResult && (
               <div className="mt-4 pt-4 border-t border-gray-300 dark:border-gray-600">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Traditional analysis would have given: <strong className="text-gray-900 dark:text-gray-100">{result.traditionalResult.sentiment}</strong> (confidence: {(result.traditionalResult.confidence * 100).toFixed(0)}%)
