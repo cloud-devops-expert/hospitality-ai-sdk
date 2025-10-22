@@ -1,0 +1,39 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Conference Room Background -->
+  <rect width="800" height="600" fill="#e8e8e8"/>
+
+  <!-- Floor -->
+  <rect y="500" width="800" height="100" fill="#c9b299"/>
+
+  <!-- Wall -->
+  <rect width="800" height="500" fill="#f0f0f0"/>
+
+  <!-- Conference Table -->
+  <ellipse cx="400" cy="350" rx="250" ry="120" fill="#6b4423" stroke="#4a2f1a" stroke-width="3"/>
+
+  <!-- Chairs (occupied and empty) -->
+  <!-- Top chairs -->
+  <rect x="250" y="180" width="50" height="60" rx="5" fill="#3a3a3a" stroke="#222" stroke-width="2"/>
+  <rect x="380" y="180" width="50" height="60" rx="5" fill="#3a3a3a" stroke="#222" stroke-width="2"/>
+  <rect x="510" y="180" width="50" height="60" rx="5" fill="#d0d0d0" stroke="#222" stroke-width="2"/>
+
+  <!-- People (heads for occupied chairs) -->
+  <circle cx="275" cy="170" r="15" fill="#f4a460"/>
+  <circle cx="405" cy="170" r="15" fill="#d2a679"/>
+
+  <!-- Bottom chairs -->
+  <rect x="250" y="460" width="50" height="60" rx="5" fill="#d0d0d0" stroke="#222" stroke-width="2"/>
+  <rect x="380" y="460" width="50" height="60" rx="5" fill="#3a3a3a" stroke="#222" stroke-width="2"/>
+  <rect x="510" y="460" width="50" height="60" rx="5" fill="#d0d0d0" stroke="#222" stroke-width="2"/>
+
+  <!-- Person at bottom -->
+  <circle cx="405" cy="540" r="15" fill="#c19a6b"/>
+
+  <!-- Occupancy indicator -->
+  <rect x="650" y="50" width="120" height="80" fill="#4a90e2" opacity="0.8" rx="5"/>
+  <text x="710" y="80" font-family="Arial" font-size="20" fill="white" text-anchor="middle" font-weight="bold">60%</text>
+  <text x="710" y="105" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Occupied</text>
+
+  <!-- Text Label -->
+  <text x="400" y="580" font-family="Arial" font-size="24" fill="#333" text-anchor="middle">Occupancy Detection - Conference Room</text>
+</svg>

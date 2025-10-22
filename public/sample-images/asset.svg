@@ -1,0 +1,56 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Room Background -->
+  <rect width="800" height="600" fill="#f0f0f0"/>
+
+  <!-- Floor -->
+  <rect y="450" width="800" height="150" fill="#d4c5b0"/>
+
+  <!-- Furniture Collection -->
+
+  <!-- Sofa -->
+  <rect x="80" y="300" width="250" height="150" fill="#8b4513" stroke="#654321" stroke-width="2" rx="10"/>
+  <rect x="70" y="290" width="270" height="30" fill="#a0826d" rx="5"/>
+  <!-- Cushions -->
+  <rect x="100" y="320" width="70" height="50" fill="#d2691e" rx="3"/>
+  <rect x="190" y="320" width="70" height="50" fill="#d2691e" rx="3"/>
+
+  <!-- Coffee Table -->
+  <rect x="380" y="380" width="180" height="70" fill="#6b4423" stroke="#4a2f1a" stroke-width="2" rx="5"/>
+  <!-- Table legs -->
+  <rect x="390" y="430" width="15" height="40" fill="#4a2f1a"/>
+  <rect x="535" y="430" width="15" height="40" fill="#4a2f1a"/>
+
+  <!-- Armchair -->
+  <rect x="620" y="320" width="150" height="130" fill="#556b2f" stroke="#3d4f26" stroke-width="2" rx="10"/>
+  <rect x="610" y="310" width="170" height="30" fill="#6b8e23" rx="5"/>
+  <!-- Armrests -->
+  <rect x="605" y="330" width="25" height="80" fill="#6b8e23" rx="3"/>
+  <rect x="760" y="330" width="25" height="80" fill="#6b8e23" rx="3"/>
+
+  <!-- Asset Tags/Labels -->
+  <g>
+    <!-- Sofa tag -->
+    <rect x="130" y="250" width="120" height="40" fill="#4a90e2" opacity="0.9" rx="3"/>
+    <text x="190" y="270" font-family="Arial" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Sofa #A-1234</text>
+    <text x="190" y="285" font-family="Arial" font-size="11" fill="white" text-anchor="middle">Good Condition</text>
+
+    <!-- Table tag -->
+    <rect x="400" y="330" width="140" height="40" fill="#4a90e2" opacity="0.9" rx="3"/>
+    <text x="470" y="350" font-family="Arial" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Table #A-5678</text>
+    <text x="470" y="365" font-family="Arial" font-size="11" fill="white" text-anchor="middle">Excellent</text>
+
+    <!-- Chair tag -->
+    <rect x="630" y="270" width="130" height="40" fill="#ffa500" opacity="0.9" rx="3"/>
+    <text x="695" y="290" font-family="Arial" font-size="14" fill="white" text-anchor="middle" font-weight="bold">Chair #A-9012</text>
+    <text x="695" y="305" font-family="Arial" font-size="11" fill="white" text-anchor="middle">Needs Repair</text>
+  </g>
+
+  <!-- Asset Summary -->
+  <rect x="50" y="50" width="180" height="120" fill="#28a745" opacity="0.9" rx="5"/>
+  <text x="140" y="85" font-family="Arial" font-size="18" fill="white" text-anchor="middle" font-weight="bold">Assets Tracked</text>
+  <text x="140" y="115" font-family="Arial" font-size="32" fill="white" text-anchor="middle" font-weight="bold">3</text>
+  <text x="140" y="145" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Furniture Items</text>
+
+  <!-- Text Label -->
+  <text x="400" y="580" font-family="Arial" font-size="24" fill="#333" text-anchor="middle">Asset Condition Tracking - Furniture</text>
+</svg>

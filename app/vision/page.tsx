@@ -10,6 +10,11 @@ export default function VisionPage() {
   const [imageData, setImageData] = useState<string>('');
   const [imagePreview, setImagePreview] = useState<string>('');
 
+  // Get sample image path based on analysis type
+  const getSampleImage = (type: string) => {
+    return `/sample-images/${type}.svg`;
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -68,9 +73,22 @@ export default function VisionPage() {
             ))}
           </div>
 
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+              Sample Scene for {analysisType.charAt(0).toUpperCase() + analysisType.slice(1)} Analysis
+            </h3>
+            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+              <img
+                src={getSampleImage(analysisType)}
+                alt={`${analysisType} sample`}
+                className="max-w-full h-auto rounded-lg border-2 border-gray-300 dark:border-gray-600"
+              />
+            </div>
+          </div>
+
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Upload Image (Optional)
+              Upload Your Own Image (Optional)
             </label>
             <input
               type="file"
@@ -80,6 +98,7 @@ export default function VisionPage() {
             />
             {imagePreview && (
               <div className="mt-4">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Your Uploaded Image</h4>
                 <img
                   src={imagePreview}
                   alt="Preview"
@@ -104,18 +123,16 @@ export default function VisionPage() {
               Analysis Results
             </h2>
 
-            {imagePreview && (
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Analyzed Image
-                </h3>
-                <img
-                  src={imagePreview}
-                  alt="Analyzed"
-                  className="max-w-full h-auto max-h-96 rounded-lg border border-gray-300 dark:border-gray-600"
-                />
-              </div>
-            )}
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Analyzed Image {!imagePreview && '(Sample)'}
+              </h3>
+              <img
+                src={imagePreview || getSampleImage(analysisType)}
+                alt="Analyzed"
+                className="max-w-full h-auto max-h-96 rounded-lg border border-gray-300 dark:border-gray-600"
+              />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">

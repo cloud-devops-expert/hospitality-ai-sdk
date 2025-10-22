@@ -1,0 +1,39 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hotel Room Background -->
+  <rect width="800" height="600" fill="#fafafa"/>
+
+  <!-- Floor -->
+  <rect y="450" width="800" height="150" fill="#dcc9b3"/>
+
+  <!-- Bed -->
+  <rect x="150" y="300" width="300" height="180" fill="#4a4a4a" stroke="#333" stroke-width="2"/>
+  <rect x="140" y="280" width="320" height="30" fill="#5a5a5a"/>
+  <!-- White bedding -->
+  <rect x="160" y="310" width="280" height="120" fill="#ffffff" stroke="#e0e0e0" stroke-width="2"/>
+  <!-- Pillows -->
+  <rect x="170" y="320" width="80" height="40" fill="#f5f5f5" stroke="#ddd" stroke-width="1"/>
+  <rect x="270" y="320" width="80" height="40" fill="#f5f5f5" stroke="#ddd" stroke-width="1"/>
+
+  <!-- Nightstand -->
+  <rect x="480" y="350" width="80" height="100" fill="#8b6914" stroke="#654321" stroke-width="2"/>
+  <circle cx="540" cy="390" r="8" fill="#ffd700"/>
+
+  <!-- Lamp -->
+  <line x1="520" y1="350" x2="520" y2="310" stroke="#666" stroke-width="4"/>
+  <polygon points="500,310 540,310 530,280 510,280" fill="#ffe4b5"/>
+
+  <!-- Sparkles (cleanliness indicators) -->
+  <g fill="#4a90e2" opacity="0.7">
+    <polygon points="200,260 205,270 215,270 207,277 210,287 200,280 190,287 193,277 185,270 195,270"/>
+    <polygon points="350,250 353,257 360,257 354,262 356,269 350,264 344,269 346,262 340,257 347,257"/>
+    <polygon points="420,290 423,297 430,297 424,302 426,309 420,304 414,309 416,302 410,297 417,297"/>
+  </g>
+
+  <!-- Cleanliness Score -->
+  <rect x="620" y="100" width="150" height="100" fill="#28a745" opacity="0.9" rx="5"/>
+  <text x="695" y="140" font-family="Arial" font-size="32" fill="white" text-anchor="middle" font-weight="bold">95</text>
+  <text x="695" y="170" font-family="Arial" font-size="18" fill="white" text-anchor="middle">Clean Score</text>
+
+  <!-- Text Label -->
+  <text x="400" y="580" font-family="Arial" font-size="24" fill="#333" text-anchor="middle">Cleanliness Assessment - Hotel Room</text>
+</svg>
