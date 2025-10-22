@@ -14,7 +14,8 @@ const customJestConfig = {
   },
   collectCoverageFrom: [
     'lib/**/*.{js,jsx,ts,tsx}',
-    'app/**/*.{js,jsx,ts,tsx}',
+    // Excluded: app/ directory (Next.js demo/frontend code)
+    // Focus coverage on SDK library code only
     '!**/*.d.ts',
     '!**/node_modules/**',
     '!**/.next/**',

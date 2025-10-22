@@ -368,4 +368,160 @@ describe('No-Show Prediction', () => {
       expect(result.recommendedActions).toBeInstanceOf(Array);
     });
   });
+
+  describe('Gradient Boosting Decision Tree Paths', () => {
+    describe('Tree 1 Branches', () => {
+      it('should handle high payment with long lead time and low reliability', () => {
+        const booking: Booking = {
+          ...highRiskBooking,
+          paymentMethod: 'pay-at-property', // High payment score
+          leadTimeDays: 30, // Long lead time
+          guestHistory: {
+            totalStays: 10,
+            noShowCount: 4, // 40% no-show rate (low reliability)
+            cancellationCount: 2,
+          },
+        };
+
+        const result = predictNoShowGradientBoosting(booking);
+
+        expect(result.probability).toBeGreaterThan(0);
+        expect(result.method).toBe('gradient-boosting');
+      });
+
+      it('should handle low payment with high guest reliability', () => {
+        const booking: Booking = {
+          ...lowRiskBooking,
+          paymentMethod: 'prepaid', // Low payment score (prepaid)
+          guestHistory: {
+            totalStays: 20,
+            noShowCount: 0, // 0% no-show rate (high reliability)
+            cancellationCount: 0,
+          },
+        };
+
+        const result = predictNoShowGradientBoosting(booking);
+
+        expect(result.riskLevel).toBe('low');
+        expect(result.probability).toBeLessThan(0.4);
+      });
+    });
+
+    describe('Tree 2 Branches', () => {
+      it('should handle OTA booking with special requests', () => {
+        const booking: Booking = {
+          ...highRiskBooking,
+          bookingChannel: 'ota', // High channel score
+          hasSpecialRequests: true, // Has requests
+          totalAmount: 300,
+        };
+
+        const result = predictNoShowGradientBoosting(booking);
+
+        expect(result.method).toBe('gradient-boosting');
+        expect(result.probability).toBeGreaterThan(0);
+      });
+
+      it('should handle OTA booking with high value but no requests', () => {
+        const booking: Booking = {
+          ...highRiskBooking,
+          bookingChannel: 'ota', // High channel score
+          totalAmount: 800, // High value
+          hasSpecialRequests: false, // No requests
+        };
+
+        const result = predictNoShowGradientBoosting(booking);
+
+        expect(result.probability).toBeGreaterThan(0);
+        expect(result.method).toBe('gradient-boosting');
+      });
+
+      it('should handle direct booking with high reliability', () => {
+        const booking: Booking = {
+          ...lowRiskBooking,
+          bookingChannel: 'direct', // Low channel score
+          guestHistory: {
+            totalStays: 15,
+            noShowCount: 0, // High reliability
+            cancellationCount: 1,
+          },
+        };
+
+        const result = predictNoShowGradientBoosting(booking);
+
+        expect(result.riskLevel).toBe('low');
+        expect(result.probability).toBeLessThan(0.35);
+      });
+    });
+
+    describe('Tree 3 Branches', () => {
+      it('should handle low reliability with no prepayment', () => {
+        const booking: Booking = {
+          ...highRiskBooking,
+          paymentMethod: 'pay-at-property', // No prepayment
+          guestHistory: {
+            totalStays: 5,
+            noShowCount: 2, // 40% no-show rate (low reliability < 0.3)
+            cancellationCount: 1,
+          },
+        };
+
+        const result = predictNoShowGradientBoosting(booking);
+
+        expect(result.riskLevel).toBe('high');
+        expect(result.probability).toBeGreaterThan(0.6);
+      });
+
+      it('should handle high reliability with OTA channel', () => {
+        const booking: Booking = {
+          ...lowRiskBooking,
+          bookingChannel: 'ota', // High channel score
+          guestHistory: {
+            totalStays: 25,
+            noShowCount: 0, // 0% no-show rate (high reliability > 0.8)
+            cancellationCount: 0,
+          },
+        };
+
+        const result = predictNoShowGradientBoosting(booking);
+
+        expect(['low', 'medium']).toContain(result.riskLevel);
+        expect(result.probability).toBeLessThan(0.5);
+      });
+
+      it('should handle medium reliability with short lead time', () => {
+        const booking: Booking = {
+          ...highRiskBooking,
+          leadTimeDays: 1, // Very short lead time (< 0.1 normalized)
+          guestHistory: {
+            totalStays: 10,
+            noShowCount: 1, // 10% no-show rate (medium reliability 0.3-0.8)
+            cancellationCount: 2,
+          },
+        };
+
+        const result = predictNoShowGradientBoosting(booking);
+
+        expect(result.probability).toBeGreaterThan(0);
+        expect(['medium', 'high']).toContain(result.riskLevel);
+      });
+
+      it('should handle medium reliability with long lead time', () => {
+        const booking: Booking = {
+          ...lowRiskBooking,
+          leadTimeDays: 60, // Long lead time (> 0.1 normalized)
+          guestHistory: {
+            totalStays: 8,
+            noShowCount: 1, // 12.5% no-show rate (medium reliability)
+            cancellationCount: 1,
+          },
+        };
+
+        const result = predictNoShowGradientBoosting(booking);
+
+        expect(result.probability).toBeGreaterThan(0);
+        expect(result.method).toBe('gradient-boosting');
+      });
+    });
+  });
 });
