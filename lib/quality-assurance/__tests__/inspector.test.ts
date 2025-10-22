@@ -1,636 +1,877 @@
+/**
+ * Tests for Quality Assurance Automation Module
+ */
+
 import {
-  calculateQualityScore,
+  scoreRoomInspection,
+  assessServiceQuality,
+  optimizeInspectionRoute,
   evaluateStaffPerformance,
   analyzeQualityTrends,
-  predictDefects,
-  RoomInspection,
-  QUALITY_SCORING_WEIGHTS,
-  QUALITY_RATING_BENCHMARKS,
+  type RoomInspectionInput,
+  type ChecklistItem,
+  type ServiceQualityInput,
+  type StaffPerformance,
 } from '../inspector';
 
-describe('Quality Assurance & Inspection Automation', () => {
-  const sampleInspection: RoomInspection = {
-    roomId: 'room-001',
-    roomNumber: '101',
-    roomType: 'standard',
-    inspectionDate: new Date('2025-01-15'),
-    inspectorId: 'inspector-001',
-    cleanliness: {
-      bathroom: 8,
-      bedroom: 9,
-      entryway: 8,
-      overallCleanliness: 8,
-    },
-    maintenance: {
-      plumbing: 'good',
-      electrical: 'good',
-      hvac: 'good',
-      furniture: 'good',
-      fixtures: 'good',
-    },
-    amenities: {
-      towels: true,
-      toiletries: true,
-      minibar: true,
-      coffeemaker: true,
-      remoteControl: true,
-      safe: true,
-    },
-    defects: [],
-    inspectionDurationMinutes: 15,
-    hasPhotos: true,
-    photoCount: 3,
-  };
+describe('Quality Assurance Automation Module', () => {
+  describe('scoreRoomInspection', () => {
+    it('should score a perfect room inspection', () => {
+      const input: RoomInspectionInput = {
+        roomId: 'room-101',
+        roomType: 'deluxe',
+        inspectionDate: new Date(),
+        inspectorId: 'inspector-1',
+        checklist: [
+          { category: 'cleanliness', item: 'Floor cleaned', status: 'pass' },
+          { category: 'cleanliness', item: 'Bathroom spotless', status: 'pass' },
+          { category: 'maintenance', item: 'AC working', status: 'pass' },
+          { category: 'amenities', item: 'TV functional', status: 'pass' },
+          { category: 'safety', item: 'Smoke detector working', status: 'pass' },
+          { category: 'presentation', item: 'Bed made', status: 'pass' },
+        ],
+      };
 
-  describe('calculateQualityScore', () => {
-    describe('Overall Scoring', () => {
-      it('should calculate overall quality score correctly', () => {
-        const result = calculateQualityScore(sampleInspection);
+      const score = scoreRoomInspection(input);
 
-        expect(result.overallScore).toBeGreaterThanOrEqual(0);
-        expect(result.overallScore).toBeLessThanOrEqual(100);
-      });
-
-      it('should rate excellent performance correctly', () => {
-        const excellentInspection: RoomInspection = {
-          ...sampleInspection,
-          cleanliness: { bathroom: 10, bedroom: 10, entryway: 10, overallCleanliness: 10 },
-        };
-
-        const result = calculateQualityScore(excellentInspection);
-
-        expect(result.rating).toBe('excellent');
-        expect(result.overallScore).toBeGreaterThanOrEqual(90);
-      });
-
-      it('should rate poor performance correctly', () => {
-        const poorInspection: RoomInspection = {
-          ...sampleInspection,
-          cleanliness: { bathroom: 3, bedroom: 4, entryway: 3, overallCleanliness: 3 },
-          maintenance: {
-            plumbing: 'urgent',
-            electrical: 'needs-attention',
-            hvac: 'urgent',
-            furniture: 'needs-attention',
-            fixtures: 'urgent',
-          },
-          amenities: {
-            towels: false,
-            toiletries: false,
-            minibar: false,
-            coffeemaker: false,
-            remoteControl: false,
-            safe: false,
-          },
-          defects: [
-            {
-              type: 'damage',
-              location: 'bathroom',
-              severity: 'severe',
-              description: 'Broken toilet',
-            },
-          ],
-        };
-
-        const result = calculateQualityScore(poorInspection);
-
-        expect(result.rating).toBe('poor');
-        expect(result.overallScore).toBeLessThan(60);
-      });
+      expect(score.overall).toBe(100);
+      expect(score.rating).toBe('excellent');
+      expect(score.passedInspection).toBe(true);
+      expect(score.defectsFound.length).toBe(0);
+      expect(score.categoryScores.cleanliness).toBe(100);
+      expect(score.categoryScores.maintenance).toBe(100);
+      expect(score.categoryScores.safety).toBe(100);
     });
 
-    describe('Component Scores', () => {
-      it('should calculate cleanliness score from sub-scores', () => {
-        const result = calculateQualityScore(sampleInspection);
+    it('should score a failing room inspection', () => {
+      const input: RoomInspectionInput = {
+        roomId: 'room-102',
+        roomType: 'standard',
+        inspectionDate: new Date(),
+        inspectorId: 'inspector-1',
+        checklist: [
+          { category: 'cleanliness', item: 'Floor dirty', status: 'fail', severity: 'major' },
+          { category: 'cleanliness', item: 'Bathroom messy', status: 'fail', severity: 'moderate' },
+          { category: 'maintenance', item: 'AC broken', status: 'fail', severity: 'critical' },
+          { category: 'safety', item: 'Smoke detector missing', status: 'fail', severity: 'critical' },
+        ],
+      };
 
-        expect(result.cleanlinessScore).toBeGreaterThanOrEqual(0);
-        expect(result.cleanlinessScore).toBeLessThanOrEqual(100);
+      const score = scoreRoomInspection(input);
 
-        const expectedScore =
-          ((sampleInspection.cleanliness.bathroom +
-            sampleInspection.cleanliness.bedroom +
-            sampleInspection.cleanliness.entryway +
-            sampleInspection.cleanliness.overallCleanliness) /
-            4 /
-            10) *
-          100;
-
-        expect(result.cleanlinessScore).toBeCloseTo(expectedScore, -1); // Within 1 point
-      });
-
-      it('should calculate maintenance score based on system status', () => {
-        const result = calculateQualityScore(sampleInspection);
-
-        expect(result.maintenanceScore).toBe(100); // All systems 'good'
-      });
-
-      it('should penalize maintenance score for issues', () => {
-        const inspectionWithIssues: RoomInspection = {
-          ...sampleInspection,
-          maintenance: {
-            plumbing: 'urgent',
-            electrical: 'needs-attention',
-            hvac: 'good',
-            furniture: 'good',
-            fixtures: 'good',
-          },
-        };
-
-        const result = calculateQualityScore(inspectionWithIssues);
-
-        expect(result.maintenanceScore).toBeLessThan(100);
-        expect(result.maintenanceScore).toBeGreaterThanOrEqual(0);
-      });
-
-      it('should calculate amenities score correctly', () => {
-        const result = calculateQualityScore(sampleInspection);
-
-        expect(result.amenitiesScore).toBe(100); // All amenities present
-      });
-
-      it('should penalize missing amenities', () => {
-        const inspectionMissingAmenities: RoomInspection = {
-          ...sampleInspection,
-          amenities: {
-            towels: true,
-            toiletries: false,
-            minibar: false,
-            coffeemaker: true,
-            remoteControl: true,
-            safe: false,
-          },
-        };
-
-        const result = calculateQualityScore(inspectionMissingAmenities);
-
-        expect(result.amenitiesScore).toBeLessThan(100);
-        expect(result.amenitiesScore).toBe(50); // 3 out of 6
-      });
-
-      it('should calculate compliance score based on defects', () => {
-        const result = calculateQualityScore(sampleInspection);
-
-        expect(result.complianceScore).toBe(100); // No defects
-      });
-
-      it('should penalize compliance score for defects', () => {
-        const inspectionWithDefects: RoomInspection = {
-          ...sampleInspection,
-          defects: [
-            { type: 'stain', location: 'carpet', severity: 'minor', description: 'Small stain' },
-            { type: 'damage', location: 'wall', severity: 'moderate', description: 'Dent in wall' },
-            { type: 'odor', location: 'room', severity: 'severe', description: 'Strong odor' },
-          ],
-        };
-
-        const result = calculateQualityScore(inspectionWithDefects);
-
-        expect(result.complianceScore).toBeLessThan(100);
-        // -5 for minor, -10 for moderate, -20 for severe = 100 - 35 = 65
-        expect(result.complianceScore).toBe(65);
-      });
+      expect(score.overall).toBeLessThan(50);
+      expect(score.rating).toBe('poor');
+      expect(score.passedInspection).toBe(false);
+      expect(score.defectsFound.length).toBe(4);
+      expect(score.defectsFound.some(d => d.severity === 'critical')).toBe(true);
+      expect(score.defectsFound.some(d => d.requiresImmediateAction)).toBe(true);
     });
 
-    describe('Defect Tracking', () => {
-      it('should count defects by severity', () => {
-        const inspectionWithDefects: RoomInspection = {
-          ...sampleInspection,
-          defects: [
-            { type: 'stain', location: 'carpet', severity: 'minor', description: 'Small stain' },
-            { type: 'stain', location: 'bedding', severity: 'minor', description: 'Tiny stain' },
-            { type: 'damage', location: 'wall', severity: 'moderate', description: 'Scratch' },
-            { type: 'odor', location: 'room', severity: 'severe', description: 'Strong odor' },
-          ],
-        };
+    it('should handle needs-attention items', () => {
+      const input: RoomInspectionInput = {
+        roomId: 'room-103',
+        roomType: 'suite',
+        inspectionDate: new Date(),
+        inspectorId: 'inspector-2',
+        checklist: [
+          { category: 'cleanliness', item: 'Minor dust', status: 'needs-attention', severity: 'minor' },
+          { category: 'presentation', item: 'Pillows uneven', status: 'needs-attention', severity: 'minor' },
+          { category: 'maintenance', item: 'Light bulb dim', status: 'needs-attention', severity: 'minor' },
+        ],
+      };
 
-        const result = calculateQualityScore(inspectionWithDefects);
+      const score = scoreRoomInspection(input);
 
-        expect(result.minorIssues).toBe(2);
-        expect(result.moderateIssues).toBe(1);
-        expect(result.criticalIssues).toBe(1);
-      });
+      expect(score.overall).toBeGreaterThan(60);
+      expect(score.overall).toBeLessThan(90);
+      expect(score.defectsFound.length).toBe(3);
+      expect(score.defectsFound.every(d => d.severity === 'minor')).toBe(true);
     });
 
-    describe('Pass/Fail Logic', () => {
-      it('should pass inspection with good scores and no critical issues', () => {
-        const result = calculateQualityScore(sampleInspection);
+    it('should apply weighted category scores correctly', () => {
+      const inputWithPoorSafety: RoomInspectionInput = {
+        roomId: 'room-104',
+        roomType: 'deluxe',
+        inspectionDate: new Date(),
+        inspectorId: 'inspector-1',
+        checklist: [
+          { category: 'cleanliness', item: 'Perfect', status: 'pass' },
+          { category: 'maintenance', item: 'Perfect', status: 'pass' },
+          { category: 'amenities', item: 'Perfect', status: 'pass' },
+          { category: 'presentation', item: 'Perfect', status: 'pass' },
+          { category: 'safety', item: 'Fire exit blocked', status: 'fail', severity: 'critical' },
+        ],
+      };
 
-        expect(result.passedInspection).toBe(true);
-        expect(result.failureReasons).toBeUndefined();
-      });
+      const score = scoreRoomInspection(inputWithPoorSafety);
 
-      it('should fail inspection with critical defects', () => {
-        const inspectionWithCritical: RoomInspection = {
-          ...sampleInspection,
-          defects: [
-            {
-              type: 'damage',
-              location: 'bathroom',
-              severity: 'severe',
-              description: 'Broken toilet',
-            },
-          ],
-        };
-
-        const result = calculateQualityScore(inspectionWithCritical);
-
-        expect(result.passedInspection).toBe(false);
-        expect(result.failureReasons).toBeDefined();
-        expect(result.failureReasons?.length).toBeGreaterThan(0);
-      });
-
-      it('should fail inspection with low overall score', () => {
-        const lowScoreInspection: RoomInspection = {
-          ...sampleInspection,
-          cleanliness: { bathroom: 2, bedroom: 2, entryway: 2, overallCleanliness: 2 },
-          maintenance: {
-            plumbing: 'needs-attention',
-            electrical: 'needs-attention',
-            hvac: 'good',
-            furniture: 'needs-attention',
-            fixtures: 'good',
-          },
-        };
-
-        const result = calculateQualityScore(lowScoreInspection);
-
-        expect(result.passedInspection).toBe(false);
-        expect(result.failureReasons).toBeDefined();
-      });
+      // Safety has 30% weight, so failing it should significantly impact overall score
+      expect(score.overall).toBeLessThan(80);
+      expect(score.passedInspection).toBe(false);
     });
 
-    describe('Recommendations', () => {
-      it('should generate recommendations based on performance', () => {
-        const result = calculateQualityScore(sampleInspection);
+    it('should detect recurring issues', () => {
+      const input: RoomInspectionInput = {
+        roomId: 'room-105',
+        roomType: 'standard',
+        inspectionDate: new Date(),
+        inspectorId: 'inspector-3',
+        checklist: [
+          { category: 'maintenance', item: 'AC not cooling properly', status: 'fail', severity: 'moderate' },
+        ],
+        previousIssues: ['AC not cooling properly', 'AC making noise'],
+      };
 
-        expect(result.recommendations).toBeInstanceOf(Array);
-        expect(result.recommendations.length).toBeGreaterThan(0);
-      });
+      const score = scoreRoomInspection(input);
 
-      it('should recommend urgent cleaning for low cleanliness', () => {
-        const dirtyInspection: RoomInspection = {
-          ...sampleInspection,
-          cleanliness: { bathroom: 4, bedroom: 5, entryway: 4, overallCleanliness: 4 },
-        };
-
-        const result = calculateQualityScore(dirtyInspection);
-
-        expect(
-          result.recommendations.some((r) =>
-            r.toLowerCase().includes('clean')
-          )
-        ).toBe(true);
-      });
-
-      it('should highlight critical defects in recommendations', () => {
-        const criticalInspection: RoomInspection = {
-          ...sampleInspection,
-          defects: [
-            {
-              type: 'damage',
-              location: 'bathroom',
-              severity: 'severe',
-              description: 'Broken shower',
-            },
-          ],
-        };
-
-        const result = calculateQualityScore(criticalInspection);
-
-        expect(
-          result.recommendations.some((r) => r.includes('CRITICAL'))
-        ).toBe(true);
-      });
-
-      it('should congratulate excellent performance', () => {
-        const excellentInspection: RoomInspection = {
-          ...sampleInspection,
-          cleanliness: { bathroom: 10, bedroom: 10, entryway: 10, overallCleanliness: 10 },
-        };
-
-        const result = calculateQualityScore(excellentInspection);
-
-        expect(
-          result.recommendations.some((r) => r.includes('EXCELLENT'))
-        ).toBe(true);
-      });
+      expect(score.recommendations.some(r => r.includes('Recurring issues'))).toBe(true);
     });
 
-    describe('Corrective Actions', () => {
-      it('should generate corrective actions for issues', () => {
-        const inspectionWithIssues: RoomInspection = {
-          ...sampleInspection,
-          maintenance: {
-            ...sampleInspection.maintenance,
-            plumbing: 'urgent',
-          },
-          defects: [
-            { type: 'stain', location: 'carpet', severity: 'minor', description: 'Coffee stain' },
-          ],
-        };
+    it('should recommend urgent action for critical defects', () => {
+      const input: RoomInspectionInput = {
+        roomId: 'room-106',
+        roomType: 'suite',
+        inspectionDate: new Date(),
+        inspectorId: 'inspector-1',
+        checklist: [
+          { category: 'safety', item: 'Gas leak detected', status: 'fail', severity: 'critical' },
+        ],
+      };
 
-        const result = calculateQualityScore(inspectionWithIssues);
+      const score = scoreRoomInspection(input);
 
-        expect(result.correctiveActions).toBeInstanceOf(Array);
-        expect(result.correctiveActions.length).toBeGreaterThan(0);
-        expect(result.correctiveActions.every((a) => a.action && a.priority)).toBe(true);
-      });
-
-      it('should prioritize critical issues as immediate', () => {
-        const criticalInspection: RoomInspection = {
-          ...sampleInspection,
-          defects: [
-            {
-              type: 'damage',
-              location: 'room',
-              severity: 'severe',
-              description: 'Broken window',
-            },
-          ],
-        };
-
-        const result = calculateQualityScore(criticalInspection);
-
-        expect(
-          result.correctiveActions.some((a) => a.priority === 'immediate')
-        ).toBe(true);
-      });
-
-      it('should estimate cost and time for each action', () => {
-        const inspectionWithIssues: RoomInspection = {
-          ...sampleInspection,
-          maintenance: {
-            ...sampleInspection.maintenance,
-            electrical: 'needs-attention',
-          },
-        };
-
-        const result = calculateQualityScore(inspectionWithIssues);
-
-        result.correctiveActions.forEach((action) => {
-          expect(action.estimatedCost).toBeGreaterThanOrEqual(0);
-          expect(action.estimatedTime).toBeTruthy();
-        });
-      });
+      expect(score.recommendations.some(r => r.includes('URGENT'))).toBe(true);
     });
 
-    describe('Confidence Calculation', () => {
-      it('should calculate confidence score', () => {
-        const result = calculateQualityScore(sampleInspection);
+    it('should calculate estimated fix time for defects', () => {
+      const input: RoomInspectionInput = {
+        roomId: 'room-107',
+        roomType: 'standard',
+        inspectionDate: new Date(),
+        inspectorId: 'inspector-2',
+        checklist: [
+          { category: 'cleanliness', item: 'Stain on carpet', status: 'fail', severity: 'minor' },
+          { category: 'maintenance', item: 'Door lock broken', status: 'fail', severity: 'major' },
+        ],
+      };
 
-        expect(result.confidence).toBeGreaterThan(0);
-        expect(result.confidence).toBeLessThanOrEqual(1);
-      });
+      const score = scoreRoomInspection(input);
 
-      it('should have higher confidence with photos', () => {
-        const withPhotos = { ...sampleInspection, hasPhotos: true, photoCount: 5 };
-        const withoutPhotos = { ...sampleInspection, hasPhotos: false, photoCount: 0 };
+      expect(score.defectsFound.length).toBe(2);
+      expect(score.defectsFound[0].estimatedFixTime).toBeGreaterThan(0);
+      expect(score.defectsFound[1].estimatedFixTime).toBeGreaterThan(score.defectsFound[0].estimatedFixTime);
+    });
 
-        const result1 = calculateQualityScore(withPhotos);
-        const result2 = calculateQualityScore(withoutPhotos);
+    it('should handle empty checklist gracefully', () => {
+      const input: RoomInspectionInput = {
+        roomId: 'room-108',
+        roomType: 'deluxe',
+        inspectionDate: new Date(),
+        inspectorId: 'inspector-1',
+        checklist: [],
+      };
 
-        expect(result1.confidence).toBeGreaterThan(result2.confidence);
-      });
+      const score = scoreRoomInspection(input);
+
+      expect(score.overall).toBe(100);
+      expect(score.passedInspection).toBe(true);
+    });
+  });
+
+  describe('assessServiceQuality', () => {
+    it('should assess excellent service quality', () => {
+      const input: ServiceQualityInput = {
+        serviceType: 'front-desk',
+        staffId: 'staff-001',
+        responseTime: 2, // 2 minutes (expected is 5)
+        accuracy: 95,
+        professionalismScore: 5,
+        issuesResolved: 10,
+        issuesEscalated: 0,
+        timestamp: new Date(),
+      };
+
+      const quality = assessServiceQuality(input);
+
+      expect(quality.overall).toBeGreaterThan(90);
+      expect(quality.rating).toBe('excellent');
+      expect(quality.strengths.length).toBeGreaterThan(0);
+      expect(quality.improvementAreas.length).toBe(0);
+    });
+
+    it('should assess poor service quality', () => {
+      const input: ServiceQualityInput = {
+        serviceType: 'housekeeping',
+        staffId: 'staff-002',
+        responseTime: 90, // 90 minutes (expected is 30)
+        accuracy: 40,
+        professionalismScore: 2,
+        issuesResolved: 2,
+        issuesEscalated: 8,
+        timestamp: new Date(),
+      };
+
+      const quality = assessServiceQuality(input);
+
+      expect(quality.overall).toBeLessThan(60);
+      expect(quality.rating).toBe('poor');
+      expect(quality.improvementAreas.length).toBeGreaterThan(0);
+      expect(quality.trainingNeeded).toBeDefined();
+      expect(quality.trainingNeeded!.length).toBeGreaterThan(0);
+    });
+
+    it('should identify specific strength areas', () => {
+      const input: ServiceQualityInput = {
+        serviceType: 'concierge',
+        staffId: 'staff-003',
+        responseTime: 5,
+        accuracy: 90,
+        professionalismScore: 5,
+        issuesResolved: 15,
+        issuesEscalated: 2,
+        timestamp: new Date(),
+      };
+
+      const quality = assessServiceQuality(input);
+
+      expect(quality.strengths).toContain('Fast response time');
+      expect(quality.strengths).toContain('High accuracy in service delivery');
+      expect(quality.strengths).toContain('Excellent professional conduct');
+      expect(quality.strengths).toContain('Effective problem resolution');
+    });
+
+    it('should recommend training for specific areas', () => {
+      const input: ServiceQualityInput = {
+        serviceType: 'room-service',
+        staffId: 'staff-004',
+        responseTime: 120,
+        accuracy: 50,
+        professionalismScore: 2,
+        issuesResolved: 3,
+        issuesEscalated: 7,
+        timestamp: new Date(),
+      };
+
+      const quality = assessServiceQuality(input);
+
+      expect(quality.trainingNeeded).toBeDefined();
+      expect(quality.trainingNeeded).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('Time management'),
+          expect.stringContaining('Service standards'),
+          expect.stringContaining('Customer service'),
+          expect.stringContaining('Problem-solving'),
+        ])
+      );
+    });
+
+    it('should handle missing optional parameters', () => {
+      const input: ServiceQualityInput = {
+        serviceType: 'maintenance',
+        staffId: 'staff-005',
+        timestamp: new Date(),
+      };
+
+      const quality = assessServiceQuality(input);
+
+      expect(quality.overall).toBeGreaterThan(0);
+      expect(quality.rating).toBeTruthy();
+      expect(quality.metrics.speed).toBe(75); // Default
+      expect(quality.metrics.accuracy).toBe(80); // Default
+    });
+
+    it('should score different service types appropriately', () => {
+      const frontDesk: ServiceQualityInput = {
+        serviceType: 'front-desk',
+        staffId: 'staff-001',
+        responseTime: 10, // Expected: 5 minutes
+        timestamp: new Date(),
+      };
+
+      const maintenance: ServiceQualityInput = {
+        serviceType: 'maintenance',
+        staffId: 'staff-002',
+        responseTime: 10, // Expected: 60 minutes
+        timestamp: new Date(),
+      };
+
+      const frontDeskQuality = assessServiceQuality(frontDesk);
+      const maintenanceQuality = assessServiceQuality(maintenance);
+
+      // Maintenance response of 10 min should score better than front-desk response of 10 min
+      expect(maintenanceQuality.metrics.speed).toBeGreaterThan(frontDeskQuality.metrics.speed);
+    });
+  });
+
+  describe('optimizeInspectionRoute', () => {
+    it('should optimize route by minimizing floor changes', () => {
+      const rooms = [
+        { roomId: 'room-301', floor: 3, priority: 'medium' as const },
+        { roomId: 'room-102', floor: 1, priority: 'medium' as const },
+        { roomId: 'room-103', floor: 1, priority: 'medium' as const },
+        { roomId: 'room-302', floor: 3, priority: 'medium' as const },
+        { roomId: 'room-201', floor: 2, priority: 'medium' as const },
+      ];
+
+      const route = optimizeInspectionRoute(rooms, 1);
+
+      // Should group by floor
+      expect(route.rooms.length).toBe(5);
+      expect(route.optimizationScore).toBeGreaterThan(0);
+
+      // Check that same-floor rooms are adjacent
+      const floors = route.sequence.map(s => s.floor);
+      const floorChanges = floors.reduce((count, floor, idx) => {
+        if (idx > 0 && floor !== floors[idx - 1]) return count + 1;
+        return count;
+      }, 0);
+
+      expect(floorChanges).toBeLessThanOrEqual(4); // At most 4 changes for 5 rooms on 3 floors
+    });
+
+    it('should prioritize high-priority rooms', () => {
+      const rooms = [
+        { roomId: 'room-low', floor: 1, priority: 'low' as const },
+        { roomId: 'room-high1', floor: 1, priority: 'high' as const },
+        { roomId: 'room-high2', floor: 1, priority: 'high' as const },
+        { roomId: 'room-medium', floor: 1, priority: 'medium' as const },
+      ];
+
+      const route = optimizeInspectionRoute(rooms, 1);
+
+      // High priority rooms should come first on same floor
+      expect(route.sequence[0].priority).toBe(3); // high
+      expect(route.sequence[1].priority).toBe(3); // high
+    });
+
+    it('should calculate estimated time accurately', () => {
+      const rooms = [
+        { roomId: 'room-101', floor: 1, priority: 'high' as const }, // 25 min
+        { roomId: 'room-102', floor: 1, priority: 'medium' as const }, // 20 min
+        { roomId: 'room-201', floor: 2, priority: 'low' as const }, // 15 min
+      ];
+
+      const route = optimizeInspectionRoute(rooms);
+
+      // 25 + 20 + 15 = 60 minutes for inspections
+      // + 1 minute same floor + 3 minutes floor change = 64 total
+      expect(route.estimatedTime).toBeGreaterThanOrEqual(60);
+      expect(route.estimatedTime).toBeLessThanOrEqual(70);
+    });
+
+    it('should determine route priority correctly', () => {
+      const highPriorityRooms = [
+        { roomId: 'room-101', floor: 1, priority: 'high' as const },
+        { roomId: 'room-102', floor: 1, priority: 'high' as const },
+        { roomId: 'room-103', floor: 1, priority: 'high' as const },
+        { roomId: 'room-104', floor: 1, priority: 'low' as const },
+      ];
+
+      const lowPriorityRooms = [
+        { roomId: 'room-101', floor: 1, priority: 'low' as const },
+        { roomId: 'room-102', floor: 1, priority: 'low' as const },
+        { roomId: 'room-103', floor: 1, priority: 'low' as const },
+      ];
+
+      const highRoute = optimizeInspectionRoute(highPriorityRooms);
+      const lowRoute = optimizeInspectionRoute(lowPriorityRooms);
+
+      expect(highRoute.priority).toBe('high'); // >30% high priority
+      expect(lowRoute.priority).toBe('low');
+    });
+
+    it('should start from specified floor', () => {
+      const rooms = [
+        { roomId: 'room-101', floor: 1, priority: 'medium' as const },
+        { roomId: 'room-301', floor: 3, priority: 'medium' as const },
+        { roomId: 'room-501', floor: 5, priority: 'medium' as const },
+      ];
+
+      const routeFrom1 = optimizeInspectionRoute(rooms, 1);
+      const routeFrom5 = optimizeInspectionRoute(rooms, 5);
+
+      // Route from floor 1 should start with floor 1
+      expect(routeFrom1.sequence[0].floor).toBe(1);
+
+      // Route from floor 5 should start with floor 5
+      expect(routeFrom5.sequence[0].floor).toBe(5);
     });
   });
 
   describe('evaluateStaffPerformance', () => {
-    const staffInspections: RoomInspection[] = [
-      { ...sampleInspection, inspectionDate: new Date('2025-01-01') },
-      { ...sampleInspection, inspectionDate: new Date('2025-01-02') },
-      { ...sampleInspection, inspectionDate: new Date('2025-01-03') },
-      { ...sampleInspection, inspectionDate: new Date('2025-01-04') },
-      { ...sampleInspection, inspectionDate: new Date('2025-01-05') },
-    ];
+    it('should evaluate excellent staff performance', () => {
+      const inspections = [
+        { inspectorId: 'staff-001', score: 95, defectsFound: 3, duration: 18, expectedDuration: 20 },
+        { inspectorId: 'staff-001', score: 92, defectsFound: 4, duration: 19, expectedDuration: 20 },
+        { inspectorId: 'staff-001', score: 97, defectsFound: 2, duration: 17, expectedDuration: 20 },
+        { inspectorId: 'staff-001', score: 93, defectsFound: 3, duration: 18, expectedDuration: 20 },
+      ];
 
-    it('should evaluate staff performance from multiple inspections', () => {
-      const result = evaluateStaffPerformance(
-        'staff-001',
-        'John Doe',
-        'housekeeping',
-        staffInspections,
-        '2025-01'
-      );
+      const staffInfo = {
+        staffId: 'staff-001',
+        name: 'John Doe',
+        role: 'Senior Inspector',
+      };
 
-      expect(result.overallScore).toBeGreaterThanOrEqual(0);
-      expect(result.overallScore).toBeLessThanOrEqual(100);
+      const period = {
+        start: new Date('2025-01-01'),
+        end: new Date('2025-01-31'),
+      };
+
+      const performance = evaluateStaffPerformance(inspections, staffInfo, period);
+
+      expect(performance.metrics.inspectionsCompleted).toBe(4);
+      expect(performance.metrics.averageScore).toBeGreaterThan(90);
+      expect(performance.metrics.timeEfficiency).toBeGreaterThan(100);
+      expect(performance.rating).toBe('excellent');
     });
 
-    it('should calculate component scores', () => {
-      const result = evaluateStaffPerformance(
-        'staff-001',
-        'John Doe',
-        'housekeeping',
-        staffInspections,
-        '2025-01'
-      );
+    it('should evaluate poor staff performance', () => {
+      const inspections = [
+        { inspectorId: 'staff-002', score: 55, defectsFound: 1, duration: 35, expectedDuration: 20 },
+        { inspectorId: 'staff-002', score: 60, defectsFound: 0, duration: 40, expectedDuration: 20 },
+        { inspectorId: 'staff-002', score: 58, defectsFound: 1, duration: 38, expectedDuration: 20 },
+      ];
 
-      expect(result.qualityScore).toBeGreaterThanOrEqual(0);
-      expect(result.efficiencyScore).toBeGreaterThanOrEqual(0);
-      expect(result.consistencyScore).toBeGreaterThanOrEqual(0);
+      const staffInfo = {
+        staffId: 'staff-002',
+        name: 'Jane Smith',
+        role: 'Junior Inspector',
+      };
+
+      const period = {
+        start: new Date('2025-01-01'),
+        end: new Date('2025-01-31'),
+      };
+
+      const performance = evaluateStaffPerformance(inspections, staffInfo, period);
+
+      expect(performance.metrics.averageScore).toBeLessThan(70);
+      expect(performance.metrics.timeEfficiency).toBeLessThan(80);
+      expect(performance.rating).toBe('poor');
+      expect(performance.recommendations.length).toBeGreaterThan(0);
     });
 
-    it('should track inspection metrics', () => {
-      const result = evaluateStaffPerformance(
-        'staff-001',
-        'John Doe',
-        'housekeeping',
-        staffInspections,
-        '2025-01'
+    it('should detect improving trend', () => {
+      const inspections = [
+        // First half - lower scores
+        { inspectorId: 'staff-003', score: 70, defectsFound: 2, duration: 25, expectedDuration: 20 },
+        { inspectorId: 'staff-003', score: 72, defectsFound: 3, duration: 24, expectedDuration: 20 },
+        // Second half - higher scores
+        { inspectorId: 'staff-003', score: 85, defectsFound: 4, duration: 20, expectedDuration: 20 },
+        { inspectorId: 'staff-003', score: 88, defectsFound: 5, duration: 19, expectedDuration: 20 },
+      ];
+
+      const staffInfo = {
+        staffId: 'staff-003',
+        name: 'Bob Johnson',
+        role: 'Inspector',
+      };
+
+      const performance = evaluateStaffPerformance(
+        inspections,
+        staffInfo,
+        { start: new Date('2025-01-01'), end: new Date('2025-01-31') }
       );
 
-      expect(result.roomsInspected).toBe(5);
-      expect(result.averageInspectionTime).toBeGreaterThan(0);
-      expect(result.defectsFound).toBeGreaterThanOrEqual(0);
+      expect(performance.trend).toBe('improving');
+      expect(performance.recommendations.some(r => r.includes('positive improvement'))).toBe(true);
     });
 
-    it('should assign performance rating', () => {
-      const result = evaluateStaffPerformance(
-        'staff-001',
-        'John Doe',
-        'housekeeping',
-        staffInspections,
-        '2025-01'
+    it('should detect declining trend', () => {
+      const inspections = [
+        // First half - higher scores
+        { inspectorId: 'staff-004', score: 90, defectsFound: 5, duration: 18, expectedDuration: 20 },
+        { inspectorId: 'staff-004', score: 88, defectsFound: 4, duration: 19, expectedDuration: 20 },
+        // Second half - lower scores
+        { inspectorId: 'staff-004', score: 72, defectsFound: 2, duration: 25, expectedDuration: 20 },
+        { inspectorId: 'staff-004', score: 70, defectsFound: 1, duration: 26, expectedDuration: 20 },
+      ];
+
+      const staffInfo = {
+        staffId: 'staff-004',
+        name: 'Alice Williams',
+        role: 'Inspector',
+      };
+
+      const performance = evaluateStaffPerformance(
+        inspections,
+        staffInfo,
+        { start: new Date('2025-01-01'), end: new Date('2025-01-31') }
       );
 
-      expect([
-        'top-performer',
-        'above-average',
-        'average',
-        'below-average',
-        'needs-support',
-      ]).toContain(result.performanceRating);
+      expect(performance.trend).toBe('declining');
+      expect(performance.recommendations.some(r => r.includes('declining'))).toBe(true);
     });
 
-    it('should identify strengths and areas for improvement', () => {
-      const result = evaluateStaffPerformance(
-        'staff-001',
-        'John Doe',
-        'housekeeping',
-        staffInspections,
-        '2025-01'
+    it('should provide specific recommendations', () => {
+      const inspections = [
+        { inspectorId: 'staff-005', score: 65, defectsFound: 0, duration: 25, expectedDuration: 20 },
+        { inspectorId: 'staff-005', score: 68, defectsFound: 1, duration: 26, expectedDuration: 20 },
+      ];
+
+      const staffInfo = {
+        staffId: 'staff-005',
+        name: 'Charlie Brown',
+        role: 'Inspector',
+      };
+
+      const performance = evaluateStaffPerformance(
+        inspections,
+        staffInfo,
+        { start: new Date('2025-01-01'), end: new Date('2025-01-31') }
       );
 
-      expect(result.strengths).toBeInstanceOf(Array);
-      expect(result.areasForImprovement).toBeInstanceOf(Array);
-      expect(result.trainingNeeded).toBeInstanceOf(Array);
-    });
-
-    it('should determine performance trend', () => {
-      const result = evaluateStaffPerformance(
-        'staff-001',
-        'John Doe',
-        'housekeeping',
-        staffInspections,
-        '2025-01'
-      );
-
-      expect(['improving', 'stable', 'declining']).toContain(result.scoresTrend);
+      // Low defects per inspection should trigger recommendation
+      expect(performance.recommendations.some(r => r.includes('thorough in defect identification'))).toBe(true);
     });
 
     it('should throw error with no inspections', () => {
-      expect(() =>
-        evaluateStaffPerformance('staff-001', 'John Doe', 'housekeeping', [], '2025-01')
-      ).toThrow('Need at least one inspection');
+      expect(() => {
+        evaluateStaffPerformance(
+          [],
+          { staffId: 'staff-006', name: 'Test', role: 'Inspector' },
+          { start: new Date(), end: new Date() }
+        );
+      }).toThrow('At least one inspection is required');
     });
   });
 
   describe('analyzeQualityTrends', () => {
-    const trendData = [
-      {
-        inspection: { ...sampleInspection, inspectionDate: new Date('2024-10-15') },
-        date: new Date('2024-10-15'),
-      },
-      {
-        inspection: { ...sampleInspection, inspectionDate: new Date('2024-10-20') },
-        date: new Date('2024-10-20'),
-      },
-      {
-        inspection: { ...sampleInspection, inspectionDate: new Date('2024-11-10') },
-        date: new Date('2024-11-10'),
-      },
-      {
-        inspection: { ...sampleInspection, inspectionDate: new Date('2024-11-25') },
-        date: new Date('2024-11-25'),
-      },
-      {
-        inspection: { ...sampleInspection, inspectionDate: new Date('2024-12-05') },
-        date: new Date('2024-12-05'),
-      },
-    ];
+    it('should analyze quality trends over time', () => {
+      const inspections = [
+        {
+          roomId: 'room-101',
+          roomType: 'deluxe',
+          score: 85,
+          timestamp: new Date('2025-01-01'),
+          defects: [{ category: 'cleanliness', description: 'Minor dust' }],
+        },
+        {
+          roomId: 'room-102',
+          roomType: 'standard',
+          score: 90,
+          timestamp: new Date('2025-01-02'),
+          defects: [],
+        },
+        {
+          roomId: 'room-103',
+          roomType: 'deluxe',
+          score: 78,
+          timestamp: new Date('2025-01-03'),
+          defects: [{ category: 'maintenance', description: 'AC issue' }],
+        },
+      ];
 
-    it('should group inspections by month', () => {
-      const trends = analyzeQualityTrends(trendData);
+      const period = {
+        start: new Date('2025-01-01'),
+        end: new Date('2025-01-31'),
+      };
 
-      expect(trends.length).toBeGreaterThan(0);
-      expect(trends.every((t) => t.period.match(/\d{4}-\d{2}/))).toBe(true);
+      const trends = analyzeQualityTrends(inspections, period);
+
+      expect(trends.totalInspections).toBe(3);
+      expect(trends.averageScore).toBeGreaterThan(75);
+      expect(trends.passRate).toBeGreaterThan(50);
+      expect(trends.roomTypePerformance.size).toBeGreaterThan(0);
     });
 
-    it('should calculate monthly averages', () => {
-      const trends = analyzeQualityTrends(trendData);
+    it('should identify top issues', () => {
+      const inspections = [
+        {
+          roomId: 'room-101',
+          roomType: 'standard',
+          score: 75,
+          timestamp: new Date(),
+          defects: [
+            { category: 'cleanliness', description: 'Dirty bathroom' },
+            { category: 'maintenance', description: 'Broken AC' },
+          ],
+        },
+        {
+          roomId: 'room-102',
+          roomType: 'standard',
+          score: 80,
+          timestamp: new Date(),
+          defects: [{ category: 'cleanliness', description: 'Dirty bathroom' }],
+        },
+        {
+          roomId: 'room-103',
+          roomType: 'standard',
+          score: 82,
+          timestamp: new Date(),
+          defects: [{ category: 'cleanliness', description: 'Dirty bathroom' }],
+        },
+      ];
 
-      trends.forEach((trend) => {
-        expect(trend.averageScore).toBeGreaterThanOrEqual(0);
-        expect(trend.averageScore).toBeLessThanOrEqual(100);
+      const trends = analyzeQualityTrends(inspections, {
+        start: new Date(),
+        end: new Date(),
       });
+
+      expect(trends.topIssues.length).toBeGreaterThan(0);
+      expect(trends.topIssues[0].issue).toContain('Dirty bathroom');
+      expect(trends.topIssues[0].count).toBe(3);
     });
 
-    it('should calculate pass rate', () => {
-      const trends = analyzeQualityTrends(trendData);
+    it('should detect increasing issue trends', () => {
+      const inspections = [
+        // First half - fewer instances
+        {
+          roomId: 'room-101',
+          roomType: 'standard',
+          score: 85,
+          timestamp: new Date(),
+          defects: [{ category: 'maintenance', description: 'AC problem' }],
+        },
+        {
+          roomId: 'room-102',
+          roomType: 'standard',
+          score: 87,
+          timestamp: new Date(),
+          defects: [],
+        },
+        // Second half - more instances
+        {
+          roomId: 'room-103',
+          roomType: 'standard',
+          score: 80,
+          timestamp: new Date(),
+          defects: [{ category: 'maintenance', description: 'AC problem' }],
+        },
+        {
+          roomId: 'room-104',
+          roomType: 'standard',
+          score: 78,
+          timestamp: new Date(),
+          defects: [{ category: 'maintenance', description: 'AC problem' }],
+        },
+      ];
 
-      trends.forEach((trend) => {
-        expect(trend.passRate).toBeGreaterThanOrEqual(0);
-        expect(trend.passRate).toBeLessThanOrEqual(100);
+      const trends = analyzeQualityTrends(inspections, {
+        start: new Date(),
+        end: new Date(),
       });
+
+      const acIssue = trends.topIssues.find(i => i.issue.includes('AC problem'));
+      expect(acIssue).toBeDefined();
+      expect(acIssue!.trend).toBe('increasing');
     });
 
-    it('should determine trend direction', () => {
-      const trends = analyzeQualityTrends(trendData);
+    it('should calculate room type performance', () => {
+      const inspections = [
+        { roomId: 'room-101', roomType: 'deluxe', score: 95, timestamp: new Date(), defects: [] },
+        { roomId: 'room-102', roomType: 'deluxe', score: 92, timestamp: new Date(), defects: [] },
+        { roomId: 'room-201', roomType: 'standard', score: 75, timestamp: new Date(), defects: [] },
+        { roomId: 'room-202', roomType: 'standard', score: 78, timestamp: new Date(), defects: [] },
+      ];
 
-      trends.forEach((trend) => {
-        expect(['improving', 'stable', 'declining']).toContain(trend.trend);
+      const trends = analyzeQualityTrends(inspections, {
+        start: new Date(),
+        end: new Date(),
       });
+
+      expect(trends.roomTypePerformance.get('deluxe')).toBeGreaterThan(90);
+      expect(trends.roomTypePerformance.get('standard')).toBeLessThan(80);
     });
 
-    it('should forecast next month score', () => {
-      const trends = analyzeQualityTrends(trendData);
+    it('should detect quality improvement', () => {
+      const inspections = [
+        // First half - lower scores
+        { roomId: 'room-101', roomType: 'standard', score: 70, timestamp: new Date(), defects: [] },
+        { roomId: 'room-102', roomType: 'standard', score: 72, timestamp: new Date(), defects: [] },
+        // Second half - higher scores
+        { roomId: 'room-103', roomType: 'standard', score: 85, timestamp: new Date(), defects: [] },
+        { roomId: 'room-104', roomType: 'standard', score: 88, timestamp: new Date(), defects: [] },
+      ];
 
-      trends.forEach((trend) => {
-        expect(trend.forecastNextMonth).toBeGreaterThanOrEqual(0);
-        expect(trend.forecastNextMonth).toBeLessThanOrEqual(100);
+      const trends = analyzeQualityTrends(inspections, {
+        start: new Date(),
+        end: new Date(),
       });
+
+      expect(trends.improvementRate).toBeGreaterThan(5);
+      expect(trends.prediction).toContain('upward');
     });
 
-    it('should count critical issues', () => {
-      const trends = analyzeQualityTrends(trendData);
+    it('should detect quality decline', () => {
+      const inspections = [
+        // First half - higher scores
+        { roomId: 'room-101', roomType: 'standard', score: 90, timestamp: new Date(), defects: [] },
+        { roomId: 'room-102', roomType: 'standard', score: 88, timestamp: new Date(), defects: [] },
+        // Second half - lower scores
+        { roomId: 'room-103', roomType: 'standard', score: 70, timestamp: new Date(), defects: [] },
+        { roomId: 'room-104', roomType: 'standard', score: 72, timestamp: new Date(), defects: [] },
+      ];
 
-      trends.forEach((trend) => {
-        expect(trend.criticalIssuesCount).toBeGreaterThanOrEqual(0);
+      const trends = analyzeQualityTrends(inspections, {
+        start: new Date(),
+        end: new Date(),
       });
+
+      expect(trends.improvementRate).toBeLessThan(-5);
+      expect(trends.prediction).toContain('declining');
+    });
+
+    it('should calculate pass rate correctly', () => {
+      const inspections = [
+        { roomId: 'room-101', roomType: 'standard', score: 80, timestamp: new Date(), defects: [] }, // Pass
+        { roomId: 'room-102', roomType: 'standard', score: 90, timestamp: new Date(), defects: [] }, // Pass
+        { roomId: 'room-103', roomType: 'standard', score: 60, timestamp: new Date(), defects: [] }, // Fail
+        { roomId: 'room-104', roomType: 'standard', score: 70, timestamp: new Date(), defects: [] }, // Fail
+      ];
+
+      const trends = analyzeQualityTrends(inspections, {
+        start: new Date(),
+        end: new Date(),
+      });
+
+      expect(trends.passRate).toBe(50); // 2 out of 4 passed (score >= 75)
+    });
+
+    it('should throw error with no inspections', () => {
+      expect(() => {
+        analyzeQualityTrends([], {
+          start: new Date(),
+          end: new Date(),
+        });
+      }).toThrow('At least one inspection is required');
     });
   });
 
-  describe('predictDefects', () => {
-    it('should predict defect probability', () => {
-      const prediction = predictDefects('room-101', 'standard', 15, 0.3);
+  describe('Integration Tests', () => {
+    it('should handle complete room inspection workflow', () => {
+      const input: RoomInspectionInput = {
+        roomId: 'room-501',
+        roomType: 'presidential-suite',
+        inspectionDate: new Date('2025-01-22'),
+        inspectorId: 'inspector-001',
+        checklist: [
+          { category: 'cleanliness', item: 'Living area spotless', status: 'pass' },
+          { category: 'cleanliness', item: 'Bedroom pristine', status: 'pass' },
+          { category: 'cleanliness', item: 'Bathroom sparkling', status: 'pass' },
+          { category: 'maintenance', item: 'All appliances working', status: 'pass' },
+          { category: 'maintenance', item: 'Climate control optimal', status: 'pass' },
+          { category: 'amenities', item: 'Mini-bar stocked', status: 'pass' },
+          { category: 'amenities', item: 'Entertainment system functional', status: 'pass' },
+          { category: 'safety', item: 'Fire safety equipment present', status: 'pass' },
+          { category: 'safety', item: 'Emergency exits clear', status: 'pass' },
+          { category: 'presentation', item: 'Luxury linens', status: 'pass' },
+          { category: 'presentation', item: 'Fresh flowers arranged', status: 'pass' },
+        ],
+      };
 
-      expect(prediction.defectProbability).toBeGreaterThanOrEqual(0);
-      expect(prediction.defectProbability).toBeLessThanOrEqual(1);
+      const score = scoreRoomInspection(input);
+
+      expect(score.overall).toBe(100);
+      expect(score.rating).toBe('excellent');
+      expect(score.passedInspection).toBe(true);
+      expect(score.defectsFound.length).toBe(0);
+      expect(score.recommendations[0]).toContain('maintain current service levels');
     });
 
-    it('should assign risk level', () => {
-      const prediction = predictDefects('room-101', 'standard', 15, 0.3);
+    it('should handle multi-staff performance comparison', () => {
+      const staff1Inspections = [
+        { inspectorId: 'staff-001', score: 95, defectsFound: 4, duration: 18, expectedDuration: 20 },
+        { inspectorId: 'staff-001', score: 93, defectsFound: 5, duration: 19, expectedDuration: 20 },
+      ];
 
-      expect(['low', 'medium', 'high']).toContain(prediction.riskLevel);
+      const staff2Inspections = [
+        { inspectorId: 'staff-002', score: 75, defectsFound: 2, duration: 25, expectedDuration: 20 },
+        { inspectorId: 'staff-002', score: 78, defectsFound: 3, duration: 24, expectedDuration: 20 },
+      ];
+
+      const perf1 = evaluateStaffPerformance(
+        staff1Inspections,
+        { staffId: 'staff-001', name: 'Top Performer', role: 'Senior Inspector' },
+        { start: new Date(), end: new Date() }
+      );
+
+      const perf2 = evaluateStaffPerformance(
+        staff2Inspections,
+        { staffId: 'staff-002', name: 'Average Performer', role: 'Inspector' },
+        { start: new Date(), end: new Date() }
+      );
+
+      expect(perf1.metrics.averageScore).toBeGreaterThan(perf2.metrics.averageScore);
+      expect(perf1.metrics.timeEfficiency).toBeGreaterThan(perf2.metrics.timeEfficiency);
+      expect(perf1.rating).toBe('excellent');
+      expect(perf2.rating).toBe('good');
     });
 
-    it('should recommend action based on risk', () => {
-      const prediction = predictDefects('room-101', 'standard', 15, 0.3);
+    it('should optimize complex multi-floor inspection route', () => {
+      const rooms = [];
+      // Create 15 rooms across 5 floors
+      for (let floor = 1; floor <= 5; floor++) {
+        for (let room = 1; room <= 3; room++) {
+          rooms.push({
+            roomId: `room-${floor}0${room}`,
+            floor,
+            priority: (floor === 1 || room === 1) ? 'high' as const : 'medium' as const,
+          });
+        }
+      }
 
-      expect(prediction.recommendedAction).toBeTruthy();
-      expect(typeof prediction.recommendedAction).toBe('string');
+      const route = optimizeInspectionRoute(rooms, 1);
+
+      expect(route.rooms.length).toBe(15);
+      expect(route.optimizationScore).toBeGreaterThan(50);
+      expect(route.estimatedTime).toBeGreaterThan(200); // At least 15 * 15 minutes
+      expect(route.priority).toBe('high'); // Many high priority rooms
     });
 
-    it('should show higher risk with more days since inspection', () => {
-      const recent = predictDefects('room-101', 'standard', 5, 0.3);
-      const old = predictDefects('room-101', 'standard', 25, 0.3);
+    it('should handle service quality workflow with full metrics', () => {
+      const input: ServiceQualityInput = {
+        serviceType: 'housekeeping',
+        staffId: 'staff-hk-001',
+        guestFeedback: 4.5,
+        responseTime: 25,
+        completionTime: 45,
+        accuracy: 92,
+        professionalismScore: 5,
+        issuesResolved: 12,
+        issuesEscalated: 1,
+        timestamp: new Date(),
+      };
 
-      expect(old.defectProbability).toBeGreaterThan(recent.defectProbability);
+      const quality = assessServiceQuality(input);
+
+      expect(quality.overall).toBeGreaterThan(85);
+      expect(quality.rating).toEqual(expect.stringMatching(/excellent|good/));
+      expect(quality.metrics.speed).toBeGreaterThan(80);
+      expect(quality.metrics.accuracy).toBe(92);
+      expect(quality.metrics.professionalism).toBe(100);
+      expect(quality.metrics.effectiveness).toBeGreaterThan(90);
+      expect(quality.strengths.length).toBeGreaterThan(2);
     });
 
-    it('should show higher risk for suites than standard rooms', () => {
-      const standard = predictDefects('room-101', 'standard', 15, 0.3);
-      const suite = predictDefects('room-201', 'suite', 15, 0.3);
+    it('should provide actionable insights from quality trend analysis', () => {
+      const inspections = [];
+      // Create 20 inspections with realistic progression
+      for (let i = 0; i < 20; i++) {
+        // Scores improve over time
+        const baseScore = 70 + (i * 1.5);
+        inspections.push({
+          roomId: `room-${100 + i}`,
+          roomType: i % 2 === 0 ? 'standard' : 'deluxe',
+          score: Math.min(100, Math.round(baseScore)),
+          timestamp: new Date(2025, 0, i + 1),
+          defects: i < 10 ? [
+            { category: 'cleanliness', description: 'Minor issues' },
+            { category: 'maintenance', description: 'Small repairs needed' },
+          ] : [],
+        });
+      }
 
-      expect(suite.defectProbability).toBeGreaterThan(standard.defectProbability);
-    });
+      const trends = analyzeQualityTrends(inspections, {
+        start: new Date(2025, 0, 1),
+        end: new Date(2025, 0, 31),
+      });
 
-    it('should recommend immediate inspection for high risk', () => {
-      const highRisk = predictDefects('room-101', 'suite', 30, 0.8);
-
-      expect(highRisk.riskLevel).toBe('high');
-      expect(highRisk.recommendedAction.toLowerCase()).toContain('immediate');
-    });
-  });
-
-  describe('Constants and Exports', () => {
-    it('should export scoring weights', () => {
-      expect(QUALITY_SCORING_WEIGHTS).toBeDefined();
-      expect(QUALITY_SCORING_WEIGHTS.cleanliness).toBe(0.4);
-      expect(QUALITY_SCORING_WEIGHTS.maintenance).toBe(0.3);
-      expect(QUALITY_SCORING_WEIGHTS.amenities).toBe(0.2);
-      expect(QUALITY_SCORING_WEIGHTS.compliance).toBe(0.1);
-
-      // Weights should sum to 1.0
-      const sum = Object.values(QUALITY_SCORING_WEIGHTS).reduce((a, b) => a + b, 0);
-      expect(sum).toBeCloseTo(1.0, 5);
-    });
-
-    it('should export rating benchmarks', () => {
-      expect(QUALITY_RATING_BENCHMARKS).toBeDefined();
-      expect(QUALITY_RATING_BENCHMARKS.excellent).toBe(90);
-      expect(QUALITY_RATING_BENCHMARKS.good).toBe(80);
-      expect(QUALITY_RATING_BENCHMARKS.satisfactory).toBe(70);
+      expect(trends.totalInspections).toBe(20);
+      expect(trends.improvementRate).toBeGreaterThan(10);
+      expect(trends.prediction).toContain('upward');
+      expect(trends.roomTypePerformance.size).toBe(2);
     });
   });
 });
