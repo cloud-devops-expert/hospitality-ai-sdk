@@ -1,717 +1,505 @@
+/**
+ * Tests for Guest Journey Mapping Module
+ */
+
 import {
-  mapGuestJourney,
-  analyzeJourneys,
-  predictNextBestAction,
+  analyzeGuestJourney,
   optimizeJourney,
-  JourneyTouchpoint,
-  GuestJourney,
-  JourneyStage,
+  generatePersonalization,
+  benchmarkJourneys,
+  type GuestJourney,
+  type Touchpoint,
+  type GuestProfile,
+  type JourneyStage,
+  type TouchpointType,
 } from '../mapper';
 
-describe('Guest Journey Mapping', () => {
-  // Sample touchpoints for testing
-  const bookingTouchpoint: JourneyTouchpoint = {
-    stage: 'booking',
-    timestamp: new Date('2024-01-01T10:00:00'),
-    action: 'Online reservation',
-    channel: 'web',
-    satisfaction: 8,
-    durationMinutes: 10,
-  };
+describe('Guest Journey Mapping Module', () => {
+  // Helper to create mock touchpoint
+  const createTouchpoint = (
+    id: string,
+    stage: JourneyStage,
+    type: TouchpointType,
+    outcome: 'success' | 'partial' | 'failure' | 'abandoned' = 'success',
+    satisfaction?: number
+  ): Touchpoint => ({
+    id,
+    stage,
+    type,
+    timestamp: new Date(),
+    duration: 120,
+    outcome,
+    satisfaction,
+  });
 
-  const preArrivalTouchpoint: JourneyTouchpoint = {
-    stage: 'pre-arrival',
-    timestamp: new Date('2024-01-05T14:00:00'),
-    action: 'Pre-arrival email confirmation',
-    channel: 'email',
-    satisfaction: 9,
-    durationMinutes: 2,
-  };
+  // Helper to create mock journey
+  const createMockJourney = (
+    id: string,
+    touchpoints: Touchpoint[],
+    profile?: GuestProfile
+  ): GuestJourney => ({
+    guestId: `guest-${id}`,
+    journeyId: `journey-${id}`,
+    startDate: new Date('2025-01-01'),
+    endDate: new Date('2025-01-05'),
+    touchpoints,
+    guestProfile: profile,
+  });
 
-  const arrivalTouchpoint: JourneyTouchpoint = {
-    stage: 'arrival',
-    timestamp: new Date('2024-01-10T15:00:00'),
-    action: 'Arrival at property',
-    channel: 'in-person',
-    satisfaction: 7,
-    durationMinutes: 5,
-  };
-
-  const checkInTouchpoint: JourneyTouchpoint = {
-    stage: 'check-in',
-    timestamp: new Date('2024-01-10T15:30:00'),
-    action: 'Check-in process',
-    channel: 'in-person',
-    satisfaction: 6,
-    durationMinutes: 15,
-    issues: ['Long wait time at front desk'],
-  };
-
-  const inStayTouchpoint: JourneyTouchpoint = {
-    stage: 'in-stay',
-    timestamp: new Date('2024-01-11T12:00:00'),
-    action: 'Room service request',
-    channel: 'phone',
-    satisfaction: 9,
-    durationMinutes: 30,
-  };
-
-  const checkOutTouchpoint: JourneyTouchpoint = {
-    stage: 'check-out',
-    timestamp: new Date('2024-01-13T11:00:00'),
-    action: 'Express checkout',
-    channel: 'mobile',
-    satisfaction: 8,
-    durationMinutes: 5,
-  };
-
-  const postStayTouchpoint: JourneyTouchpoint = {
-    stage: 'post-stay',
-    timestamp: new Date('2024-01-14T10:00:00'),
-    action: 'Feedback survey',
-    channel: 'email',
-    satisfaction: 8,
-    durationMinutes: 5,
-  };
-
-  const completeTouchpoints: JourneyTouchpoint[] = [
-    bookingTouchpoint,
-    preArrivalTouchpoint,
-    arrivalTouchpoint,
-    checkInTouchpoint,
-    inStayTouchpoint,
-    checkOutTouchpoint,
-    postStayTouchpoint,
-  ];
-
-  describe('mapGuestJourney', () => {
-    it('should map a complete guest journey', () => {
-      const journey = mapGuestJourney('guest-123', 'res-456', completeTouchpoints);
-
-      expect(journey.guestId).toBe('guest-123');
-      expect(journey.reservationId).toBe('res-456');
-      expect(journey.touchpoints).toHaveLength(7);
-      expect(journey.overallSatisfaction).toBeGreaterThan(0);
-      expect(journey.completionRate).toBe(100); // All 7 stages completed
-    });
-
-    it('should sort touchpoints by timestamp', () => {
-      const unsortedTouchpoints = [
-        checkInTouchpoint,
-        bookingTouchpoint,
-        arrivalTouchpoint,
+  describe('analyzeGuestJourney', () => {
+    it('should analyze a complete guest journey', () => {
+      const touchpoints = [
+        createTouchpoint('tp1', 'research', 'website', 'success', 4),
+        createTouchpoint('tp2', 'booking', 'website', 'success', 5),
+        createTouchpoint('tp3', 'check-in', 'kiosk', 'success', 4),
+        createTouchpoint('tp4', 'in-stay', 'room-service', 'success', 5),
+        createTouchpoint('tp5', 'check-out', 'front-desk', 'success', 4),
       ];
 
-      const journey = mapGuestJourney('guest-123', 'res-456', unsortedTouchpoints);
+      const journey = createMockJourney('1', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
 
-      expect(journey.touchpoints[0].stage).toBe('booking');
-      expect(journey.touchpoints[1].stage).toBe('arrival');
-      expect(journey.touchpoints[2].stage).toBe('check-in');
+      expect(analysis.journeyId).toBe('journey-1');
+      expect(analysis.overallScore).toBeGreaterThan(0);
+      expect(analysis.stageScores.size).toBeGreaterThan(0);
+      expect(analysis.touchpointScores.size).toBe(5);
+      expect(analysis.completionRate).toBeGreaterThan(0);
+    });
+
+    it('should throw error for journey with no touchpoints', () => {
+      const journey = createMockJourney('empty', []);
+
+      expect(() => analyzeGuestJourney(journey)).toThrow(
+        'Journey must have at least one touchpoint'
+      );
+    });
+
+    it('should calculate high score for excellent journey', () => {
+      const touchpoints = Array(10).fill(null).map((_, i) =>
+        createTouchpoint(`tp${i}`, 'in-stay', 'concierge', 'success', 5)
+      );
+
+      const journey = createMockJourney('excellent', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+
+      expect(analysis.overallScore).toBeGreaterThan(85);
+    });
+
+    it('should calculate low score for poor journey', () => {
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'website', 'failure', 1),
+        createTouchpoint('tp2', 'check-in', 'front-desk', 'failure', 2),
+        createTouchpoint('tp3', 'in-stay', 'room-service', 'partial', 2),
+        createTouchpoint('tp4', 'check-out', 'front-desk', 'abandoned'),
+      ];
+
+      const journey = createMockJourney('poor', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+
+      expect(analysis.overallScore).toBeLessThan(50);
+    });
+
+    it('should identify bottlenecks in journey', () => {
+      const touchpoints = [
+        ...Array(5).fill(null).map((_, i) =>
+          createTouchpoint(`slow${i}`, 'check-in', 'front-desk', 'partial', 2)
+        ).map(tp => ({ ...tp, duration: 900 })), // 15 min each
+      ];
+
+      const journey = createMockJourney('bottleneck', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+
+      expect(analysis.bottlenecks.length).toBeGreaterThan(0);
+      expect(analysis.bottlenecks[0].stage).toBe('check-in');
     });
 
     it('should calculate stage scores correctly', () => {
-      const journey = mapGuestJourney('guest-123', 'res-456', completeTouchpoints);
-
-      expect(journey.stageScores.booking).toBeGreaterThan(0);
-      expect(journey.stageScores['check-in']).toBeLessThan(journey.stageScores.booking);
-      expect(journey.stageScores['in-stay']).toBeGreaterThan(80);
-    });
-
-    it('should identify pain points from issues', () => {
-      const journey = mapGuestJourney('guest-123', 'res-456', completeTouchpoints);
-
-      expect(journey.painPoints.length).toBeGreaterThan(0);
-
-      const checkInPainPoint = journey.painPoints.find(
-        (pp) => pp.stage === 'check-in'
-      );
-      expect(checkInPainPoint).toBeDefined();
-      expect(checkInPainPoint?.issue).toContain('Long wait time');
-    });
-
-    it('should identify pain points from low satisfaction', () => {
-      const lowSatisfactionTouchpoint: JourneyTouchpoint = {
-        stage: 'arrival',
-        timestamp: new Date('2024-01-10T15:00:00'),
-        action: 'Arrival',
-        channel: 'in-person',
-        satisfaction: 3,
-        durationMinutes: 20,
-      };
-
-      const journey = mapGuestJourney('guest-123', 'res-456', [
-        lowSatisfactionTouchpoint,
-      ]);
-
-      expect(journey.painPoints.length).toBeGreaterThan(0);
-      expect(journey.painPoints[0].severity).toBe('critical');
-    });
-
-    it('should identify highlights from high satisfaction', () => {
-      const journey = mapGuestJourney('guest-123', 'res-456', completeTouchpoints);
-
-      expect(journey.highlights.length).toBeGreaterThan(0);
-      expect(journey.highlights.some((h) => h.includes('in-stay'))).toBe(true);
-    });
-
-    it('should calculate overall satisfaction', () => {
-      const journey = mapGuestJourney('guest-123', 'res-456', completeTouchpoints);
-
-      expect(journey.overallSatisfaction).toBeGreaterThan(0);
-      expect(journey.overallSatisfaction).toBeLessThanOrEqual(100);
-    });
-
-    it('should penalize overall satisfaction for pain points', () => {
-      const noPainPointsTouchpoints = completeTouchpoints.map((tp) => ({
-        ...tp,
-        issues: undefined,
-        satisfaction: 9,
-      }));
-
-      const journeyWithPainPoints = mapGuestJourney(
-        'guest-1',
-        'res-1',
-        completeTouchpoints
-      );
-      const journeyWithoutPainPoints = mapGuestJourney(
-        'guest-2',
-        'res-2',
-        noPainPointsTouchpoints
-      );
-
-      expect(journeyWithoutPainPoints.overallSatisfaction).toBeGreaterThan(
-        journeyWithPainPoints.overallSatisfaction
-      );
-    });
-
-    it('should calculate completion rate', () => {
-      const partialTouchpoints = [
-        bookingTouchpoint,
-        checkInTouchpoint,
-        checkOutTouchpoint,
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'website', 'success', 5),
+        createTouchpoint('tp2', 'booking', 'phone', 'success', 4),
+        createTouchpoint('tp3', 'check-in', 'kiosk', 'failure', 2),
       ];
 
-      const journey = mapGuestJourney('guest-123', 'res-456', partialTouchpoints);
+      const journey = createMockJourney('stages', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
 
-      expect(journey.completionRate).toBeLessThan(100);
-      expect(journey.completionRate).toBeGreaterThan(0);
+      const bookingScore = analysis.stageScores.get('booking');
+      const checkinScore = analysis.stageScores.get('check-in');
+
+      expect(bookingScore).toBeDefined();
+      expect(checkinScore).toBeDefined();
+      expect(bookingScore!.score).toBeGreaterThan(checkinScore!.score);
     });
 
-    it('should calculate total duration in hours', () => {
-      const journey = mapGuestJourney('guest-123', 'res-456', completeTouchpoints);
+    it('should identify highlights for great experiences', () => {
+      const touchpoints = Array(5).fill(null).map((_, i) =>
+        createTouchpoint(`tp${i}`, 'in-stay', 'concierge', 'success', 5)
+      );
 
-      expect(journey.totalDurationHours).toBeGreaterThan(0);
-      // From Jan 1 to Jan 14 is ~13 days = ~312 hours
-      expect(journey.totalDurationHours).toBeGreaterThan(300);
+      const journey = createMockJourney('highlights', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+
+      expect(analysis.highlights.length).toBeGreaterThan(0);
     });
 
-    it('should calculate channel distribution', () => {
-      const journey = mapGuestJourney('guest-123', 'res-456', completeTouchpoints);
+    it('should identify pain points for poor experiences', () => {
+      const touchpoints = [
+        createTouchpoint('tp1', 'check-in', 'front-desk', 'failure', 1),
+        createTouchpoint('tp2', 'in-stay', 'room-service', 'failure', 2),
+      ];
 
-      expect(journey.channelDistribution.web).toBeGreaterThan(0);
-      expect(journey.channelDistribution.email).toBeGreaterThan(0);
-      expect(journey.channelDistribution['in-person']).toBeGreaterThan(0);
+      const journey = createMockJourney('pain', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+
+      expect(analysis.painPoints.length).toBeGreaterThan(0);
     });
 
     it('should generate recommendations', () => {
-      const journey = mapGuestJourney('guest-123', 'res-456', completeTouchpoints);
-
-      expect(journey.recommendations).toBeInstanceOf(Array);
-      expect(journey.recommendations.length).toBeGreaterThan(0);
-    });
-
-    it('should throw error with no touchpoints', () => {
-      expect(() => mapGuestJourney('guest-123', 'res-456', [])).toThrow(
-        'At least one touchpoint is required'
-      );
-    });
-
-    it('should handle missing satisfaction values with defaults', () => {
-      const touchpointWithoutSatisfaction: JourneyTouchpoint = {
-        stage: 'booking',
-        timestamp: new Date(),
-        action: 'Booking',
-        channel: 'web',
-      };
-
-      const journey = mapGuestJourney('guest-123', 'res-456', [
-        touchpointWithoutSatisfaction,
-      ]);
-
-      expect(journey.overallSatisfaction).toBeGreaterThan(0);
-    });
-
-    it('should assign correct severity to pain points', () => {
-      const criticalTouchpoint: JourneyTouchpoint = {
-        stage: 'check-in',
-        timestamp: new Date(),
-        action: 'Check-in',
-        channel: 'in-person',
-        satisfaction: 2,
-        issues: ['Critical failure'],
-      };
-
-      const journey = mapGuestJourney('guest-123', 'res-456', [criticalTouchpoint]);
-
-      const criticalPainPoint = journey.painPoints.find((pp) => pp.severity === 'critical');
-      expect(criticalPainPoint).toBeDefined();
-    });
-  });
-
-  describe('analyzeJourneys', () => {
-    it('should analyze multiple journeys', () => {
-      const journey1 = mapGuestJourney('guest-1', 'res-1', completeTouchpoints);
-      const journey2 = mapGuestJourney('guest-2', 'res-2', completeTouchpoints);
-
-      const analytics = analyzeJourneys([journey1, journey2]);
-
-      expect(analytics.totalJourneys).toBe(2);
-      expect(analytics.averageSatisfaction).toBeGreaterThan(0);
-      expect(analytics.completionRate).toBeGreaterThan(0);
-    });
-
-    it('should calculate stage performance', () => {
-      const journey1 = mapGuestJourney('guest-1', 'res-1', completeTouchpoints);
-      const journey2 = mapGuestJourney('guest-2', 'res-2', completeTouchpoints);
-
-      const analytics = analyzeJourneys([journey1, journey2]);
-
-      expect(analytics.stagePerformance.booking).toBeDefined();
-      expect(analytics.stagePerformance.booking.averageSatisfaction).toBeGreaterThan(0);
-      expect(analytics.stagePerformance.booking.touchpointCount).toBeGreaterThan(0);
-    });
-
-    it('should identify common pain points', () => {
-      const journey1 = mapGuestJourney('guest-1', 'res-1', completeTouchpoints);
-      const journey2 = mapGuestJourney('guest-2', 'res-2', completeTouchpoints);
-
-      const analytics = analyzeJourneys([journey1, journey2]);
-
-      expect(analytics.commonPainPoints).toBeInstanceOf(Array);
-      if (analytics.commonPainPoints.length > 0) {
-        expect(analytics.commonPainPoints[0].frequency).toBeGreaterThan(0);
-        expect(analytics.commonPainPoints[0].averageImpact).toBeGreaterThan(0);
-      }
-    });
-
-    it('should analyze channel effectiveness', () => {
-      const journey1 = mapGuestJourney('guest-1', 'res-1', completeTouchpoints);
-      const journey2 = mapGuestJourney('guest-2', 'res-2', completeTouchpoints);
-
-      const analytics = analyzeJourneys([journey1, journey2]);
-
-      expect(analytics.channelEffectiveness.web).toBeDefined();
-      expect(analytics.channelEffectiveness.web.usageCount).toBeGreaterThan(0);
-    });
-
-    it('should identify bottlenecks', () => {
-      const slowCheckInTouchpoints = completeTouchpoints.map((tp) =>
-        tp.stage === 'check-in'
-          ? { ...tp, durationMinutes: 45, satisfaction: 4 }
-          : tp
-      );
-
-      const journeys = Array.from({ length: 5 }, (_, i) =>
-        mapGuestJourney(`guest-${i}`, `res-${i}`, slowCheckInTouchpoints)
-      );
-
-      const analytics = analyzeJourneys(journeys);
-
-      expect(analytics.bottlenecks.length).toBeGreaterThan(0);
-
-      const checkInBottleneck = analytics.bottlenecks.find(
-        (b) => b.stage === 'check-in'
-      );
-      expect(checkInBottleneck).toBeDefined();
-      expect(checkInBottleneck?.impact).toBeGreaterThan(0);
-    });
-
-    it('should calculate optimization score', () => {
-      const journey1 = mapGuestJourney('guest-1', 'res-1', completeTouchpoints);
-      const journey2 = mapGuestJourney('guest-2', 'res-2', completeTouchpoints);
-
-      const analytics = analyzeJourneys([journey1, journey2]);
-
-      expect(analytics.optimizationScore).toBeGreaterThan(0);
-      expect(analytics.optimizationScore).toBeLessThanOrEqual(100);
-    });
-
-    it('should identify drop-off points', () => {
-      const incompleteTouchpoints = [
-        bookingTouchpoint,
-        preArrivalTouchpoint,
-        arrivalTouchpoint,
-        // Missing check-in and beyond
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'website', 'success', 3),
+        createTouchpoint('tp2', 'check-in', 'front-desk', 'partial', 2),
       ];
 
-      const journeys = [
-        mapGuestJourney('guest-1', 'res-1', completeTouchpoints),
-        mapGuestJourney('guest-2', 'res-2', incompleteTouchpoints),
-        mapGuestJourney('guest-3', 'res-3', incompleteTouchpoints),
+      const journey = createMockJourney('recs', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+
+      expect(analysis.recommendations.length).toBeGreaterThan(0);
+    });
+
+    it('should calculate completion rate', () => {
+      const fullJourney = [
+        createTouchpoint('tp1', 'booking', 'website', 'success'),
+        createTouchpoint('tp2', 'pre-arrival', 'email', 'success'),
+        createTouchpoint('tp3', 'check-in', 'kiosk', 'success'),
+        createTouchpoint('tp4', 'in-stay', 'concierge', 'success'),
+        createTouchpoint('tp5', 'check-out', 'front-desk', 'success'),
+        createTouchpoint('tp6', 'post-stay', 'email', 'success'),
       ];
 
-      const analytics = analyzeJourneys(journeys);
-
-      expect(analytics.dropOffPoints).toBeInstanceOf(Array);
-    });
-
-    it('should throw error with no journeys', () => {
-      expect(() => analyzeJourneys([])).toThrow(
-        'At least one journey is required for analysis'
-      );
-    });
-
-    it('should handle journeys with missing stages', () => {
-      const partialJourney = mapGuestJourney('guest-1', 'res-1', [
-        bookingTouchpoint,
-        checkInTouchpoint,
-      ]);
-
-      const analytics = analyzeJourneys([partialJourney]);
-
-      expect(analytics.stagePerformance['pre-arrival'].touchpointCount).toBe(0);
-    });
-
-    it('should sort bottlenecks by impact', () => {
-      const touchpointsWithMultipleIssues = [
-        { ...bookingTouchpoint, satisfaction: 3, durationMinutes: 60 },
-        { ...checkInTouchpoint, satisfaction: 2, durationMinutes: 50 },
-        { ...inStayTouchpoint, satisfaction: 4, durationMinutes: 120 },
+      const partialJourney = [
+        createTouchpoint('tp1', 'booking', 'website', 'success'),
+        createTouchpoint('tp2', 'check-in', 'kiosk', 'success'),
       ];
 
-      const journeys = Array.from({ length: 10 }, (_, i) =>
-        mapGuestJourney(`guest-${i}`, `res-${i}`, touchpointsWithMultipleIssues)
-      );
+      const fullAnalysis = analyzeGuestJourney(createMockJourney('full', fullJourney));
+      const partialAnalysis = analyzeGuestJourney(createMockJourney('partial', partialJourney));
 
-      const analytics = analyzeJourneys(journeys);
-
-      if (analytics.bottlenecks.length > 1) {
-        expect(analytics.bottlenecks[0].impact).toBeGreaterThanOrEqual(
-          analytics.bottlenecks[1].impact
-        );
-      }
-    });
-  });
-
-  describe('predictNextBestAction', () => {
-    it('should predict next action for booking stage', () => {
-      const action = predictNextBestAction(
-        { guestId: 'guest-1', touchpoints: [bookingTouchpoint] },
-        'booking',
-        [bookingTouchpoint]
-      );
-
-      expect(action.action).toBeTruthy();
-      expect(action.channel).toBeTruthy();
-      expect(action.timing).toBeTruthy();
-      expect(action.priority).toBeTruthy();
-      expect(action.confidence).toBeGreaterThan(0);
-      expect(action.expectedImpact).toBeGreaterThan(0);
-      expect(action.reasoning).toBeTruthy();
-    });
-
-    it('should prioritize addressing unresolved issues', () => {
-      const action = predictNextBestAction(
-        { guestId: 'guest-1', touchpoints: [checkInTouchpoint] },
-        'check-in',
-        [checkInTouchpoint]
-      );
-
-      expect(action.priority).toBe('urgent');
-      expect(action.timing).toBe('immediate');
-      expect(action.action).toContain('Long wait time');
-    });
-
-    it('should recommend proactive check-in for low satisfaction', () => {
-      const lowSatTouchpoint: JourneyTouchpoint = {
-        stage: 'in-stay',
-        timestamp: new Date(),
-        action: 'Room issue',
-        channel: 'phone',
-        satisfaction: 4,
-        durationMinutes: 10,
-      };
-
-      const action = predictNextBestAction(
-        { guestId: 'guest-1', touchpoints: [lowSatTouchpoint] },
-        'in-stay',
-        [lowSatTouchpoint]
-      );
-
-      expect(action.priority).toBe('high');
-      expect(action.action).toContain('check-in');
-    });
-
-    it('should suggest welcome amenity at check-in', () => {
-      const action = predictNextBestAction(
-        { guestId: 'guest-1', touchpoints: [checkInTouchpoint] },
-        'check-in',
-        [
-          {
-            ...checkInTouchpoint,
-            issues: undefined,
-            satisfaction: 8,
-          },
-        ]
-      );
-
-      expect(action.action).toContain('welcome');
-      expect(action.channel).toBe('in-person');
-    });
-
-    it('should recommend mid-stay check-in during in-stay', () => {
-      const action = predictNextBestAction(
-        { guestId: 'guest-1', touchpoints: [inStayTouchpoint] },
-        'in-stay',
-        [inStayTouchpoint]
-      );
-
-      expect(action.action).toContain('mid-stay');
-      expect(action.channel).toBe('mobile');
-    });
-
-    it('should request feedback at check-out', () => {
-      const action = predictNextBestAction(
-        { guestId: 'guest-1', touchpoints: [checkOutTouchpoint] },
-        'check-out',
-        [checkOutTouchpoint]
-      );
-
-      expect(action.action).toContain('feedback');
-      expect(action.channel).toBe('email');
-    });
-
-    it('should calculate confidence based on data quality', () => {
-      const actionWithMoreData = predictNextBestAction(
-        { guestId: 'guest-1', touchpoints: completeTouchpoints },
-        'in-stay',
-        completeTouchpoints.slice(-3)
-      );
-
-      const actionWithLessData = predictNextBestAction(
-        { guestId: 'guest-1', touchpoints: [bookingTouchpoint] },
-        'booking',
-        [bookingTouchpoint]
-      );
-
-      expect(actionWithMoreData.confidence).toBeGreaterThan(
-        actionWithLessData.confidence
-      );
-    });
-
-    it('should handle empty touchpoints array', () => {
-      const action = predictNextBestAction(
-        { guestId: 'guest-1', touchpoints: [] },
-        'booking',
-        []
-      );
-
-      expect(action.confidence).toBeLessThan(100);
-    });
-
-    it('should provide reasoning for recommendations', () => {
-      const action = predictNextBestAction(
-        { guestId: 'guest-1', touchpoints: [checkInTouchpoint] },
-        'check-in',
-        [checkInTouchpoint]
-      );
-
-      expect(action.reasoning).toBeTruthy();
-      expect(typeof action.reasoning).toBe('string');
+      expect(fullAnalysis.completionRate).toBe(100);
+      expect(partialAnalysis.completionRate).toBeLessThan(100);
     });
   });
 
   describe('optimizeJourney', () => {
-    it('should generate optimization recommendations', () => {
-      const journeys = Array.from({ length: 5 }, (_, i) =>
-        mapGuestJourney(`guest-${i}`, `res-${i}`, completeTouchpoints)
-      );
-
-      const analytics = analyzeJourneys(journeys);
-      const optimization = optimizeJourney(analytics);
-
-      expect(optimization.currentScore).toBeGreaterThan(0);
-      expect(optimization.targetScore).toBeGreaterThan(optimization.currentScore);
-      expect(optimization.improvements).toBeInstanceOf(Array);
-      expect(optimization.quickWins).toBeInstanceOf(Array);
-      expect(optimization.strategicInitiatives).toBeInstanceOf(Array);
-    });
-
-    it('should identify quick wins', () => {
-      const lowPerformanceTouchpoints = completeTouchpoints.map((tp) => ({
-        ...tp,
-        satisfaction: 5,
-      }));
-
-      const journeys = Array.from({ length: 5 }, (_, i) =>
-        mapGuestJourney(`guest-${i}`, `res-${i}`, lowPerformanceTouchpoints)
-      );
-
-      const analytics = analyzeJourneys(journeys);
-      const optimization = optimizeJourney(analytics);
-
-      expect(optimization.quickWins.length).toBeGreaterThan(0);
-    });
-
-    it('should suggest strategic initiatives', () => {
-      const journeys = Array.from({ length: 5 }, (_, i) =>
-        mapGuestJourney(`guest-${i}`, `res-${i}`, completeTouchpoints)
-      );
-
-      const analytics = analyzeJourneys(journeys);
-      const optimization = optimizeJourney(analytics);
-
-      expect(optimization.strategicInitiatives.length).toBeGreaterThan(0);
-    });
-
-    it('should calculate estimated satisfaction gain', () => {
-      const journeys = Array.from({ length: 5 }, (_, i) =>
-        mapGuestJourney(`guest-${i}`, `res-${i}`, completeTouchpoints)
-      );
-
-      const analytics = analyzeJourneys(journeys);
-      const optimization = optimizeJourney(analytics);
-
-      expect(optimization.estimatedSatisfactionGain).toBeGreaterThan(0);
-    });
-
-    it('should provide stage-specific improvements', () => {
-      const journeys = Array.from({ length: 5 }, (_, i) =>
-        mapGuestJourney(`guest-${i}`, `res-${i}`, completeTouchpoints)
-      );
-
-      const analytics = analyzeJourneys(journeys);
-      const optimization = optimizeJourney(analytics);
-
-      expect(optimization.improvements.length).toBeGreaterThan(0);
-
-      optimization.improvements.forEach((improvement) => {
-        expect(improvement.stage).toBeTruthy();
-        expect(improvement.actions).toBeInstanceOf(Array);
-        expect(improvement.estimatedImpact).toBeGreaterThanOrEqual(0);
-      });
-    });
-
-    it('should address bottlenecks in quick wins', () => {
-      const slowCheckInTouchpoints = completeTouchpoints.map((tp) =>
-        tp.stage === 'check-in'
-          ? { ...tp, durationMinutes: 60, satisfaction: 3 }
-          : tp
-      );
-
-      const journeys = Array.from({ length: 10 }, (_, i) =>
-        mapGuestJourney(`guest-${i}`, `res-${i}`, slowCheckInTouchpoints)
-      );
-
-      const analytics = analyzeJourneys(journeys);
-      const optimization = optimizeJourney(analytics);
-
-      const hasBottleneckAddress = optimization.quickWins.some((qw) =>
-        qw.toLowerCase().includes('bottleneck')
-      );
-      expect(hasBottleneckAddress).toBe(true);
-    });
-
-    it('should suggest simplifying journey for low completion', () => {
-      const incompleteTouchpoints = [
-        bookingTouchpoint,
-        preArrivalTouchpoint,
-        arrivalTouchpoint,
+    it('should generate optimization suggestions', () => {
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'website', 'partial', 3),
+        createTouchpoint('tp2', 'check-in', 'front-desk', 'success', 3),
       ];
 
-      const journeys = Array.from({ length: 10 }, (_, i) =>
-        i < 5
-          ? mapGuestJourney(`guest-${i}`, `res-${i}`, completeTouchpoints)
-          : mapGuestJourney(`guest-${i}`, `res-${i}`, incompleteTouchpoints)
-      );
+      const journey = createMockJourney('opt', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+      const optimization = optimizeJourney(journey, analysis);
 
-      const analytics = analyzeJourneys(journeys);
-      const optimization = optimizeJourney(analytics);
-
-      const hasSimplificationSuggestion = optimization.quickWins.some((qw) =>
-        qw.toLowerCase().includes('simplify')
-      );
-      expect(hasSimplificationSuggestion).toBe(true);
+      expect(optimization.improvements.length).toBeGreaterThan(0);
+      expect(optimization.potentialScore).toBeGreaterThan(optimization.currentScore);
     });
 
-    it('should set realistic target scores', () => {
-      const journeys = Array.from({ length: 5 }, (_, i) =>
-        mapGuestJourney(`guest-${i}`, `res-${i}`, completeTouchpoints)
-      );
+    it('should prioritize high-impact improvements', () => {
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'website', 'failure', 1),
+        createTouchpoint('tp2', 'check-in', 'kiosk', 'success', 4),
+      ];
 
-      const analytics = analyzeJourneys(journeys);
-      const optimization = optimizeJourney(analytics);
+      const journey = createMockJourney('priority', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+      const optimization = optimizeJourney(journey, analysis);
 
-      expect(optimization.targetScore).toBeLessThanOrEqual(100);
-      expect(optimization.targetScore).toBeGreaterThan(optimization.currentScore);
+      const priorities = optimization.improvements.map(imp => imp.priority);
+      expect(Math.max(...priorities)).toBeGreaterThanOrEqual(7);
+    });
+
+    it('should estimate impact of improvements', () => {
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'website', 'partial', 3),
+      ];
+
+      const journey = createMockJourney('impact', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+      const optimization = optimizeJourney(journey, analysis);
+
+      expect(optimization.estimatedImpact.satisfactionIncrease).toBeGreaterThanOrEqual(0);
+      expect(optimization.estimatedImpact.timeReduction).toBeGreaterThanOrEqual(0);
+      expect(optimization.estimatedImpact.conversionIncrease).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should provide prioritized action list', () => {
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'website', 'failure', 2),
+        createTouchpoint('tp2', 'check-in', 'kiosk', 'partial', 3),
+      ];
+
+      const journey = createMockJourney('actions', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+      const optimization = optimizeJourney(journey, analysis);
+
+      expect(optimization.prioritizedActions.length).toBeGreaterThan(0);
+      expect(optimization.prioritizedActions.length).toBeLessThanOrEqual(5);
     });
   });
 
-  describe('Integration Scenarios', () => {
-    it('should handle a complete guest journey from start to finish', () => {
-      const journey = mapGuestJourney('guest-123', 'res-456', completeTouchpoints);
+  describe('generatePersonalization', () => {
+    it('should generate recommendations for business travelers', () => {
+      const profile: GuestProfile = {
+        guestType: 'business',
+        loyaltyTier: 'none',
+        previousStays: 5,
+        averageSpend: 500,
+        preferredChannels: ['mobile-app', 'email'],
+      };
 
-      expect(journey.completionRate).toBe(100);
-      expect(journey.touchpoints).toHaveLength(7);
-      expect(journey.overallSatisfaction).toBeGreaterThan(0);
-    });
-
-    it('should analyze multiple guests and provide insights', () => {
-      const journeys = Array.from({ length: 20 }, (_, i) => {
-        const satisfaction = 5 + (i % 5);
-        const adjustedTouchpoints = completeTouchpoints.map((tp) => ({
-          ...tp,
-          satisfaction: satisfaction + Math.random() * 2,
-        }));
-
-        return mapGuestJourney(`guest-${i}`, `res-${i}`, adjustedTouchpoints);
-      });
-
-      const analytics = analyzeJourneys(journeys);
-
-      expect(analytics.totalJourneys).toBe(20);
-      expect(analytics.stagePerformance).toBeDefined();
-      expect(analytics.channelEffectiveness).toBeDefined();
-    });
-
-    it('should provide actionable recommendations throughout journey', () => {
-      const stages: JourneyStage[] = [
-        'booking',
-        'pre-arrival',
-        'arrival',
-        'check-in',
-        'in-stay',
-        'check-out',
-        'post-stay',
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'mobile-app', 'success', 4),
       ];
 
-      stages.forEach((stage) => {
-        const relevantTouchpoint = completeTouchpoints.find(
-          (tp) => tp.stage === stage
-        )!;
+      const journey = createMockJourney('business', touchpoints, profile);
+      const analysis = analyzeGuestJourney(journey);
+      const personalization = generatePersonalization(journey, analysis);
 
-        const action = predictNextBestAction(
-          { guestId: 'guest-1', touchpoints: [relevantTouchpoint] },
-          stage,
-          [relevantTouchpoint]
-        );
-
-        expect(action.action).toBeTruthy();
-        expect(action.channel).toBeTruthy();
-      });
-    });
-
-    it('should optimize journey based on analytics', () => {
-      const journeys = Array.from({ length: 30 }, (_, i) =>
-        mapGuestJourney(`guest-${i}`, `res-${i}`, completeTouchpoints)
+      const hasBusinessRec = personalization.recommendations.some(
+        r => r.type.includes('express') || r.type.includes('workspace')
       );
 
-      const analytics = analyzeJourneys(journeys);
-      const optimization = optimizeJourney(analytics);
+      expect(hasBusinessRec).toBe(true);
+    });
 
-      expect(optimization.improvements.length).toBeGreaterThan(0);
-      expect(optimization.quickWins.length).toBeGreaterThan(0);
-      expect(optimization.strategicInitiatives.length).toBeGreaterThan(0);
+    it('should generate recommendations for families', () => {
+      const profile: GuestProfile = {
+        guestType: 'family',
+        loyaltyTier: 'silver',
+        previousStays: 2,
+        averageSpend: 800,
+        preferredChannels: ['website'],
+      };
+
+      const touchpoints = [
+        createTouchpoint('tp1', 'research', 'website', 'success'),
+      ];
+
+      const journey = createMockJourney('family', touchpoints, profile);
+      const analysis = analyzeGuestJourney(journey);
+      const personalization = generatePersonalization(journey, analysis);
+
+      const hasFamilyRec = personalization.recommendations.some(
+        r => r.type.includes('family') || r.type.includes('connecting')
+      );
+
+      expect(hasFamilyRec).toBe(true);
+    });
+
+    it('should emphasize loyalty benefits for members', () => {
+      const profile: GuestProfile = {
+        guestType: 'leisure',
+        loyaltyTier: 'platinum',
+        previousStays: 20,
+        averageSpend: 1200,
+        preferredChannels: ['mobile-app'],
+      };
+
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'mobile-app', 'success', 5),
+      ];
+
+      const journey = createMockJourney('loyalty', touchpoints, profile);
+      const analysis = analyzeGuestJourney(journey);
+      const personalization = generatePersonalization(journey, analysis);
+
+      const hasLoyaltyRec = personalization.recommendations.some(
+        r => r.type.includes('loyalty')
+      );
+
+      expect(hasLoyaltyRec).toBe(true);
+    });
+
+    it('should identify preferred communication channels', () => {
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'mobile-app', 'success'),
+        createTouchpoint('tp2', 'pre-arrival', 'mobile-app', 'success'),
+        createTouchpoint('tp3', 'check-in', 'kiosk', 'success'),
+      ];
+
+      const journey = createMockJourney('channels', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+      const personalization = generatePersonalization(journey, analysis);
+
+      expect(personalization.preferredChannels[0]).toBe('mobile-app');
+    });
+
+    it('should calculate optimal timing for interactions', () => {
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'website', 'success'),
+      ];
+
+      const journey = createMockJourney('timing', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+      const personalization = generatePersonalization(journey, analysis);
+
+      expect(personalization.optimalTiming.size).toBeGreaterThan(0);
+    });
+  });
+
+  describe('benchmarkJourneys', () => {
+    it('should benchmark multiple journeys', () => {
+      const journeys = Array(5).fill(null).map((_, i) => {
+        const touchpoints = [
+          createTouchpoint('tp1', 'booking', 'website', 'success', 4 + (i % 2)),
+          createTouchpoint('tp2', 'check-in', 'kiosk', 'success', 3 + (i % 2)),
+        ];
+        return createMockJourney(`${i}`, touchpoints);
+      });
+
+      const benchmark = benchmarkJourneys(journeys);
+
+      expect(benchmark.totalJourneys).toBe(5);
+      expect(benchmark.averageScore).toBeGreaterThan(0);
+      expect(benchmark.completionRate).toBeGreaterThan(0);
+    });
+
+    it('should identify top performing stages', () => {
+      const journeys = Array(3).fill(null).map((_, i) => {
+        const touchpoints = [
+          createTouchpoint('tp1', 'booking', 'website', 'success', 5),
+          createTouchpoint('tp2', 'check-in', 'kiosk', 'partial', 3),
+        ];
+        return createMockJourney(`${i}`, touchpoints);
+      });
+
+      const benchmark = benchmarkJourneys(journeys);
+
+      expect(benchmark.topPerformingStages.length).toBeGreaterThan(0);
+      expect(benchmark.topPerformingStages).toContain('booking');
+    });
+
+    it('should identify underperforming stages', () => {
+      const journeys = Array(3).fill(null).map((_, i) => {
+        const touchpoints = [
+          createTouchpoint('tp1', 'booking', 'website', 'success', 5),
+          createTouchpoint('tp2', 'check-in', 'front-desk', 'failure', 1),
+        ];
+        return createMockJourney(`${i}`, touchpoints);
+      });
+
+      const benchmark = benchmarkJourneys(journeys);
+
+      expect(benchmark.underperformingStages.length).toBeGreaterThan(0);
+      expect(benchmark.underperformingStages).toContain('check-in');
+    });
+
+    it('should throw error with no journeys', () => {
+      expect(() => benchmarkJourneys([])).toThrow(
+        'At least one journey is required for benchmarking'
+      );
+    });
+
+    it('should provide industry comparison', () => {
+      const journeys = [
+        createMockJourney('1', [createTouchpoint('tp1', 'booking', 'website', 'success', 4)]),
+      ];
+
+      const benchmark = benchmarkJourneys(journeys);
+
+      expect(benchmark.industryComparison.score).toBeGreaterThan(0);
+      expect(benchmark.industryComparison.percentile).toBeGreaterThan(0);
+      expect(benchmark.industryComparison.percentile).toBeLessThanOrEqual(100);
+    });
+  });
+
+  describe('Integration Tests', () => {
+    it('should handle complete guest lifecycle', () => {
+      const profile: GuestProfile = {
+        guestType: 'leisure',
+        loyaltyTier: 'gold',
+        previousStays: 10,
+        averageSpend: 1000,
+        preferredChannels: ['mobile-app', 'email'],
+      };
+
+      const touchpoints = [
+        createTouchpoint('tp1', 'awareness', 'social-media', 'success', 4),
+        createTouchpoint('tp2', 'research', 'website', 'success', 4),
+        createTouchpoint('tp3', 'booking', 'mobile-app', 'success', 5),
+        createTouchpoint('tp4', 'pre-arrival', 'email', 'success', 4),
+        createTouchpoint('tp5', 'check-in', 'kiosk', 'success', 5),
+        createTouchpoint('tp6', 'in-stay', 'concierge', 'success', 5),
+        createTouchpoint('tp7', 'amenity-usage', 'restaurant', 'success', 4),
+        createTouchpoint('tp8', 'check-out', 'mobile-app', 'success', 5),
+        createTouchpoint('tp9', 'post-stay', 'email', 'success', 4),
+      ];
+
+      const journey = createMockJourney('complete', touchpoints, profile);
+      const analysis = analyzeGuestJourney(journey);
+      const optimization = optimizeJourney(journey, analysis);
+      const personalization = generatePersonalization(journey, analysis);
+
+      expect(analysis.overallScore).toBeGreaterThan(80);
+      expect(analysis.completionRate).toBe(100);
+      expect(optimization.improvements.length).toBeGreaterThanOrEqual(0);
+      expect(personalization.recommendations.length).toBeGreaterThan(0);
+    });
+
+    it('should handle problematic journey with failures', () => {
+      const touchpoints = [
+        createTouchpoint('tp1', 'booking', 'website', 'failure', 1),
+        createTouchpoint('tp2', 'booking', 'phone', 'success', 3),
+        createTouchpoint('tp3', 'check-in', 'front-desk', 'partial', 2),
+        createTouchpoint('tp4', 'in-stay', 'room-service', 'failure', 1),
+        createTouchpoint('tp5', 'check-out', 'front-desk', 'abandoned'),
+      ];
+
+      const journey = createMockJourney('problematic', touchpoints);
+      const analysis = analyzeGuestJourney(journey);
+      const optimization = optimizeJourney(journey, analysis);
+
+      expect(analysis.overallScore).toBeLessThan(60);
+      expect(analysis.bottlenecks.length).toBeGreaterThan(0);
+      expect(analysis.painPoints.length).toBeGreaterThan(0);
+      expect(optimization.improvements.length).toBeGreaterThan(2);
+      expect(optimization.potentialScore).toBeGreaterThan(analysis.overallScore);
+    });
+
+    it('should compare multiple guest types in benchmark', () => {
+      const businessJourneys = Array(3).fill(null).map((_, i) => {
+        const profile: GuestProfile = {
+          guestType: 'business',
+          loyaltyTier: 'platinum',
+          previousStays: 15,
+          averageSpend: 600,
+          preferredChannels: ['mobile-app'],
+        };
+        return createMockJourney(`biz${i}`, [
+          createTouchpoint('tp1', 'booking', 'mobile-app', 'success', 5),
+          createTouchpoint('tp2', 'check-in', 'kiosk', 'success', 5),
+        ], profile);
+      });
+
+      const familyJourneys = Array(2).fill(null).map((_, i) => {
+        const profile: GuestProfile = {
+          guestType: 'family',
+          loyaltyTier: 'none',
+          previousStays: 1,
+          averageSpend: 1200,
+          preferredChannels: ['website'],
+        };
+        return createMockJourney(`fam${i}`, [
+          createTouchpoint('tp1', 'booking', 'website', 'success', 4),
+          createTouchpoint('tp2', 'check-in', 'front-desk', 'success', 3),
+        ], profile);
+      });
+
+      const allJourneys = [...businessJourneys, ...familyJourneys];
+      const benchmark = benchmarkJourneys(allJourneys);
+
+      expect(benchmark.totalJourneys).toBe(5);
+      expect(benchmark.averageScore).toBeGreaterThan(0);
     });
   });
 });
