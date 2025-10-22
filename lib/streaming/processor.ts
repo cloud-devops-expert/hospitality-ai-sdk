@@ -1,591 +1,526 @@
 /**
- * Real-Time Streaming ML
+ * Real-Time Streaming ML Processor
  *
- * Event-driven ML processing with real-time anomaly detection, pattern recognition,
- * and incremental learning using sliding window algorithms.
+ * Event-driven ML updates, real-time anomaly detection,
+ * and live dashboard data feeds for hospitality operations.
  *
- * Features:
- * - Event stream processing with sliding windows
- * - Real-time anomaly detection
- * - Live metric aggregation
- * - Pattern recognition and forecasting
- * - Alert generation and prioritization
- * - Incremental model updates
- *
- * @module lib/streaming/processor
+ * Zero-cost local processing with incremental learning.
  */
 
 // ============================================================================
-// Types and Interfaces
+// Types
 // ============================================================================
-
-export type EventType =
-  | 'booking'
-  | 'checkin'
-  | 'checkout'
-  | 'room-service'
-  | 'complaint'
-  | 'maintenance'
-  | 'payment'
-  | 'review'
-  | 'cancellation';
 
 export interface StreamEvent {
   eventId: string;
-  eventType: EventType;
+  eventType: 'booking' | 'checkin' | 'checkout' | 'review' | 'maintenance' | 'service_request' | 'revenue' | 'occupancy';
   timestamp: Date;
-  propertyId: string;
-  guestId?: string;
-  roomId?: string;
   data: Record<string, any>;
-  metadata?: {
-    source?: string;
-    priority?: 'low' | 'medium' | 'high' | 'critical';
-    tags?: string[];
-  };
+  priority: 'low' | 'medium' | 'high' | 'critical';
 }
 
-export interface StreamWindow {
-  windowId: string;
-  startTime: Date;
-  endTime: Date;
-  events: StreamEvent[];
-  metrics: WindowMetrics;
+export interface StreamProcessor {
+  processEvent(event: StreamEvent): Promise<ProcessedEvent>;
+  getMetrics(): StreamMetrics;
+  reset(): void;
 }
 
-export interface WindowMetrics {
-  eventCount: number;
-  eventsByType: Record<EventType, number>;
-  averageValue?: number;
-  min?: number;
-  max?: number;
-  anomalyCount: number;
-  patterns: Pattern[];
-}
-
-export interface Pattern {
-  type: 'spike' | 'drop' | 'trend' | 'cyclic' | 'cluster';
-  confidence: number; // 0-100
-  description: string;
-  startTime: Date;
-  endTime: Date;
-  significance: 'low' | 'medium' | 'high';
+export interface ProcessedEvent {
+  eventId: string;
+  processedAt: Date;
+  anomalies: Anomaly[];
+  predictions: Prediction[];
+  alerts: Alert[];
+  metrics: EventMetrics;
 }
 
 export interface Anomaly {
-  anomalyId: string;
-  event: StreamEvent;
-  detectedAt: Date;
-  type: 'statistical' | 'behavioral' | 'threshold' | 'pattern';
+  type: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
-  score: number; // 0-100, higher = more anomalous
-  baseline: number;
-  deviation: number;
+  score: number;
   description: string;
-  suggestedAction?: string;
+  affectedMetric: string;
+  threshold: number;
+  actualValue: number;
+}
+
+export interface Prediction {
+  metric: string;
+  predictedValue: number;
+  confidence: number;
+  timeHorizon: number; // minutes
+  method: string;
 }
 
 export interface Alert {
   alertId: string;
+  type: 'anomaly' | 'threshold' | 'trend' | 'pattern';
+  severity: 'info' | 'warning' | 'error' | 'critical';
+  message: string;
+  action: string;
   timestamp: Date;
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  category: 'anomaly' | 'threshold' | 'pattern' | 'prediction';
-  title: string;
-  description: string;
-  affectedEntities: string[];
-  metrics?: Record<string, number>;
-  recommendations: string[];
-  acknowledged: boolean;
+}
+
+export interface EventMetrics {
+  processingTime: number;
+  eventCount: number;
+  anomalyRate: number;
+  alertRate: number;
 }
 
 export interface StreamMetrics {
   totalEvents: number;
   eventsPerSecond: number;
-  averageProcessingTime: number; // ms
-  activeWindows: number;
-  anomaliesDetected: number;
-  alertsGenerated: number;
-  lastUpdateTime: Date;
+  averageProcessingTime: number;
+  anomalyCount: number;
+  alertCount: number;
+  uptimeSeconds: number;
+  lastEventTime: Date | null;
+  eventTypeDistribution: Map<string, number>;
 }
 
-export interface StreamProcessorConfig {
-  windowSize: number; // minutes
-  windowSlide: number; // minutes
-  anomalyThreshold: number; // 0-100
-  maxWindows: number;
-  enablePatternDetection: boolean;
-  enableAnomalyDetection: boolean;
-  enableAlerts: boolean;
+export interface IncrementalModel {
+  update(data: number[], target?: number): void;
+  predict(data: number[]): number;
+  getMetrics(): ModelMetrics;
 }
 
-export interface StreamProcessor {
-  config: StreamProcessorConfig;
-  windows: StreamWindow[];
-  anomalies: Anomaly[];
-  alerts: Alert[];
-  metrics: StreamMetrics;
-  baseline: Record<string, number>;
+export interface ModelMetrics {
+  sampleCount: number;
+  mean: number;
+  variance: number;
+  lastUpdate: Date;
+  accuracy?: number;
 }
 
-export interface RealTimeForecast {
-  metric: string;
-  currentValue: number;
-  predictedValue: number;
-  confidence: number;
-  timeHorizon: number; // minutes
-  trend: 'increasing' | 'decreasing' | 'stable';
+export interface DashboardFeed {
+  subscribe(callback: (event: ProcessedEvent) => void): string;
+  unsubscribe(subscriptionId: string): void;
+  getRecentEvents(limit: number): ProcessedEvent[];
+  getLiveMetrics(): StreamMetrics;
 }
 
 // ============================================================================
-// Stream Processor Creation and Management
+// Incremental Learning Model
 // ============================================================================
 
-/**
- * Creates a new stream processor
- */
-export function createStreamProcessor(
-  config?: Partial<StreamProcessorConfig>
-): StreamProcessor {
-  const defaultConfig: StreamProcessorConfig = {
-    windowSize: 15,
-    windowSlide: 5,
-    anomalyThreshold: 75,
-    maxWindows: 12,
-    enablePatternDetection: true,
-    enableAnomalyDetection: true,
-    enableAlerts: true,
-  };
+export class IncrementalStatsModel implements IncrementalModel {
+  private n = 0;
+  private mean = 0;
+  private m2 = 0;
+  private lastUpdate: Date | null = null;
 
-  return {
-    config: { ...defaultConfig, ...config },
-    windows: [],
-    anomalies: [],
-    alerts: [],
-    metrics: {
-      totalEvents: 0,
-      eventsPerSecond: 0,
-      averageProcessingTime: 0,
-      activeWindows: 0,
-      anomaliesDetected: 0,
-      alertsGenerated: 0,
-      lastUpdateTime: new Date(),
-    },
-    baseline: {},
-  };
-}
-
-/**
- * Processes a stream of events
- */
-export function processEventStream(
-  processor: StreamProcessor,
-  events: StreamEvent[]
-): StreamProcessor {
-  const startTime = Date.now();
-
-  // Update baseline from existing events
-  updateBaseline(processor, events);
-
-  // Add events to appropriate windows
-  events.forEach((event) => {
-    addEventToWindow(processor, event);
-
-    // Detect anomalies
-    if (processor.config.enableAnomalyDetection) {
-      const anomaly = detectAnomaly(processor, event);
-      if (anomaly) {
-        processor.anomalies.push(anomaly);
-        processor.metrics.anomaliesDetected++;
-
-        // Generate alert if configured
-        if (processor.config.enableAlerts && anomaly.severity !== 'low') {
-          const alert = generateAlert(anomaly);
-          processor.alerts.push(alert);
-          processor.metrics.alertsGenerated++;
-        }
-      }
-    }
-  });
-
-  // Detect patterns across windows
-  if (processor.config.enablePatternDetection) {
-    detectPatterns(processor);
+  update(data: number[]): void {
+    data.forEach(value => {
+      this.n++;
+      const delta = value - this.mean;
+      this.mean += delta / this.n;
+      const delta2 = value - this.mean;
+      this.m2 += delta * delta2;
+    });
+    this.lastUpdate = new Date();
   }
 
-  // Update metrics
-  const processingTime = Date.now() - startTime;
-  processor.metrics.totalEvents += events.length;
-  processor.metrics.averageProcessingTime =
-    (processor.metrics.averageProcessingTime * 0.7 + processingTime * 0.3);
-  processor.metrics.lastUpdateTime = new Date();
-  processor.metrics.activeWindows = processor.windows.length;
-
-  // Calculate events per second
-  if (processor.windows.length > 0) {
-    const totalTime = processor.windows.reduce(
-      (sum, w) => sum + (w.endTime.getTime() - w.startTime.getTime()),
-      0
-    ) / 1000;
-    processor.metrics.eventsPerSecond = totalTime > 0
-      ? processor.metrics.totalEvents / totalTime
-      : 0;
+  predict(data: number[]): number {
+    if (this.n === 0) return data[data.length - 1] || 0;
+    
+    // Simple exponential smoothing
+    const alpha = 0.3;
+    const lastValue = data[data.length - 1] || this.mean;
+    return alpha * lastValue + (1 - alpha) * this.mean;
   }
 
-  return processor;
-}
-
-/**
- * Gets real-time forecast based on recent events
- */
-export function getRealTimeForecast(
-  processor: StreamProcessor,
-  metric: string,
-  timeHorizon: number = 15
-): RealTimeForecast {
-  if (processor.windows.length < 2) {
-    const currentValue = processor.baseline[metric] || 0;
+  getMetrics(): ModelMetrics {
+    const variance = this.n > 1 ? this.m2 / (this.n - 1) : 0;
     return {
-      metric,
-      currentValue,
-      predictedValue: currentValue,
-      confidence: 30,
-      timeHorizon,
-      trend: 'stable',
+      sampleCount: this.n,
+      mean: this.mean,
+      variance,
+      lastUpdate: this.lastUpdate || new Date(),
     };
   }
 
-  // Get values from recent windows
-  const recentWindows = processor.windows.slice(-6); // Last 6 windows
-  const values = recentWindows.map((w) => {
-    if (metric === 'events') return w.metrics.eventCount;
-    if (metric === 'anomalies') return w.metrics.anomalyCount;
-    return 0;
-  });
-
-  const currentValue = values[values.length - 1];
-
-  // Simple linear regression for prediction
-  const n = values.length;
-  const xValues = Array.from({ length: n }, (_, i) => i);
-  const xMean = xValues.reduce((sum, x) => sum + x, 0) / n;
-  const yMean = values.reduce((sum, y) => sum + y, 0) / n;
-
-  const numerator = xValues.reduce((sum, x, i) => sum + (x - xMean) * (values[i] - yMean), 0);
-  const denominator = xValues.reduce((sum, x) => sum + Math.pow(x - xMean, 2), 0);
-
-  const slope = denominator !== 0 ? numerator / denominator : 0;
-  const intercept = yMean - slope * xMean;
-
-  // Predict for next time horizon
-  const predictedValue = Math.max(0, slope * n + intercept);
-
-  // Calculate confidence based on variance
-  const variance = values.reduce((sum, v) => sum + Math.pow(v - yMean, 2), 0) / n;
-  const confidence = Math.max(0, Math.min(100, 100 - (variance / yMean) * 50));
-
-  // Determine trend
-  let trend: RealTimeForecast['trend'];
-  if (slope > 0.1) {
-    trend = 'increasing';
-  } else if (slope < -0.1) {
-    trend = 'decreasing';
-  } else {
-    trend = 'stable';
+  reset(): void {
+    this.n = 0;
+    this.mean = 0;
+    this.m2 = 0;
+    this.lastUpdate = null;
   }
-
-  return {
-    metric,
-    currentValue,
-    predictedValue: Math.round(predictedValue),
-    confidence: Math.round(confidence),
-    timeHorizon,
-    trend,
-  };
-}
-
-/**
- * Gets current streaming metrics
- */
-export function getStreamMetrics(processor: StreamProcessor): StreamMetrics {
-  return processor.metrics;
-}
-
-/**
- * Gets recent anomalies
- */
-export function getRecentAnomalies(
-  processor: StreamProcessor,
-  count: number = 10
-): Anomaly[] {
-  return processor.anomalies.slice(-count);
-}
-
-/**
- * Gets active alerts
- */
-export function getActiveAlerts(processor: StreamProcessor): Alert[] {
-  return processor.alerts.filter((alert) => !alert.acknowledged);
-}
-
-/**
- * Acknowledges an alert
- */
-export function acknowledgeAlert(
-  processor: StreamProcessor,
-  alertId: string
-): StreamProcessor {
-  const alert = processor.alerts.find((a) => a.alertId === alertId);
-  if (alert) {
-    alert.acknowledged = true;
-  }
-  return processor;
 }
 
 // ============================================================================
-// Helper Functions
+// Real-Time Anomaly Detection
 // ============================================================================
 
-function updateBaseline(processor: StreamProcessor, events: StreamEvent[]): void {
-  // Calculate baseline metrics from events
-  const eventCounts = new Map<EventType, number>();
+export class RealTimeAnomalyDetector {
+  private readonly windowSize: number;
+  private readonly zScoreThreshold: number;
+  private dataWindow: number[] = [];
+  
+  constructor(windowSize = 100, zScoreThreshold = 3) {
+    this.windowSize = windowSize;
+    this.zScoreThreshold = zScoreThreshold;
+  }
 
-  events.forEach((event) => {
-    eventCounts.set(event.eventType, (eventCounts.get(event.eventType) || 0) + 1);
-  });
-
-  eventCounts.forEach((count, eventType) => {
-    const key = `${eventType}_rate`;
-    const existingValue = processor.baseline[key] || 0;
-    processor.baseline[key] = existingValue * 0.8 + (count / events.length) * 0.2;
-  });
-}
-
-function addEventToWindow(processor: StreamProcessor, event: StreamEvent): void {
-  const eventTime = event.timestamp;
-
-  // Find or create appropriate window
-  let targetWindow = processor.windows.find((w) =>
-    eventTime >= w.startTime && eventTime < w.endTime
-  );
-
-  if (!targetWindow) {
-    // Create new window
-    const windowStartTime = new Date(eventTime);
-    windowStartTime.setMinutes(
-      Math.floor(windowStartTime.getMinutes() / processor.config.windowSlide) *
-        processor.config.windowSlide
-    );
-    windowStartTime.setSeconds(0);
-    windowStartTime.setMilliseconds(0);
-
-    const windowEndTime = new Date(windowStartTime);
-    windowEndTime.setMinutes(windowEndTime.getMinutes() + processor.config.windowSize);
-
-    targetWindow = {
-      windowId: `window_${windowStartTime.getTime()}`,
-      startTime: windowStartTime,
-      endTime: windowEndTime,
-      events: [],
-      metrics: {
-        eventCount: 0,
-        eventsByType: {} as Record<EventType, number>,
-        anomalyCount: 0,
-        patterns: [],
-      },
-    };
-
-    processor.windows.push(targetWindow);
-
-    // Remove old windows if exceeding max
-    if (processor.windows.length > processor.config.maxWindows) {
-      processor.windows.shift();
+  detectAnomaly(value: number, metric: string): Anomaly | null {
+    this.dataWindow.push(value);
+    if (this.dataWindow.length > this.windowSize) {
+      this.dataWindow.shift();
     }
-  }
 
-  // Add event to window
-  targetWindow.events.push(event);
-  targetWindow.metrics.eventCount++;
+    if (this.dataWindow.length < 10) {
+      return null; // Not enough data
+    }
 
-  // Update event type counts
-  targetWindow.metrics.eventsByType[event.eventType] =
-    (targetWindow.metrics.eventsByType[event.eventType] || 0) + 1;
-}
+    const mean = this.dataWindow.reduce((sum, v) => sum + v, 0) / this.dataWindow.length;
+    const variance = this.dataWindow.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / this.dataWindow.length;
+    const stdDev = Math.sqrt(variance);
 
-function detectAnomaly(
-  processor: StreamProcessor,
-  event: StreamEvent
-): Anomaly | null {
-  const baselineKey = `${event.eventType}_rate`;
-  const baseline = processor.baseline[baselineKey] || 0;
+    if (stdDev === 0) return null;
 
-  if (baseline === 0) {
-    return null; // Not enough data for baseline
-  }
+    const zScore = Math.abs((value - mean) / stdDev);
+    
+    if (zScore > this.zScoreThreshold) {
+      let severity: Anomaly['severity'];
+      if (zScore > this.zScoreThreshold * 2) {
+        severity = 'critical';
+      } else if (zScore > this.zScoreThreshold * 1.5) {
+        severity = 'high';
+      } else if (zScore > this.zScoreThreshold * 1.2) {
+        severity = 'medium';
+      } else {
+        severity = 'low';
+      }
 
-  // Get current rate from recent window
-  const recentWindow = processor.windows[processor.windows.length - 1];
-  if (!recentWindow) return null;
+      return {
+        type: 'statistical',
+        severity,
+        score: zScore,
+        description: `${metric} value ${value.toFixed(2)} deviates significantly from mean ${mean.toFixed(2)}`,
+        affectedMetric: metric,
+        threshold: mean + this.zScoreThreshold * stdDev,
+        actualValue: value,
+      };
+    }
 
-  const currentRate =
-    (recentWindow.metrics.eventsByType[event.eventType] || 0) /
-    recentWindow.metrics.eventCount;
-
-  const deviation = Math.abs(currentRate - baseline);
-  const deviationPercent = baseline > 0 ? (deviation / baseline) * 100 : 0;
-
-  // Check if anomalous
-  if (deviationPercent < processor.config.anomalyThreshold) {
     return null;
   }
 
-  // Determine severity
-  let severity: Anomaly['severity'];
-  if (deviationPercent > 200) {
-    severity = 'critical';
-  } else if (deviationPercent > 150) {
-    severity = 'high';
-  } else if (deviationPercent > 100) {
-    severity = 'medium';
-  } else {
-    severity = 'low';
+  reset(): void {
+    this.dataWindow = [];
   }
-
-  // Determine type
-  let type: Anomaly['type'] = 'statistical';
-  if (event.eventType === 'complaint' || event.eventType === 'cancellation') {
-    type = 'behavioral';
-  }
-
-  const score = Math.min(100, deviationPercent);
-
-  const description = `${event.eventType} event rate ${currentRate.toFixed(
-    2
-  )} deviates ${deviationPercent.toFixed(0)}% from baseline ${baseline.toFixed(2)}`;
-
-  let suggestedAction: string | undefined;
-  if (event.eventType === 'complaint') {
-    suggestedAction = 'Investigate recent complaint patterns and address root causes';
-  } else if (event.eventType === 'cancellation') {
-    suggestedAction = 'Review cancellation reasons and implement retention strategies';
-  } else if (event.eventType === 'maintenance') {
-    suggestedAction = 'Check for facility issues and allocate maintenance resources';
-  }
-
-  return {
-    anomalyId: `anomaly_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-    event,
-    detectedAt: new Date(),
-    type,
-    severity,
-    score,
-    baseline,
-    deviation: deviationPercent,
-    description,
-    suggestedAction,
-  };
 }
 
-function detectPatterns(processor: StreamProcessor): void {
-  if (processor.windows.length < 3) return;
+// ============================================================================
+// Stream Processor Implementation
+// ============================================================================
 
-  const recentWindows = processor.windows.slice(-6);
+export class LiveStreamProcessor implements StreamProcessor {
+  private eventCount = 0;
+  private anomalyCount = 0;
+  private alertCount = 0;
+  private totalProcessingTime = 0;
+  private startTime = Date.now();
+  private lastEventTime: Date | null = null;
+  private eventTypeDistribution = new Map<string, number>();
+  
+  private anomalyDetectors = new Map<string, RealTimeAnomalyDetector>();
+  private incrementalModels = new Map<string, IncrementalStatsModel>();
 
-  // Detect spike pattern
-  const eventCounts = recentWindows.map((w) => w.metrics.eventCount);
-  const avgCount = eventCounts.reduce((sum, c) => sum + c, 0) / eventCounts.length;
-  const maxCount = Math.max(...eventCounts);
+  async processEvent(event: StreamEvent): Promise<ProcessedEvent> {
+    const startProcessing = Date.now();
+    
+    this.eventCount++;
+    this.lastEventTime = event.timestamp;
+    this.eventTypeDistribution.set(
+      event.eventType,
+      (this.eventTypeDistribution.get(event.eventType) || 0) + 1
+    );
 
-  if (maxCount > avgCount * 2) {
-    const spikeWindow = recentWindows.find((w) => w.metrics.eventCount === maxCount);
-    if (spikeWindow && spikeWindow.metrics.patterns.every((p) => p.type !== 'spike')) {
-      spikeWindow.metrics.patterns.push({
-        type: 'spike',
-        confidence: 85,
-        description: `Event spike detected: ${maxCount} events (${((maxCount / avgCount - 1) * 100).toFixed(0)}% above average)`,
-        startTime: spikeWindow.startTime,
-        endTime: spikeWindow.endTime,
-        significance: maxCount > avgCount * 3 ? 'high' : 'medium',
+    // Extract numeric metrics from event data
+    const metrics = this.extractMetrics(event);
+    
+    // Detect anomalies
+    const anomalies: Anomaly[] = [];
+    for (const [metricName, value] of Object.entries(metrics)) {
+      if (!this.anomalyDetectors.has(metricName)) {
+        this.anomalyDetectors.set(metricName, new RealTimeAnomalyDetector());
+      }
+      const detector = this.anomalyDetectors.get(metricName)!;
+      const anomaly = detector.detectAnomaly(value, metricName);
+      if (anomaly) {
+        anomalies.push(anomaly);
+        this.anomalyCount++;
+      }
+    }
+
+    // Update incremental models and generate predictions
+    const predictions: Prediction[] = [];
+    for (const [metricName, value] of Object.entries(metrics)) {
+      if (!this.incrementalModels.has(metricName)) {
+        this.incrementalModels.set(metricName, new IncrementalStatsModel());
+      }
+      const model = this.incrementalModels.get(metricName)!;
+      model.update([value]);
+      
+      const predicted = model.predict([value]);
+      predictions.push({
+        metric: metricName,
+        predictedValue: predicted,
+        confidence: this.calculateConfidence(model.getMetrics()),
+        timeHorizon: 15,
+        method: 'exponential_smoothing',
       });
     }
+
+    // Generate alerts
+    const alerts = this.generateAlerts(event, anomalies);
+    this.alertCount += alerts.length;
+
+    const processingTime = Date.now() - startProcessing;
+    this.totalProcessingTime += processingTime;
+
+    const eventMetrics: EventMetrics = {
+      processingTime,
+      eventCount: this.eventCount,
+      anomalyRate: (this.anomalyCount / this.eventCount) * 100,
+      alertRate: (this.alertCount / this.eventCount) * 100,
+    };
+
+    return {
+      eventId: event.eventId,
+      processedAt: new Date(),
+      anomalies,
+      predictions,
+      alerts,
+      metrics: eventMetrics,
+    };
   }
 
-  // Detect trend pattern
-  if (eventCounts.length >= 4) {
-    const firstHalf = eventCounts.slice(0, Math.floor(eventCounts.length / 2));
-    const secondHalf = eventCounts.slice(Math.floor(eventCounts.length / 2));
+  getMetrics(): StreamMetrics {
+    const uptimeSeconds = (Date.now() - this.startTime) / 1000;
+    const eventsPerSecond = this.eventCount / uptimeSeconds;
 
-    const firstAvg = firstHalf.reduce((sum, c) => sum + c, 0) / firstHalf.length;
-    const secondAvg = secondHalf.reduce((sum, c) => sum + c, 0) / secondHalf.length;
+    return {
+      totalEvents: this.eventCount,
+      eventsPerSecond: Math.round(eventsPerSecond * 100) / 100,
+      averageProcessingTime: this.eventCount > 0 ? this.totalProcessingTime / this.eventCount : 0,
+      anomalyCount: this.anomalyCount,
+      alertCount: this.alertCount,
+      uptimeSeconds: Math.round(uptimeSeconds),
+      lastEventTime: this.lastEventTime,
+      eventTypeDistribution: this.eventTypeDistribution,
+    };
+  }
 
-    if (secondAvg > firstAvg * 1.3) {
-      const lastWindow = recentWindows[recentWindows.length - 1];
-      if (lastWindow.metrics.patterns.every((p) => p.type !== 'trend')) {
-        lastWindow.metrics.patterns.push({
-          type: 'trend',
-          confidence: 75,
-          description: `Upward trend detected: ${((secondAvg / firstAvg - 1) * 100).toFixed(0)}% increase`,
-          startTime: recentWindows[0].startTime,
-          endTime: lastWindow.endTime,
-          significance: 'medium',
-        });
-      }
-    } else if (secondAvg < firstAvg * 0.7) {
-      const lastWindow = recentWindows[recentWindows.length - 1];
-      if (lastWindow.metrics.patterns.every((p) => p.type !== 'trend')) {
-        lastWindow.metrics.patterns.push({
-          type: 'trend',
-          confidence: 75,
-          description: `Downward trend detected: ${((1 - secondAvg / firstAvg) * 100).toFixed(0)}% decrease`,
-          startTime: recentWindows[0].startTime,
-          endTime: lastWindow.endTime,
-          significance: 'medium',
-        });
+  reset(): void {
+    this.eventCount = 0;
+    this.anomalyCount = 0;
+    this.alertCount = 0;
+    this.totalProcessingTime = 0;
+    this.startTime = Date.now();
+    this.lastEventTime = null;
+    this.eventTypeDistribution.clear();
+    this.anomalyDetectors.clear();
+    this.incrementalModels.clear();
+  }
+
+  private extractMetrics(event: StreamEvent): Record<string, number> {
+    const metrics: Record<string, number> = {};
+    
+    for (const [key, value] of Object.entries(event.data)) {
+      if (typeof value === 'number') {
+        metrics[key] = value;
       }
     }
+
+    return metrics;
+  }
+
+  private calculateConfidence(modelMetrics: ModelMetrics): number {
+    if (modelMetrics.sampleCount < 10) return 0.3;
+    if (modelMetrics.sampleCount < 50) return 0.6;
+    if (modelMetrics.sampleCount < 100) return 0.8;
+    return 0.9;
+  }
+
+  private generateAlerts(event: StreamEvent, anomalies: Anomaly[]): Alert[] {
+    const alerts: Alert[] = [];
+
+    // Critical event alerts
+    if (event.priority === 'critical') {
+      alerts.push({
+        alertId: `alert-${event.eventId}`,
+        type: 'threshold',
+        severity: 'critical',
+        message: `Critical ${event.eventType} event detected`,
+        action: 'Immediate review required',
+        timestamp: new Date(),
+      });
+    }
+
+    // Anomaly alerts
+    anomalies.forEach((anomaly, index) => {
+      if (anomaly.severity === 'critical' || anomaly.severity === 'high') {
+        alerts.push({
+          alertId: `alert-${event.eventId}-${index}`,
+          type: 'anomaly',
+          severity: anomaly.severity === 'critical' ? 'critical' : 'warning',
+          message: anomaly.description,
+          action: `Investigate ${anomaly.affectedMetric}`,
+          timestamp: new Date(),
+        });
+      }
+    });
+
+    return alerts;
   }
 }
 
-function generateAlert(anomaly: Anomaly): Alert {
-  const alertId = `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+// ============================================================================
+// Dashboard Feed Implementation
+// ============================================================================
 
-  let priority: Alert['priority'];
-  if (anomaly.severity === 'critical') {
-    priority = 'critical';
-  } else if (anomaly.severity === 'high') {
-    priority = 'high';
-  } else if (anomaly.severity === 'medium') {
-    priority = 'medium';
+export class LiveDashboardFeed implements DashboardFeed {
+  private subscribers = new Map<string, (event: ProcessedEvent) => void>();
+  private recentEvents: ProcessedEvent[] = [];
+  private processor: StreamProcessor;
+  private maxRecentEvents = 100;
+
+  constructor(processor: StreamProcessor) {
+    this.processor = processor;
+  }
+
+  subscribe(callback: (event: ProcessedEvent) => void): string {
+    const subscriptionId = `sub-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    this.subscribers.set(subscriptionId, callback);
+    return subscriptionId;
+  }
+
+  unsubscribe(subscriptionId: string): void {
+    this.subscribers.delete(subscriptionId);
+  }
+
+  async publishEvent(event: StreamEvent): Promise<void> {
+    const processedEvent = await this.processor.processEvent(event);
+    
+    // Store in recent events
+    this.recentEvents.unshift(processedEvent);
+    if (this.recentEvents.length > this.maxRecentEvents) {
+      this.recentEvents.pop();
+    }
+
+    // Notify all subscribers
+    for (const callback of this.subscribers.values()) {
+      try {
+        callback(processedEvent);
+      } catch (error) {
+        console.error('Error in subscriber callback:', error);
+      }
+    }
+  }
+
+  getRecentEvents(limit: number = 10): ProcessedEvent[] {
+    return this.recentEvents.slice(0, limit);
+  }
+
+  getLiveMetrics(): StreamMetrics {
+    return this.processor.getMetrics();
+  }
+
+  getSubscriberCount(): number {
+    return this.subscribers.size;
+  }
+}
+
+// ============================================================================
+// Batch Event Processing
+// ============================================================================
+
+export async function processEventBatch(
+  events: StreamEvent[],
+  processor: StreamProcessor
+): Promise<ProcessedEvent[]> {
+  const results: ProcessedEvent[] = [];
+  
+  for (const event of events) {
+    const processed = await processor.processEvent(event);
+    results.push(processed);
+  }
+
+  return results;
+}
+
+// ============================================================================
+// Trend Detection
+// ============================================================================
+
+export interface TrendAnalysis {
+  trend: 'increasing' | 'decreasing' | 'stable';
+  strength: number;
+  confidence: number;
+  recentEvents: number;
+}
+
+export function detectTrend(events: ProcessedEvent[], metric: string): TrendAnalysis {
+  if (events.length < 5) {
+    return {
+      trend: 'stable',
+      strength: 0,
+      confidence: 0,
+      recentEvents: events.length,
+    };
+  }
+
+  const values: number[] = [];
+  events.forEach(event => {
+    const pred = event.predictions.find(p => p.metric === metric);
+    if (pred) {
+      values.push(pred.predictedValue);
+    }
+  });
+
+  if (values.length < 5) {
+    return {
+      trend: 'stable',
+      strength: 0,
+      confidence: 0,
+      recentEvents: values.length,
+    };
+  }
+
+  // Calculate linear regression slope
+  const n = values.length;
+  const xMean = (n - 1) / 2;
+  const yMean = values.reduce((sum, v) => sum + v, 0) / n;
+
+  let numerator = 0;
+  let denominator = 0;
+  for (let i = 0; i < n; i++) {
+    numerator += (i - xMean) * (values[i] - yMean);
+    denominator += Math.pow(i - xMean, 2);
+  }
+
+  const slope = numerator / denominator;
+  const avgValue = Math.abs(yMean);
+  const normalizedSlope = avgValue > 0 ? (slope / avgValue) * 100 : 0;
+
+  let trend: TrendAnalysis['trend'];
+  if (Math.abs(normalizedSlope) < 1) {
+    trend = 'stable';
+  } else if (normalizedSlope > 0) {
+    trend = 'increasing';
   } else {
-    priority = 'low';
+    trend = 'decreasing';
   }
 
-  const title = `${anomaly.type.charAt(0).toUpperCase() + anomaly.type.slice(1)} Anomaly: ${anomaly.event.eventType}`;
-
-  const affectedEntities: string[] = [anomaly.event.propertyId];
-  if (anomaly.event.roomId) affectedEntities.push(anomaly.event.roomId);
-  if (anomaly.event.guestId) affectedEntities.push(anomaly.event.guestId);
-
-  const recommendations: string[] = [];
-  if (anomaly.suggestedAction) {
-    recommendations.push(anomaly.suggestedAction);
-  }
-  recommendations.push('Monitor pattern over next hour');
-  recommendations.push('Review historical data for similar anomalies');
+  const strength = Math.min(100, Math.abs(normalizedSlope) * 10);
+  const confidence = Math.min(0.95, n / 100);
 
   return {
-    alertId,
-    timestamp: anomaly.detectedAt,
-    priority,
-    category: 'anomaly',
-    title,
-    description: anomaly.description,
-    affectedEntities,
-    metrics: {
-      anomalyScore: anomaly.score,
-      baseline: anomaly.baseline,
-      deviation: anomaly.deviation,
-    },
-    recommendations,
-    acknowledged: false,
+    trend,
+    strength: Math.round(strength),
+    confidence: Math.round(confidence * 100) / 100,
+    recentEvents: n,
   };
 }
