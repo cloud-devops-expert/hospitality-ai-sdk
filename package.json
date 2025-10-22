@@ -19,6 +19,7 @@
     "@payloadcms/next": "^3.60.0",
     "@payloadcms/plugin-seo": "^3.60.0",
     "@payloadcms/richtext-lexical": "^3.60.0",
+    "@types/pg": "^8.15.5",
     "ai": "^3.0.0",
     "date-fns": "^3.0.0",
     "graphql": "^16.11.0",
