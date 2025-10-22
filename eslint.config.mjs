@@ -19,9 +19,15 @@ const eslintConfig = [
       'build/**',
       '.cache/**',
       'public/**',
+      '.agent/timefold-samples/**',
+      '.turbo/**',
+      'coverage/**',
+      '.payload/**',
+      'payload-types.ts',
+      'generated-schema.graphql',
     ],
   },
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...compat.extends('next/core-web-vitals', 'next/typescript', 'prettier'),
   {
     rules: {
       // TypeScript rules
@@ -45,6 +51,13 @@ const eslintConfig = [
     files: ['next-env.d.ts'],
     rules: {
       '@typescript-eslint/triple-slash-reference': 'off',
+    },
+  },
+  {
+    files: ['jest.config.js', 'jest.setup.js'],
+    rules: {
+      '@typescript-eslint/no-var-requires': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
 ];

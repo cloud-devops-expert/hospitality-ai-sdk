@@ -1,0 +1,22 @@
+# Dependencies
+node_modules
+.next
+out
+dist
+build
+.turbo
+
+# Third-party samples
+.agent/timefold-samples
+
+# Generated files
+coverage
+.payload
+payload-types.ts
+generated-schema.graphql
+
+# Logs
+*.log
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
