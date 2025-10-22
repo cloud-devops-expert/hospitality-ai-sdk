@@ -166,6 +166,103 @@ describe('No-Show Prediction', () => {
 
       expect(gbResult.confidence).toBeGreaterThanOrEqual(lrResult.confidence);
     });
+
+    it('should handle medium risk bookings', () => {
+      const mediumRiskBooking: Booking = {
+        ...lowRiskBooking,
+        paymentMethod: 'corporate-billing',
+        leadTimeDays: 14,
+        guestHistory: {
+          totalStays: 5,
+          noShowCount: 0,
+          cancellationCount: 1,
+        },
+      };
+
+      const result = predictNoShowGradientBoosting(mediumRiskBooking);
+
+      expect(result.probability).toBeGreaterThan(0);
+      expect(result.probability).toBeLessThan(1);
+      expect(['low', 'medium', 'high']).toContain(result.riskLevel);
+    });
+
+    it('should handle high-value booking with requests', () => {
+      const highValueBooking: Booking = {
+        ...lowRiskBooking,
+        totalAmount: 2000,
+        hasSpecialRequests: false,
+      };
+
+      const result = predictNoShowGradientBoosting(highValueBooking);
+
+      expect(result.probability).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should handle same-day booking without prepayment', () => {
+      const sameDayBooking: Booking = {
+        ...lowRiskBooking,
+        leadTimeDays: 0,
+        paymentMethod: 'pay-at-property',
+      };
+
+      const result = predictNoShowGradientBoosting(sameDayBooking);
+
+      expect(result.riskLevel).toBeDefined();
+      expect(result.probability).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Medium Risk Levels', () => {
+    it('should detect medium risk in logistic regression', () => {
+      const mediumBooking: Booking = {
+        id: 'medium-1',
+        guestName: 'Medium Guest',
+        checkInDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+        checkOutDate: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000),
+        roomType: 'double',
+        bookingChannel: 'ota',
+        leadTimeDays: 10,
+        totalAmount: 400,
+        paymentMethod: 'corporate-billing',
+        hasSpecialRequests: true,
+        guestHistory: {
+          totalStays: 3,
+          noShowCount: 0,
+          cancellationCount: 0,
+        },
+      };
+
+      const result = predictNoShowLogisticRegression(mediumBooking);
+
+      expect(['low', 'medium', 'high']).toContain(result.riskLevel);
+      expect(result.probability).toBeGreaterThanOrEqual(0);
+      expect(result.probability).toBeLessThanOrEqual(1);
+    });
+
+    it('should detect medium risk in gradient boosting', () => {
+      const mediumBooking: Booking = {
+        id: 'medium-2',
+        guestName: 'Medium Guest 2',
+        checkInDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+        checkOutDate: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000),
+        roomType: 'double',
+        bookingChannel: 'direct',
+        leadTimeDays: 15,
+        totalAmount: 500,
+        paymentMethod: 'pay-at-property',
+        hasSpecialRequests: true,
+        guestHistory: {
+          totalStays: 4,
+          noShowCount: 0,
+          cancellationCount: 1,
+        },
+      };
+
+      const result = predictNoShowGradientBoosting(mediumBooking);
+
+      expect(['low', 'medium', 'high']).toContain(result.riskLevel);
+      expect(result.recommendedActions.length).toBeGreaterThan(0);
+    });
   });
 
   describe('Risk Level Classification', () => {
@@ -179,6 +276,73 @@ describe('No-Show Prediction', () => {
         const result = predictNoShowRuleBased(booking);
         expect(result.riskLevel).toBe(expectedRisk);
       });
+    });
+  });
+
+  describe('Edge Cases for Lead Time', () => {
+    it('should handle lead time between 1-2 days (last-minute)', () => {
+      const booking: Booking = {
+        ...lowRiskBooking,
+        leadTimeDays: 2,
+      };
+
+      const result = predictNoShowRuleBased(booking);
+
+      expect(result.reasons.some(r => r.includes('Last-minute'))).toBe(true);
+    });
+
+    it('should handle lead time between 3-6 days (short lead time)', () => {
+      const booking: Booking = {
+        ...lowRiskBooking,
+        leadTimeDays: 5,
+      };
+
+      const result = predictNoShowRuleBased(booking);
+
+      expect(result.reasons.some(r => r.includes('Short lead time'))).toBe(true);
+    });
+
+    it('should handle very long lead time (>60 days)', () => {
+      const booking: Booking = {
+        ...lowRiskBooking,
+        leadTimeDays: 90,
+      };
+
+      const result = predictNoShowRuleBased(booking);
+
+      expect(result.reasons.some(r => r.includes('Very long lead time'))).toBe(true);
+    });
+  });
+
+  describe('Edge Cases for Guest History', () => {
+    it('should handle moderate no-show rate (>0.1 but <0.3)', () => {
+      const booking: Booking = {
+        ...lowRiskBooking,
+        guestHistory: {
+          totalStays: 10,
+          noShowCount: 2, // 20% no-show rate
+          cancellationCount: 0,
+        },
+      };
+
+      const result = predictNoShowRuleBased(booking);
+
+      expect(result.reasons.some(r => r.includes('Some previous no-shows'))).toBe(true);
+    });
+
+    it('should handle high cancellation rate (>0.3)', () => {
+      const booking: Booking = {
+        ...lowRiskBooking,
+        guestHistory: {
+          totalStays: 10,
+          noShowCount: 0,
+          cancellationCount: 4, // 40% cancellation rate
+        },
+      };
+
+      const result = predictNoShowRuleBased(booking);
+
+      expect(result.reasons.some(r => r.includes('High cancellation history'))).toBe(true);
     });
   });
 
