@@ -1,24 +1,20 @@
-import type { Metadata } from 'next'
-import { Rubik } from 'next/font/google'
-import './globals.css'
-import { ThemeProvider } from '@/components/ThemeProvider'
+import type { Metadata } from 'next';
+import { Rubik } from 'next/font/google';
+import './globals.css';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const rubik = Rubik({
   subsets: ['latin'],
   variable: '--font-rubik',
   display: 'swap',
-})
+});
 
 export const metadata: Metadata = {
   title: 'Hospitality AI SDK',
   description: 'AI-powered tools for hospitality management',
-}
+};
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={rubik.variable}>
@@ -32,5 +28,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

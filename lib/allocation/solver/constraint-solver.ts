@@ -5,8 +5,6 @@
 
 import type {
   HotelAllocation,
-  GuestBooking,
-  Room,
   HardSoftScore,
   ConstraintMatch,
   TenantConstraintConfig,
@@ -25,7 +23,9 @@ export class ConstraintSolver {
     const client = getConstraintConfigClient();
     const constraints = await client.getTenantConstraints(allocation.tenantId);
 
-    console.log(`[Solver] Loaded ${constraints.length} constraints for tenant ${allocation.tenantId}`);
+    console.warn(
+      `[Solver] Loaded ${constraints.length} constraints for tenant ${allocation.tenantId}`
+    );
 
     // 2. Generate initial solution (greedy assignment)
     const solution = this.generateInitialSolution(allocation);
@@ -51,7 +51,7 @@ export class ConstraintSolver {
    */
   private generateInitialSolution(allocation: HotelAllocation): HotelAllocation {
     const availableRooms = [...allocation.rooms];
-    const bookings = allocation.bookings.map(booking => ({ ...booking }));
+    const bookings = allocation.bookings.map((booking) => ({ ...booking }));
 
     // Sort bookings: VIPs first, then by check-in date
     bookings.sort((a, b) => {
@@ -61,9 +61,7 @@ export class ConstraintSolver {
 
     // Assign rooms greedily
     for (const booking of bookings) {
-      const candidates = availableRooms.filter(
-        room => room.type === booking.requestedRoomType
-      );
+      const candidates = availableRooms.filter((room) => room.type === booking.requestedRoomType);
 
       if (candidates.length > 0) {
         // Pick first matching room (can be improved with scoring)
@@ -104,7 +102,9 @@ export class ConstraintSolver {
       iterations++;
     }
 
-    console.log(`[Solver] Completed ${iterations} iterations, score: ${bestScore.hardScore}hard/${bestScore.softScore}soft`);
+    console.warn(
+      `[Solver] Completed ${iterations} iterations, score: ${bestScore.hardScore}hard/${bestScore.softScore}soft`
+    );
 
     return best;
   }
@@ -113,7 +113,7 @@ export class ConstraintSolver {
    * Generate neighbor solution by swapping assignments
    */
   private generateNeighbor(solution: HotelAllocation): HotelAllocation {
-    const bookings = solution.bookings.map(b => ({ ...b }));
+    const bookings = solution.bookings.map((b) => ({ ...b }));
 
     // Pick two random bookings
     const i = Math.floor(Math.random() * bookings.length);
@@ -156,12 +156,10 @@ export class ConstraintSolver {
       if (!evaluator) continue;
 
       for (const booking of solution.bookings) {
-        const match = evaluator.evaluator(
-          booking,
-          solution.bookings,
-          solution.rooms,
-          { ...config.parameters, weight: config.weight }
-        );
+        const match = evaluator.evaluator(booking, solution.bookings, solution.rooms, {
+          ...config.parameters,
+          weight: config.weight,
+        });
 
         if (match) {
           hardScore += match.score.hardScore;

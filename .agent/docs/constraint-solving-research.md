@@ -22,6 +22,7 @@ This research evaluates OptaPlanner and its actively-developed fork Timefold for
 ## 1. OptaPlanner: Status & Overview
 
 ### Current Status
+
 - **Version**: Red Hat Build of OptaPlanner 8.29 (last documented version)
 - **License**: Apache 2.0 (open source)
 - **Status**: **End of Life** (Spring 2024)
@@ -31,12 +32,14 @@ This research evaluates OptaPlanner and its actively-developed fork Timefold for
 ### What is OptaPlanner?
 
 OptaPlanner is a constraint satisfaction solver that optimizes planning problems using:
+
 - Advanced optimization heuristics and metaheuristics
 - Efficient score calculation
 - Pure Java implementation (runs on any JVM)
 - 100% open source under Apache License 2.0
 
 ### Core Capabilities
+
 - Constraint programming (CP)
 - Optimization algorithms (genetic algorithms, simulated annealing, tabu search, etc.)
 - Score-based evaluation of solutions
@@ -44,7 +47,9 @@ OptaPlanner is a constraint satisfaction solver that optimizes planning problems
 - Built-in integration with Red Hat Decision Manager and Process Automation Manager
 
 ### Integration with Red Hat Products
+
 OptaPlanner is a built-in component of:
+
 - Red Hat Decision Manager 7.11, 7.12
 - Red Hat Process Automation Manager 7.11, 7.12
 
@@ -57,6 +62,7 @@ In 2022, Red Hat's strategy changed, making it clear the project needed a new su
 ## 2. Timefold: The Active Fork
 
 ### Current Status
+
 - **Forked**: April 20, 2023 from OptaPlanner
 - **Latest Version**: 1.27.0 (October 14, 2025)
 - **GitHub**: https://github.com/TimefoldAI/timefold-solver
@@ -74,6 +80,7 @@ The fork was created by a dedicated open-source company co-founded by the OptaPl
 ### Licensing: Open Core Model
 
 **Timefold Community Edition**:
+
 - License: Apache 2.0 (same as OptaPlanner)
 - Cost: FREE
 - Features: Full constraint solver capabilities
@@ -81,6 +88,7 @@ The fork was created by a dedicated open-source company co-founded by the OptaPl
 - GitHub: https://github.com/TimefoldAI/timefold-solver
 
 **Timefold Enterprise Edition**:
+
 - License: Proprietary
 - Cost: Commercial subscription
 - Features: Multi-threaded solving, nearby selection optimization, dedicated support
@@ -91,21 +99,25 @@ The fork was created by a dedicated open-source company co-founded by the OptaPl
 ### Key Improvements Over OptaPlanner
 
 **Performance**:
+
 - **2x faster** out-of-the-box
 - Optimized score calculation
 - Better memory efficiency
 
 **Distribution Size**:
+
 - **41% smaller** jar-with-dependencies
 - Reduced transitive dependencies
 - Removed Drools (XStream removed due to CVEs)
 
 **Modern Stack**:
+
 - **Java 17+** required (Java 21 supported)
 - **Jakarta** instead of javax (Spring Boot 3, Quarkus 3 compatible)
 - **Constraint Streams** only (deprecated scoreDRL removed)
 
 **Development & Community**:
+
 - GitHub Issues (not JIRA)
 - GitHub Discussions (not Google Groups)
 - Regular releases with bug fixes and new features
@@ -116,6 +128,7 @@ The fork was created by a dedicated open-source company co-founded by the OptaPl
 **Migration Time**: ~2 minutes using automated tools
 
 **Automated Migration Commands**:
+
 ```bash
 # Maven
 mvn ai.timefold.solver:timefold-solver-migration:migrate
@@ -125,6 +138,7 @@ gradle migrateToTimefold
 ```
 
 **Key Changes**:
+
 - Package names: `org.optaplanner` → `ai.timefold.solver`
 - Artifact IDs: `optaplanner-*` → `timefold-solver-*`
 - Class renames: `OptaPlannerJacksonModule` → `TimefoldJacksonModule`
@@ -139,15 +153,16 @@ gradle migrateToTimefold
 
 ### Supported Languages
 
-| Language | Support Level | Performance | Status |
-|----------|--------------|-------------|--------|
-| **Java** | Native | 100% baseline | Primary |
-| **Kotlin** | Native | ~100% | Primary |
-| **Python** | Bindings | ~50-58% slower | Available |
-| **JavaScript** | None | N/A | Not available |
-| **TypeScript** | None | N/A | Not available |
+| Language       | Support Level | Performance    | Status        |
+| -------------- | ------------- | -------------- | ------------- |
+| **Java**       | Native        | 100% baseline  | Primary       |
+| **Kotlin**     | Native        | ~100%          | Primary       |
+| **Python**     | Bindings      | ~50-58% slower | Available     |
+| **JavaScript** | None          | N/A            | Not available |
+| **TypeScript** | None          | N/A            | Not available |
 
 ### Java/Kotlin (Primary)
+
 - Native implementation
 - Full feature set
 - Best performance
@@ -159,15 +174,18 @@ gradle migrateToTimefold
 **Package**: https://pypi.org/project/timefold/
 
 **Requirements**:
+
 - Python 3.10+
 - JDK 17+ with `JAVA_HOME` set
 
 **Installation**:
+
 ```bash
 pip install timefold
 ```
 
 **Performance Warning**:
+
 > "Using Timefold Solver in Python is significantly slower than using Timefold Solver for Java or Kotlin."
 
 **Benchmark**: ~50-58% slower than Java implementation
@@ -175,6 +193,7 @@ pip install timefold
 **Use Case**: Prototyping, non-performance-critical workloads, Python-heavy ecosystems
 
 **Example** (School Timetabling):
+
 ```python
 from dataclasses import dataclass, field
 from timefold.solver import planning_entity, planning_solution, PlanningVariable
@@ -202,6 +221,7 @@ class TimeTable:
 **Status**: No official bindings or ports exist.
 
 **Alternatives for JS/TS Ecosystems**:
+
 1. **REST API approach** (recommended for Node.js integration)
 2. **JavaScript constraint solvers** (different capabilities, see Section 6)
 3. **Python bindings** via serverless functions (not recommended due to performance)
@@ -263,6 +283,7 @@ Timefold provides 15 quickstart examples, several relevant to hospitality:
 #### Room Allocation with Guest Preferences
 
 **Problem**: Assign guests to rooms considering:
+
 - Room type (single, double, suite)
 - Floor preference (high/low, specific floor)
 - View preference (ocean, city, garden)
@@ -274,6 +295,7 @@ Timefold provides 15 quickstart examples, several relevant to hospitality:
 - Family rooms near each other
 
 **Constraints**:
+
 - Hard: Room capacity, availability dates, accessibility requirements
 - Soft: Preferences (weighted), room upgrade opportunities, housekeeping efficiency
 
@@ -282,6 +304,7 @@ Timefold provides 15 quickstart examples, several relevant to hospitality:
 #### Staff Scheduling Optimization
 
 **Problem**: Create optimal shift schedules for:
+
 - Front desk agents
 - Housekeepers
 - Restaurant/bar staff
@@ -289,6 +312,7 @@ Timefold provides 15 quickstart examples, several relevant to hospitality:
 - Concierge service
 
 **Constraints**:
+
 - Hard: Shift coverage, skills match, labor laws, max hours
 - Soft: Preference satisfaction, fairness, consecutive days off, shift rotation
 
@@ -297,6 +321,7 @@ Timefold provides 15 quickstart examples, several relevant to hospitality:
 #### Housekeeping Route Optimization
 
 **Problem**: Optimize daily cleaning routes considering:
+
 - Room locations (floor, wing)
 - Checkout vs. stay-over priorities
 - Staff assignments
@@ -304,6 +329,7 @@ Timefold provides 15 quickstart examples, several relevant to hospitality:
 - Break times
 
 **Constraints**:
+
 - Hard: All rooms cleaned by deadline, staff availability
 - Soft: Minimize travel time, balance workload, guest disturbance minimization
 
@@ -312,6 +338,7 @@ Timefold provides 15 quickstart examples, several relevant to hospitality:
 #### Restaurant Table Assignment
 
 **Problem**: Assign reservations to tables optimally:
+
 - Table capacity and party size
 - Time slots and duration
 - VIP/preferred seating
@@ -319,6 +346,7 @@ Timefold provides 15 quickstart examples, several relevant to hospitality:
 - Server assignments
 
 **Constraints**:
+
 - Hard: Capacity, time availability, reservation commitments
 - Soft: Preference satisfaction, table turnover optimization, server workload balance
 
@@ -327,6 +355,7 @@ Timefold provides 15 quickstart examples, several relevant to hospitality:
 #### Conference Room Booking
 
 **Problem**: Allocate hotel conference/meeting rooms:
+
 - Multiple simultaneous events
 - Setup/teardown time
 - Equipment requirements (A/V, catering)
@@ -334,6 +363,7 @@ Timefold provides 15 quickstart examples, several relevant to hospitality:
 - Adjacent room needs
 
 **Constraints**:
+
 - Hard: Room capacity, equipment availability, time conflicts
 - Soft: Customer preferences, setup efficiency, cost optimization
 
@@ -350,6 +380,7 @@ Since Timefold is Java-based and there are no native JavaScript bindings, integr
 #### Strategy 1: REST API Microservice (RECOMMENDED)
 
 **Architecture**:
+
 ```
 ┌─────────────────┐         ┌──────────────────┐
 │   Next.js App   │  HTTP   │  Timefold Service│
@@ -370,6 +401,7 @@ Since Timefold is Java-based and there are no native JavaScript bindings, integr
    - Deploy as Docker container or GraalVM native image
 
 2. **Example Quarkus REST API**:
+
 ```java
 @Path("/room-allocation")
 public class RoomAllocationResource {
@@ -393,6 +425,7 @@ public class RoomAllocationResource {
 ```
 
 3. **Next.js API Route** (TypeScript):
+
 ```typescript
 // app/api/allocate-rooms/route.ts
 export async function POST(request: Request) {
@@ -402,7 +435,7 @@ export async function POST(request: Request) {
   const response = await fetch('http://timefold-service:8080/room-allocation/solve', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(problem)
+    body: JSON.stringify(problem),
   });
 
   const solution = await response.json();
@@ -411,6 +444,7 @@ export async function POST(request: Request) {
 ```
 
 **Advantages**:
+
 - Clean separation of concerns
 - Each service uses optimal language
 - Horizontal scaling of solver service
@@ -418,6 +452,7 @@ export async function POST(request: Request) {
 - Industry-standard approach
 
 **Disadvantages**:
+
 - Network latency overhead
 - Operational complexity (multiple services)
 - Requires Docker/Kubernetes for deployment
@@ -429,6 +464,7 @@ export async function POST(request: Request) {
 #### Strategy 2: GraalVM Native Image
 
 **Architecture**:
+
 ```
 Timefold Service (Quarkus)
       ↓
@@ -442,6 +478,7 @@ Timefold Service (Quarkus)
 ```
 
 **Benefits**:
+
 - **20x faster startup** (70ms vs 1.2s JVM)
 - **Smaller footprint** (~50MB vs ~200MB JVM)
 - **Lower memory usage**
@@ -449,29 +486,33 @@ Timefold Service (Quarkus)
 - **Kubernetes/serverless ideal**
 
 **Tradeoffs**:
+
 - **~42% slower solving** (124k vs 213k score calculations/sec)
 - No JIT optimizations
 - Longer compilation time
 
 **Performance Comparison** (School Timetabling):
 
-| Metric | JVM | GraalVM Native |
-|--------|-----|----------------|
-| Startup | 1.216s | 0.070s (20x faster) |
+| Metric         | JVM     | GraalVM Native       |
+| -------------- | ------- | -------------------- |
+| Startup        | 1.216s  | 0.070s (20x faster)  |
 | Score calc/sec | 213,780 | 124,774 (42% slower) |
-| Memory | Higher | Lower |
+| Memory         | Higher  | Lower                |
 
 **Recommendation**: Use native images for:
+
 - Rapid startup scenarios (serverless, autoscaling)
 - Short-running optimization tasks (<1 minute)
 - Cost-sensitive cloud deployments
 
 Use JVM for:
+
 - Long-running optimization (>5 minutes)
 - Maximum solving performance
 - Background batch processing
 
 **Build Example**:
+
 ```bash
 # Build native image with Quarkus
 ./mvnw package -Pnative
@@ -487,15 +528,18 @@ Use JVM for:
 #### Strategy 3: JNI (Java Native Interface) Bindings
 
 **Architecture**:
+
 ```
 Node.js → Native Module (C++) → JNI → Java/Timefold
 ```
 
 **Advantages**:
+
 - Single process
 - No network overhead
 
 **Disadvantages**:
+
 - Complex to build and maintain
 - JVM lifecycle management in Node process
 - Platform-specific binaries
@@ -554,6 +598,7 @@ Based on the project's philosophy of **cost-effectiveness** and **pragmatism**:
 **Implementation Phases**:
 
 **Phase 1**: Traditional JavaScript Implementation (MVP)
+
 - Implement `lib/allocation/traditional.ts`
 - Rule-based room allocation
 - Weighted preference scoring
@@ -561,6 +606,7 @@ Based on the project's philosophy of **cost-effectiveness** and **pragmatism**:
 - Ships immediately
 
 **Phase 2**: Timefold Integration (Advanced Feature)
+
 - Create Timefold microservice (Quarkus)
 - Compile to GraalVM native image
 - Containerize with Docker
@@ -568,12 +614,14 @@ Based on the project's philosophy of **cost-effectiveness** and **pragmatism**:
 - Add cost/usage tracking
 
 **Phase 3**: Hybrid Logic
+
 - Create `lib/allocation/hybrid.ts`
 - Decision tree: traditional → Timefold escalation
 - Thresholds: complexity, constraint count, preference weights
 - Performance monitoring
 
 **Alignment with Project Philosophy**:
+
 - ✅ Traditional method first
 - ✅ AI/advanced method optional
 - ✅ Cost-effectiveness (85%+ handled by free traditional)
@@ -595,21 +643,25 @@ Since Timefold has no JavaScript bindings, here are pure JavaScript alternatives
 **License**: MIT (or check current)
 
 **Description**:
+
 - Fast TypeScript implementation of Cassowary constraint solving algorithm
 - Based on seminal Cassowary paper
 - Redesigned to be lightweight and fast
 - Potential WebAssembly compilation
 
 **Best For**:
+
 - UI layout constraints
 - Linear constraint satisfaction
 - Geometric constraints
 
 **Not Ideal For**:
+
 - Complex scheduling (lacks metaheuristics)
 - Large-scale optimization
 
 **Installation**:
+
 ```bash
 npm install @lume/kiwi
 ```
@@ -622,6 +674,7 @@ npm install @lume/kiwi
 **NPM**: `cassowary`
 
 **Description**:
+
 - Improved version of Greg Badros's JavaScript port
 - Hierarchical constraint toolkit
 - Dramatically improved performance vs. original
@@ -637,6 +690,7 @@ npm install @lume/kiwi
 **GitHub**: https://github.com/JWally/jsLPSolver
 
 **Description**:
+
 - Linear programming solver
 - Simplex algorithm
 - Resource allocation problems
@@ -657,10 +711,12 @@ For scheduling and optimization problems, genetic algorithms can provide approxi
 **NPM**: `genetic-js`
 
 **Description**:
+
 - Advanced genetic and evolutionary algorithm library
 - Written in JavaScript
 
 **Best For**:
+
 - Scheduling problems
 - Approximate optimization
 - Custom fitness functions
@@ -672,6 +728,7 @@ For scheduling and optimization problems, genetic algorithms can provide approxi
 **NPM**: `geneticalgorithm`
 
 **Description**:
+
 - Calculation framework for artificial evolution
 - Used for Engineering and Mathematics problems
 
@@ -684,6 +741,7 @@ For scheduling and optimization problems, genetic algorithms can provide approxi
 **NPM**: Search "framp" on npm
 
 **Description**:
+
 - Genetic algorithm specifically for timetabling problems
 - Directly relevant to room scheduling
 
@@ -706,6 +764,7 @@ For scheduling and optimization problems, genetic algorithms can provide approxi
 **NPM**: `constrained`
 
 **Description**:
+
 - Finds feasible solution to constraint systems
 - Based on cassowary.js
 - Simplex algorithm
@@ -718,6 +777,7 @@ For scheduling and optimization problems, genetic algorithms can provide approxi
 **JavaScript Support**: None officially
 
 **Third-Party**:
+
 - `node_or_tools` (npm) - Old, unmaintained Node.js bindings for TSP/VRP
 - Not recommended
 
@@ -725,38 +785,42 @@ For scheduling and optimization problems, genetic algorithms can provide approxi
 
 ### Comparison: JavaScript Alternatives vs. Timefold
 
-| Feature | Timefold | Kiwi.js | Genetic-js | JS LP Solver |
-|---------|----------|---------|------------|--------------|
-| **Language** | Java/Kotlin | TypeScript | JavaScript | JavaScript |
-| **Algorithm** | Metaheuristics, CP | Cassowary (Simplex) | Genetic Algorithms | Simplex |
-| **Use Case** | Complex scheduling | UI layout, linear | Approx. optimization | Linear programming |
-| **Performance** | Excellent | Good | Moderate | Good |
-| **Constraint Types** | Hard/soft, weighted | Linear | Custom fitness | Linear |
-| **Scheduling** | Excellent | Poor | Moderate | Poor |
-| **Learning Curve** | Moderate | Low | Moderate | Low |
-| **Production Ready** | Yes | Yes | Yes | Yes |
-| **Hospitality Fit** | Excellent | Poor | Moderate | Poor |
+| Feature              | Timefold            | Kiwi.js             | Genetic-js           | JS LP Solver       |
+| -------------------- | ------------------- | ------------------- | -------------------- | ------------------ |
+| **Language**         | Java/Kotlin         | TypeScript          | JavaScript           | JavaScript         |
+| **Algorithm**        | Metaheuristics, CP  | Cassowary (Simplex) | Genetic Algorithms   | Simplex            |
+| **Use Case**         | Complex scheduling  | UI layout, linear   | Approx. optimization | Linear programming |
+| **Performance**      | Excellent           | Good                | Moderate             | Good               |
+| **Constraint Types** | Hard/soft, weighted | Linear              | Custom fitness       | Linear             |
+| **Scheduling**       | Excellent           | Poor                | Moderate             | Poor               |
+| **Learning Curve**   | Moderate            | Low                 | Moderate             | Low                |
+| **Production Ready** | Yes                 | Yes                 | Yes                  | Yes                |
+| **Hospitality Fit**  | Excellent           | Poor                | Moderate             | Poor               |
 
 ---
 
 ### Recommendation for Hospitality AI SDK
 
 **For Simple Allocation** (Phase 1):
+
 - Use **custom traditional algorithm** (weighted scoring)
 - No external dependencies
 - Fast, predictable, cheap
 
 **For Advanced Allocation** (Phase 2):
+
 - Use **Timefold microservice** (REST API)
 - Complex constraints
 - Optimal solutions
 - Optional feature flag
 
 **Not Recommended**:
+
 - JavaScript constraint solvers for room allocation (insufficient capabilities)
 - Genetic algorithms for production scheduling (too unpredictable)
 
 **Exception**:
+
 - If Timefold integration is impossible, use genetic algorithms (e.g., `genetic-js`) as a compromise for moderate complexity cases
 
 ---
@@ -785,6 +849,7 @@ For scheduling and optimization problems, genetic algorithms can provide approxi
 ### Quickstart Examples (15 Total)
 
 **Directly Relevant to Hospitality**:
+
 1. Vehicle Routing - https://github.com/TimefoldAI/timefold-quickstarts (housekeeping routes)
 2. Employee Scheduling - (staff shifts)
 3. Meeting Scheduling - (conference rooms)
@@ -794,6 +859,7 @@ For scheduling and optimization problems, genetic algorithms can provide approxi
 7. Maintenance Scheduling - (facility maintenance)
 
 **Technologies in Examples**:
+
 - Java (primary)
 - Kotlin
 - Quarkus (primary framework)
@@ -826,6 +892,7 @@ For scheduling and optimization problems, genetic algorithms can provide approxi
 **Problem**: School Timetabling
 
 **Domain Model** (Java):
+
 ```java
 @PlanningEntity
 public class Lesson {
@@ -868,6 +935,7 @@ public class TimeTable {
 ```
 
 **Constraints** (Constraint Streams):
+
 ```java
 public class TimeTableConstraintProvider implements ConstraintProvider {
 
@@ -895,6 +963,7 @@ public class TimeTableConstraintProvider implements ConstraintProvider {
 ```
 
 **REST Endpoint**:
+
 ```java
 @Path("/timetables")
 public class TimeTableResource {
@@ -917,6 +986,7 @@ public class TimeTableResource {
 ### Example 2: Hotel Room Allocation (Conceptual Timefold)
 
 **Domain Model** (Java):
+
 ```java
 @PlanningEntity
 public class GuestStay {
@@ -956,6 +1026,7 @@ public class HotelAllocation {
 ```
 
 **Constraints**:
+
 ```java
 public class HotelConstraintProvider implements ConstraintProvider {
 
@@ -1004,6 +1075,7 @@ public class HotelConstraintProvider implements ConstraintProvider {
 ### Example 3: Node.js Integration (TypeScript)
 
 **Timefold Service Client**:
+
 ```typescript
 // lib/allocation/timefold-client.ts
 
@@ -1024,13 +1096,11 @@ export class TimefoldClient {
     this.baseUrl = baseUrl;
   }
 
-  async solveRoomAllocation(
-    problem: RoomAllocationProblem
-  ): Promise<RoomAllocationSolution> {
+  async solveRoomAllocation(problem: RoomAllocationProblem): Promise<RoomAllocationSolution> {
     const response = await fetch(`${this.baseUrl}/room-allocation/solve`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(problem)
+      body: JSON.stringify(problem),
     });
 
     if (!response.ok) {
@@ -1041,25 +1111,21 @@ export class TimefoldClient {
   }
 
   async getSolverStatus(problemId: string): Promise<string> {
-    const response = await fetch(
-      `${this.baseUrl}/room-allocation/status/${problemId}`
-    );
+    const response = await fetch(`${this.baseUrl}/room-allocation/status/${problemId}`);
     return response.json();
   }
 }
 ```
 
 **Hybrid Allocation Logic**:
+
 ```typescript
 // lib/allocation/hybrid.ts
 
 import { traditionalAllocate } from './traditional';
 import { TimefoldClient } from './timefold-client';
 
-export async function allocateRooms(
-  guestStays: GuestStay[],
-  availableRooms: Room[]
-) {
+export async function allocateRooms(guestStays: GuestStay[], availableRooms: Room[]) {
   // Step 1: Try traditional algorithm
   const traditionalResult = traditionalAllocate(guestStays, availableRooms);
 
@@ -1080,7 +1146,7 @@ export async function allocateRooms(
   const timefoldClient = new TimefoldClient();
   const solution = await timefoldClient.solveRoomAllocation({
     guestStays,
-    availableRooms
+    availableRooms,
   });
 
   // Track cost (hypothetical pricing)
@@ -1088,7 +1154,7 @@ export async function allocateRooms(
     timestamp: new Date(),
     constraintCount: guestStays.length,
     computeTimeMs: solution.metadata?.computeTimeMs,
-    estimatedCost: 0.001 // example cost tracking
+    estimatedCost: 0.001, // example cost tracking
   });
 
   return solution;
@@ -1124,18 +1190,16 @@ export interface Room {
   bookings: Array<{ checkIn: Date; checkOut: Date }>;
 }
 
-export function traditionalAllocate(
-  guestStays: GuestStay[],
-  availableRooms: Room[]
-) {
+export function traditionalAllocate(guestStays: GuestStay[], availableRooms: Room[]) {
   const allocations = [];
 
   for (const stay of guestStays) {
     // Find compatible rooms (hard constraints)
-    const compatibleRooms = availableRooms.filter(room =>
-      room.type === stay.requestedType &&
-      (!stay.preferences.accessibility || room.accessible) &&
-      !hasConflict(room, stay.checkIn, stay.checkOut)
+    const compatibleRooms = availableRooms.filter(
+      (room) =>
+        room.type === stay.requestedType &&
+        (!stay.preferences.accessibility || room.accessible) &&
+        !hasConflict(room, stay.checkIn, stay.checkOut)
     );
 
     if (compatibleRooms.length === 0) {
@@ -1144,9 +1208,9 @@ export function traditionalAllocate(
     }
 
     // Score rooms based on preferences (soft constraints)
-    const scoredRooms = compatibleRooms.map(room => ({
+    const scoredRooms = compatibleRooms.map((room) => ({
       room,
-      score: calculatePreferenceScore(room, stay.preferences)
+      score: calculatePreferenceScore(room, stay.preferences),
     }));
 
     // Assign best match
@@ -1156,19 +1220,18 @@ export function traditionalAllocate(
     // Book the room
     bestRoom.bookings.push({
       checkIn: stay.checkIn,
-      checkOut: stay.checkOut
+      checkOut: stay.checkOut,
     });
 
     allocations.push({
       ...stay,
       assignedRoom: bestRoom,
       satisfied: true,
-      preferenceScore: scoredRooms[0].score
+      preferenceScore: scoredRooms[0].score,
     });
   }
 
-  const satisfactionRate = allocations.filter(a => a.satisfied).length /
-    allocations.length;
+  const satisfactionRate = allocations.filter((a) => a.satisfied).length / allocations.length;
 
   return { allocations, satisfactionRate };
 }
@@ -1182,14 +1245,8 @@ function calculatePreferenceScore(room: Room, preferences: any): number {
   return score;
 }
 
-function hasConflict(
-  room: Room,
-  checkIn: Date,
-  checkOut: Date
-): boolean {
-  return room.bookings.some(booking =>
-    (checkIn < booking.checkOut && checkOut > booking.checkIn)
-  );
+function hasConflict(room: Room, checkIn: Date, checkOut: Date): boolean {
+  return room.bookings.some((booking) => checkIn < booking.checkOut && checkOut > booking.checkIn);
 }
 ```
 
@@ -1206,12 +1263,14 @@ function hasConflict(
 ### Timefold Performance (Java)
 
 **School Timetabling** (400 lessons, 5 timeslots, 5 rooms):
+
 - Score calculations: **213,780/sec** (JVM)
 - Score calculations: **124,774/sec** (GraalVM native, 42% slower)
 - Startup time: **1.216s** (JVM)
 - Startup time: **0.070s** (GraalVM native, 20x faster)
 
 **Employee Rostering** (medium dataset):
+
 - Solving time: ~30 seconds for near-optimal solution
 - Constraints: 10+ hard, 15+ soft
 
@@ -1222,6 +1281,7 @@ function hasConflict(
 ### Traditional JavaScript (Estimated)
 
 **Room Allocation** (100 rooms, 50 bookings):
+
 - Execution time: <20ms
 - No external dependencies
 - Predictable performance
@@ -1263,6 +1323,7 @@ function hasConflict(
    - Cost: **$0-50/month** (depends on usage)
 
 **Compute Cost**:
+
 - Typical solve: <1 second
 - Minimal CPU usage for REST API
 - Cost: **Included in infrastructure**
@@ -1276,10 +1337,12 @@ function hasConflict(
 ### Hybrid Approach (Recommended)
 
 **Phase 1** (Traditional):
+
 - Cost: $0
 - Handles: 85% of cases
 
 **Phase 2** (Timefold Escalation):
+
 - Cost: $5-20/month (Docker VPS)
 - Handles: 15% complex cases
 - Increases overall satisfaction to 95%+
@@ -1295,7 +1358,9 @@ function hasConflict(
 ### Development Environment
 
 **Local Development**:
+
 1. Run Timefold microservice locally via Docker:
+
    ```bash
    docker run -p 8080:8080 timefold/quickstart-school-timetabling
    ```
@@ -1318,7 +1383,7 @@ services:
   nextjs:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - TIMEFOLD_SERVICE_URL=http://timefold:8080
       - ENABLE_TIMEFOLD_ALLOCATION=true
@@ -1328,7 +1393,7 @@ services:
   timefold:
     image: your-timefold-room-allocation:latest
     ports:
-      - "8080:8080"
+      - '8080:8080'
     environment:
       - QUARKUS_HTTP_PORT=8080
 ```
@@ -1356,17 +1421,17 @@ spec:
         app: timefold
     spec:
       containers:
-      - name: timefold
-        image: your-timefold-allocation:native
-        ports:
-        - containerPort: 8080
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
+        - name: timefold
+          image: your-timefold-allocation:native
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: '512Mi'
+              cpu: '500m'
+            limits:
+              memory: '1Gi'
+              cpu: '1000m'
 ---
 apiVersion: v1
 kind: Service
@@ -1376,8 +1441,8 @@ spec:
   selector:
     app: timefold
   ports:
-  - port: 80
-    targetPort: 8080
+    - port: 80
+      targetPort: 8080
 ```
 
 **Deploy to**: GKE, EKS, AKS, DigitalOcean Kubernetes
@@ -1389,6 +1454,7 @@ spec:
 **Platform**: Google Cloud Run, AWS Fargate
 
 **Requirements**:
+
 - GraalVM native image (for fast cold starts)
 - Dockerfile with native executable
 
@@ -1406,6 +1472,7 @@ CMD ["./application"]
 ```
 
 **Deploy**:
+
 ```bash
 # Build native image
 ./mvnw package -Pnative -Dquarkus.native.container-build=true
@@ -1444,12 +1511,14 @@ gcloud run deploy timefold-allocation \
 
 **License**: Proprietary
 **Required For**:
+
 - Multi-threaded solving
 - Nearby selection optimization
 - Dedicated support
 - Enterprise SLAs
 
 **Not Required For**:
+
 - Basic constraint solving
 - REST API deployment
 - Production use of Community Edition
@@ -1461,6 +1530,7 @@ gcloud run deploy timefold-allocation \
 ### Apache 2.0 License Summary
 
 **You CAN**:
+
 - Use commercially
 - Modify the code
 - Distribute
@@ -1468,11 +1538,13 @@ gcloud run deploy timefold-allocation \
 - Use patents
 
 **You MUST**:
+
 - Include copyright notice
 - Include license text
 - State changes made to code
 
 **You CANNOT**:
+
 - Hold liable
 - Use trademarks
 
@@ -1482,12 +1554,12 @@ gcloud run deploy timefold-allocation \
 
 ### JavaScript Library Licenses
 
-| Library | License | Commercial Use |
-|---------|---------|----------------|
-| Kiwi.js | MIT (or check) | ✅ Yes |
-| Cassowary.js | Apache/LGPL (verify) | ✅ Yes (Apache) |
-| genetic-js | MIT (likely) | ✅ Yes |
-| javascript-lp-solver | MIT (likely) | ✅ Yes |
+| Library              | License              | Commercial Use  |
+| -------------------- | -------------------- | --------------- |
+| Kiwi.js              | MIT (or check)       | ✅ Yes          |
+| Cassowary.js         | Apache/LGPL (verify) | ✅ Yes (Apache) |
+| genetic-js           | MIT (likely)         | ✅ Yes          |
+| javascript-lp-solver | MIT (likely)         | ✅ Yes          |
 
 **Always verify current license** in package.json before using.
 
@@ -1498,7 +1570,9 @@ gcloud run deploy timefold-allocation \
 ### For Hospitality AI SDK
 
 #### Immediate Term (Phase 1)
+
 ✅ **Implement traditional JavaScript allocation algorithm**
+
 - Rule-based constraint satisfaction
 - Weighted preference scoring
 - File: `lib/allocation/traditional.ts`
@@ -1507,11 +1581,13 @@ gcloud run deploy timefold-allocation \
 - Satisfaction: 85%+
 
 ✅ **Create demo UI in Next.js**
+
 - Room allocation demo page
 - Visual constraint feedback
 - Traditional algorithm showcase
 
 ✅ **Document approach in experiments**
+
 - Cost analysis
 - Performance benchmarks
 - Satisfaction metrics
@@ -1519,7 +1595,9 @@ gcloud run deploy timefold-allocation \
 ---
 
 #### Medium Term (Phase 2)
+
 ✅ **Build Timefold microservice**
+
 - Use Quarkus quickstart (Meeting Scheduling or Bed Allocation as template)
 - Adapt to hotel room allocation domain
 - Expose REST API
@@ -1527,11 +1605,13 @@ gcloud run deploy timefold-allocation \
 - Dockerize
 
 ✅ **Deploy Timefold as optional service**
+
 - Docker Compose for easy deployment
 - Environment variable: `ENABLE_TIMEFOLD_ALLOCATION=false` (default)
 - Instructions for self-hosting
 
 ✅ **Implement hybrid logic**
+
 - File: `lib/allocation/hybrid.ts`
 - Decision tree: traditional first, escalate to Timefold if needed
 - Cost tracking
@@ -1539,18 +1619,22 @@ gcloud run deploy timefold-allocation \
 ---
 
 #### Long Term (Phase 3)
+
 ✅ **Optimize and scale**
+
 - Kubernetes deployment guides
 - Autoscaling based on solver load
 - Caching layer for repeated problems
 - Batch solving for efficiency
 
 ✅ **Expand use cases**
+
 - Staff scheduling (Employee Rostering template)
 - Housekeeping routes (Vehicle Routing template)
 - Conference room allocation (Meeting Scheduling template)
 
 ✅ **Community feedback**
+
 - Gather real-world hospitality use cases
 - Optimize constraint weights
 - Add domain-specific features
@@ -1560,23 +1644,28 @@ gcloud run deploy timefold-allocation \
 ### What NOT to Do
 
 ❌ **Do NOT use JavaScript constraint solvers** for complex scheduling
+
 - Insufficient capabilities for hospitality constraints
 - Unpredictable genetic algorithms
 - No support for hard/soft constraint separation
 
 ❌ **Do NOT use Timefold by default**
+
 - Traditional method first (cost-effectiveness)
 - Timefold as opt-in escalation only
 
 ❌ **Do NOT use OptaPlanner**
+
 - EOL status (Spring 2024)
 - Use Timefold instead
 
 ❌ **Do NOT use Python bindings for performance-critical paths**
+
 - 50%+ performance penalty
 - Use Java/Kotlin for Timefold service
 
 ❌ **Do NOT use JNI bindings**
+
 - Complex, fragile, platform-specific
 - Maintenance nightmare
 
@@ -1590,19 +1679,23 @@ gcloud run deploy timefold-allocation \
    - https://docs.timefold.ai/timefold-solver/latest/quickstart/overview
 
 2. **Clone Quickstarts Repository**:
+
    ```bash
    git clone https://github.com/TimefoldAI/timefold-quickstarts.git
    cd timefold-quickstarts
    ```
 
 3. **Run Meeting Scheduling Example** (most relevant):
+
    ```bash
    cd technology/java-quarkus/meeting-scheduling
    mvn quarkus:dev
    ```
+
    Open: http://localhost:8080
 
 4. **Study Bed Allocation Example** (hospital rooms → hotel rooms):
+
    ```bash
    cd use-cases/bed-allocation
    mvn quarkus:dev
@@ -1623,26 +1716,31 @@ gcloud run deploy timefold-allocation \
 ### Learning Path
 
 **Week 1**: Traditional Implementation
+
 - Build JavaScript allocation algorithm
 - Create demo UI
 - Test with sample data
 
 **Week 2**: Timefold Exploration
+
 - Run Timefold quickstarts
 - Understand domain modeling
 - Study constraint streams
 
 **Week 3**: Timefold Adaptation
+
 - Adapt Meeting Scheduling to hotel rooms
 - Define hospitality constraints
 - Test with real-world scenarios
 
 **Week 4**: Integration
+
 - Build REST API wrapper
 - Implement hybrid logic
 - Deploy to Docker
 
 **Week 5**: Testing & Optimization
+
 - Performance testing
 - Cost analysis
 - Documentation
@@ -1697,12 +1795,14 @@ gcloud run deploy timefold-allocation \
 **Implement a two-phase approach**:
 
 **Phase 1 (MVP)**: Traditional JavaScript algorithm
+
 - Zero cost
 - Immediate shipping
 - 85%+ satisfaction for typical cases
 - Aligns with "cost-effectiveness first" philosophy
 
 **Phase 2 (Advanced)**: Optional Timefold integration
+
 - Microservice architecture
 - Feature flag controlled
 - Handles complex edge cases
@@ -1715,28 +1815,33 @@ This approach balances **pragmatism** (ship now), **cost-effectiveness** (free f
 ## 16. References
 
 ### Official Documentation
+
 - Timefold Solver: https://docs.timefold.ai/
 - Timefold GitHub: https://github.com/TimefoldAI/timefold-solver
 - Timefold Quickstarts: https://github.com/TimefoldAI/timefold-quickstarts
 - OptaPlanner (historical): https://www.optaplanner.org/
 
 ### Key Articles
+
 - OptaPlanner continues as Timefold: https://timefold.ai/blog/optaplanner-fork
 - Upgrade guide: https://timefold.ai/blog/upgrade-optaplanner-to-timefold
 - Native images: https://timefold.ai/blog/how-to-speed-up-timefold-solver-startup-time-by-20x-with-native-images
 - License details: https://timefold.ai/license
 
 ### Examples
+
 - Hospital Bed Allocation: https://www.optaplanner.org/docs/optaplanner/latest/use-cases-and-examples/bed-allocation/
 - Conference Scheduling: https://www.optaplanner.org/docs/optaplanner/latest/use-cases-and-examples/conference-scheduling/
 - Meeting Scheduling: https://www.optaplanner.org/docs/optaplanner/latest/use-cases-and-examples/meeting-scheduling/
 
 ### JavaScript Alternatives
+
 - Kiwi.js: https://github.com/IjzerenHein/kiwi.js/
 - Cassowary.js: https://github.com/slightlyoff/cassowary.js/
 - genetic-js: https://github.com/subprotocol/genetic-js
 
 ### Tutorials
+
 - Baeldung OptaPlanner Guide: https://www.baeldung.com/opta-planner
 - Quarkus + OptaPlanner: https://github.com/quarkusio/quarkus-quickstarts/tree/main/optaplanner-quickstart
 

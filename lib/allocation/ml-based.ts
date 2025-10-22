@@ -14,8 +14,8 @@ export function allocateRoomML(
   guest: Guest,
   availableRooms: Room[]
 ): AllocationResult {
-  const candidates = availableRooms.filter(room =>
-    room.type === booking.requestedRoomType && room.status === 'available'
+  const candidates = availableRooms.filter(
+    (room) => room.type === booking.requestedRoomType && room.status === 'available'
   );
 
   if (candidates.length === 0) {
@@ -24,12 +24,12 @@ export function allocateRoomML(
       assignedRoom: null,
       score: 0,
       reasons: ['No rooms available of requested type'],
-      method: 'ml-based'
+      method: 'ml-based',
     };
   }
 
   // Feature extraction for ML model
-  const scoredRooms = candidates.map(room => {
+  const scoredRooms = candidates.map((room) => {
     const features = extractFeatures(room, guest, booking);
     const score = mlPredict(features);
     const reasons = generateReasons(room, guest, features);
@@ -45,7 +45,7 @@ export function allocateRoomML(
     assignedRoom: best.room,
     score: best.score,
     reasons: best.reasons,
-    method: 'ml-based'
+    method: 'ml-based',
   };
 }
 
@@ -71,26 +71,30 @@ interface RoomFeatures {
 
 function extractFeatures(room: Room, guest: Guest, _booking: Booking): RoomFeatures {
   // Normalize features to 0-1 range
-  const viewScore = {
-    'ocean': 1.0,
-    'city': 0.7,
-    'garden': 0.6,
-    'courtyard': 0.4,
-  }[room.view] || 0.5;
+  const viewScore =
+    {
+      ocean: 1.0,
+      city: 0.7,
+      garden: 0.6,
+      courtyard: 0.4,
+    }[room.view] || 0.5;
 
   const viewMatch = guest.preferences.view === room.view ? 1.0 : 0.0;
 
   const floorMatch = guest.preferences.floor
-    ? matchFloorPreference(room.floor, guest.preferences.floor) ? 1.0 : 0.5
+    ? matchFloorPreference(room.floor, guest.preferences.floor)
+      ? 1.0
+      : 0.5
     : 0.7;
 
-  const smokingMatch = guest.preferences.smoking !== undefined
-    ? (guest.preferences.smoking === room.smokingAllowed ? 1.0 : 0.0)
-    : 0.7;
+  const smokingMatch =
+    guest.preferences.smoking !== undefined
+      ? guest.preferences.smoking === room.smokingAllowed
+        ? 1.0
+        : 0.0
+      : 0.7;
 
-  const quietMatch = guest.preferences.quiet
-    ? (room.floor > 2 ? 1.0 : 0.3)
-    : 0.7;
+  const quietMatch = guest.preferences.quiet ? (room.floor > 2 ? 1.0 : 0.3) : 0.7;
 
   return {
     floor: room.floor / 15, // Normalize assuming max 15 floors
@@ -100,7 +104,9 @@ function extractFeatures(room: Room, guest: Guest, _booking: Booking): RoomFeatu
     smoking: room.smokingAllowed ? 1.0 : 0.0,
     vipScore: guest.vipStatus ? 1.0 : 0.0,
     loyaltyScore: Math.min(guest.previousStays / 10, 1.0),
-    budgetFit: guest.budgetMax ? (1 - Math.abs(room.basePrice - guest.budgetMax) / guest.budgetMax) : 0.7,
+    budgetFit: guest.budgetMax
+      ? 1 - Math.abs(room.basePrice - guest.budgetMax) / guest.budgetMax
+      : 0.7,
     viewMatch,
     floorMatch,
     smokingMatch,
@@ -116,11 +122,11 @@ function mlPredict(features: RoomFeatures): number {
   // Learned weights (simulated - in production, these come from training)
   const weights = {
     viewMatch: 0.25,
-    smokingMatch: 0.20,
+    smokingMatch: 0.2,
     accessibility: 0.15,
     floorMatch: 0.12,
-    quietMatch: 0.10,
-    budgetFit: 0.10,
+    quietMatch: 0.1,
+    budgetFit: 0.1,
     vipScore: 0.08,
     viewScore: 0.05,
     loyaltyScore: 0.03,
@@ -155,7 +161,8 @@ function generateReasons(room: Room, guest: Guest, features: RoomFeatures): stri
 
   if (features.viewMatch === 1.0) reasons.push('Perfect view match');
   if (features.smokingMatch === 1.0) reasons.push('Smoking preference matched');
-  if (features.accessibility === 1.0 && guest.preferences.accessible) reasons.push('Accessible room');
+  if (features.accessibility === 1.0 && guest.preferences.accessible)
+    reasons.push('Accessible room');
   if (features.vipScore === 1.0) reasons.push('VIP preference applied');
   if (features.loyaltyScore > 0.5) reasons.push('Loyalty guest bonus');
   if (features.budgetFit > 0.8) reasons.push('Within budget');
@@ -182,7 +189,7 @@ export const ML_ALLOCATION_MODELS: Record<string, MLAllocationModel> = {
     accuracy: 0.89,
     description: 'Local ML model with learned weights from historical data.',
   },
-  'clustering': {
+  clustering: {
     name: 'K-Means Clustering',
     type: 'clustering',
     cost: 0,

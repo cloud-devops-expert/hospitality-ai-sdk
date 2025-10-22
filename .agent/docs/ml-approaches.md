@@ -7,6 +7,7 @@ Comprehensive comparison of Machine Learning approaches vs Traditional algorithm
 > **The right tool for the right job, at the right cost.**
 
 This SDK provides multiple implementation approaches for each feature:
+
 - **Traditional**: Rule-based, algorithmic, statistical methods (Free, Fast)
 - **Browser ML**: Local models running in browser (Free, Medium speed)
 - **Cloud ML**: API-based models (Paid, Variable speed)
@@ -18,16 +19,17 @@ This SDK provides multiple implementation approaches for each feature:
 
 ### Available Methods
 
-| Method | Type | Cost/1K ops | Latency | Accuracy | Best For |
-|--------|------|-------------|---------|----------|----------|
-| **Traditional (Keywords)** | Rule-based | $0 | 5ms | 72% | High volume, simple cases |
-| **Browser ML** | Transformers.js | $0 | 50ms | 75% | Privacy, offline capability |
-| **OpenAI Embeddings** | Cloud API | $0.01 | 300ms | 88% | Semantic understanding |
-| **OpenAI GPT-3.5** | Cloud API | $0.50 | 800ms | 92% | Complex nuanced text |
+| Method                     | Type            | Cost/1K ops | Latency | Accuracy | Best For                    |
+| -------------------------- | --------------- | ----------- | ------- | -------- | --------------------------- |
+| **Traditional (Keywords)** | Rule-based      | $0          | 5ms     | 72%      | High volume, simple cases   |
+| **Browser ML**             | Transformers.js | $0          | 50ms    | 75%      | Privacy, offline capability |
+| **OpenAI Embeddings**      | Cloud API       | $0.01       | 300ms   | 88%      | Semantic understanding      |
+| **OpenAI GPT-3.5**         | Cloud API       | $0.50       | 800ms   | 92%      | Complex nuanced text        |
 
 ### Implementation Details
 
 **Traditional (Keywords)**
+
 ```typescript
 // lib/sentiment/traditional.ts
 - Simple keyword matching
@@ -37,6 +39,7 @@ This SDK provides multiple implementation approaches for each feature:
 ```
 
 **Browser ML (Transformers.js)**
+
 ```typescript
 // lib/sentiment/ml-browser.ts
 - Runs in browser/Node.js
@@ -47,6 +50,7 @@ This SDK provides multiple implementation approaches for each feature:
 ```
 
 **Hybrid Approach**
+
 ```typescript
 // lib/sentiment/hybrid.ts
 1. Try traditional first
@@ -68,16 +72,17 @@ This SDK provides multiple implementation approaches for each feature:
 
 ### Available Methods
 
-| Method | Type | Cost/1K ops | Latency | Accuracy | Best For |
-|--------|------|-------------|---------|----------|----------|
-| **Rule-Based** | Constraint satisfaction | $0 | 10ms | 87% | Standard bookings |
-| **Feature-Based ML** | Local neural net | $0 | 15ms | 89% | Optimal matching |
-| **K-Means Clustering** | Unsupervised ML | $0 | 25ms | 82% | Guest segmentation |
-| **Collaborative Filtering** | Recommendation | $0 | 30ms | 85% | Preference learning |
+| Method                      | Type                    | Cost/1K ops | Latency | Accuracy | Best For            |
+| --------------------------- | ----------------------- | ----------- | ------- | -------- | ------------------- |
+| **Rule-Based**              | Constraint satisfaction | $0          | 10ms    | 87%      | Standard bookings   |
+| **Feature-Based ML**        | Local neural net        | $0          | 15ms    | 89%      | Optimal matching    |
+| **K-Means Clustering**      | Unsupervised ML         | $0          | 25ms    | 82%      | Guest segmentation  |
+| **Collaborative Filtering** | Recommendation          | $0          | 30ms    | 85%      | Preference learning |
 
 ### Implementation Details
 
 **Rule-Based**
+
 ```typescript
 // lib/allocation/rule-based.ts
 - Multi-factor scoring
@@ -87,6 +92,7 @@ This SDK provides multiple implementation approaches for each feature:
 ```
 
 **ML-Based**
+
 ```typescript
 // lib/allocation/ml-based.ts
 - Feature extraction (13 features)
@@ -106,16 +112,17 @@ This SDK provides multiple implementation approaches for each feature:
 
 ### Available Methods
 
-| Method | Type | Cost/1K ops | Latency | Accuracy (R²) | Best For |
-|--------|------|-------------|---------|---------------|----------|
-| **Algorithmic** | Multi-factor formula | $0 | 5ms | 0.75 | Stable markets |
-| **Linear Regression** | Statistical ML | $0 | 8ms | 0.78 | Trend learning |
-| **Neural Network** | Deep learning | $0 | 12ms | 0.86 | Complex patterns |
-| **Random Forest** | Ensemble ML | $0 | 18ms | 0.89 | Highest accuracy |
+| Method                | Type                 | Cost/1K ops | Latency | Accuracy (R²) | Best For         |
+| --------------------- | -------------------- | ----------- | ------- | ------------- | ---------------- |
+| **Algorithmic**       | Multi-factor formula | $0          | 5ms     | 0.75          | Stable markets   |
+| **Linear Regression** | Statistical ML       | $0          | 8ms     | 0.78          | Trend learning   |
+| **Neural Network**    | Deep learning        | $0          | 12ms    | 0.86          | Complex patterns |
+| **Random Forest**     | Ensemble ML          | $0          | 18ms    | 0.89          | Highest accuracy |
 
 ### Implementation Details
 
 **Algorithmic**
+
 ```typescript
 // lib/pricing/traditional.ts
 - Seasonal adjustments
@@ -126,6 +133,7 @@ This SDK provides multiple implementation approaches for each feature:
 ```
 
 **Linear Regression**
+
 ```typescript
 // lib/pricing/ml-regression.ts
 - Feature extraction (7 features)
@@ -134,6 +142,7 @@ This SDK provides multiple implementation approaches for each feature:
 ```
 
 **Neural Network**
+
 ```typescript
 // lib/pricing/ml-regression.ts
 - 2 hidden layers (4→3 neurons)
@@ -152,17 +161,18 @@ This SDK provides multiple implementation approaches for each feature:
 
 ### Available Methods
 
-| Method | Type | Cost/1K ops | Latency | MAPE | Best For |
-|--------|------|-------------|---------|------|----------|
-| **Moving Average** | Statistical | $0 | 20ms | 19% | Baseline |
-| **ARIMA** | Time series | $0 | 35ms | 15% | Stable patterns |
-| **Prophet-like** | Additive model | $0 | 28ms | 12% | Seasonality |
-| **LSTM** | Neural network | $0 | 45ms | 17% | Complex sequences |
-| **Ensemble** | All combined | $0 | 85ms | 9% | Best accuracy |
+| Method             | Type           | Cost/1K ops | Latency | MAPE | Best For          |
+| ------------------ | -------------- | ----------- | ------- | ---- | ----------------- |
+| **Moving Average** | Statistical    | $0          | 20ms    | 19%  | Baseline          |
+| **ARIMA**          | Time series    | $0          | 35ms    | 15%  | Stable patterns   |
+| **Prophet-like**   | Additive model | $0          | 28ms    | 12%  | Seasonality       |
+| **LSTM**           | Neural network | $0          | 45ms    | 17%  | Complex sequences |
+| **Ensemble**       | All combined   | $0          | 85ms    | 9%   | Best accuracy     |
 
 ### Implementation Details
 
 **ARIMA (AutoRegressive Integrated Moving Average)**
+
 ```typescript
 // lib/forecast/ml-timeseries.ts
 - AR(2) + MA(1) model
@@ -172,6 +182,7 @@ This SDK provides multiple implementation approaches for each feature:
 ```
 
 **Prophet-like**
+
 ```typescript
 // lib/forecast/ml-timeseries.ts
 - Trend component (linear regression)
@@ -180,6 +191,7 @@ This SDK provides multiple implementation approaches for each feature:
 ```
 
 **LSTM (Long Short-Term Memory)**
+
 ```typescript
 // lib/forecast/ml-timeseries.ts
 - Recurrent neural network
@@ -199,13 +211,13 @@ This SDK provides multiple implementation approaches for each feature:
 
 ### Monthly Costs at Different Volumes
 
-| Module | Traditional | Browser ML | Cloud ML (Low) | Cloud ML (High) | Hybrid |
-|--------|-------------|------------|----------------|-----------------|--------|
-| **Sentiment (10K)** | $0 | $0 | $100 | $5,000 | $15 |
-| **Allocation (5K)** | $0 | $0 | N/A | N/A | $0 |
-| **Pricing (20K)** | $0 | $0 | N/A | N/A | $0 |
-| **Forecast (2K)** | $0 | $0 | N/A | N/A | $0 |
-| **TOTAL** | **$0** | **$0** | **$100** | **$5,000** | **$15** |
+| Module              | Traditional | Browser ML | Cloud ML (Low) | Cloud ML (High) | Hybrid  |
+| ------------------- | ----------- | ---------- | -------------- | --------------- | ------- |
+| **Sentiment (10K)** | $0          | $0         | $100           | $5,000          | $15     |
+| **Allocation (5K)** | $0          | $0         | N/A            | N/A             | $0      |
+| **Pricing (20K)**   | $0          | $0         | N/A            | N/A             | $0      |
+| **Forecast (2K)**   | $0          | $0         | N/A            | N/A             | $0      |
+| **TOTAL**           | **$0**      | **$0**     | **$100**       | **$5,000**      | **$15** |
 
 ### Break-Even Analysis
 
@@ -222,12 +234,12 @@ This SDK provides multiple implementation approaches for each feature:
 
 ### Real-Time Requirements
 
-| Use Case | Max Latency | Recommended Method |
-|----------|-------------|-------------------|
-| Live chat response | <100ms | Traditional or Browser ML |
-| Dashboard updates | <500ms | Any method |
-| Batch processing | <5s | Cloud ML acceptable |
-| Overnight reports | No limit | Ensemble methods |
+| Use Case           | Max Latency | Recommended Method        |
+| ------------------ | ----------- | ------------------------- |
+| Live chat response | <100ms      | Traditional or Browser ML |
+| Dashboard updates  | <500ms      | Any method                |
+| Batch processing   | <5s         | Cloud ML acceptable       |
+| Overnight reports  | No limit    | Ensemble methods          |
 
 ### Latency by Method Type
 
@@ -242,31 +254,35 @@ This SDK provides multiple implementation approaches for each feature:
 
 ### Hospitality Standards
 
-| Metric | Minimum | Target | Excellent |
-|--------|---------|--------|-----------|
-| **Sentiment** | 70% | 80% | 90%+ |
-| **Allocation** | 80% | 85% | 90%+ |
-| **Pricing (R²)** | 0.70 | 0.80 | 0.85+ |
-| **Forecast (MAPE)** | <20% | <15% | <10% |
+| Metric              | Minimum | Target | Excellent |
+| ------------------- | ------- | ------ | --------- |
+| **Sentiment**       | 70%     | 80%    | 90%+      |
+| **Allocation**      | 80%     | 85%    | 90%+      |
+| **Pricing (R²)**    | 0.70    | 0.80   | 0.85+     |
+| **Forecast (MAPE)** | <20%    | <15%   | <10%      |
 
 ### How We Measure
 
 **Sentiment Accuracy**
+
 - Test set of 1000 manually labeled reviews
 - Confusion matrix (precision, recall, F1)
 - Agreement with human labelers
 
 **Allocation Success**
+
 - Guest satisfaction surveys
 - Room change requests (lower = better)
 - Match rate to guest preferences
 
 **Pricing R²**
+
 - Historical occupancy vs predicted price performance
 - Revenue per available room (RevPAR)
 - Competitive set comparison
 
 **Forecast MAPE**
+
 - Mean Absolute Percentage Error
 - Actual vs predicted occupancy
 - 30-day rolling average
@@ -278,6 +294,7 @@ This SDK provides multiple implementation approaches for each feature:
 ### For Different Scale Operations
 
 #### Small Property (< 50 rooms)
+
 ```
 Sentiment: Traditional (free, good enough)
 Allocation: Rule-based (87% accuracy)
@@ -287,6 +304,7 @@ Total cost: $0/month
 ```
 
 #### Medium Property (50-200 rooms)
+
 ```
 Sentiment: Hybrid (70% traditional, 30% browser ML)
 Allocation: ML-based (89% accuracy)
@@ -296,6 +314,7 @@ Total cost: $0-15/month
 ```
 
 #### Large Property/Chain (200+ rooms)
+
 ```
 Sentiment: Hybrid with cloud escalation
 Allocation: Ensemble (rule + ML)
@@ -309,21 +328,25 @@ Total cost: $15-100/month
 ## Migration Path
 
 ### Phase 1: Start Traditional (Week 1)
+
 - Implement all traditional methods
 - Collect baseline metrics
 - Zero cost, immediate value
 
 ### Phase 2: Add Browser ML (Week 2-4)
+
 - Deploy browser-based models
 - Compare accuracy improvements
 - Still zero cost
 
 ### Phase 3: Optimize Hybrid (Month 2)
+
 - Implement smart escalation logic
 - Tune thresholds for cost/accuracy
 - Monitor monthly spend
 
 ### Phase 4: Scale & Fine-tune (Month 3+)
+
 - Collect training data
 - Retrain models monthly
 - Optimize based on actual usage
@@ -333,6 +356,7 @@ Total cost: $15-100/month
 ## Cost Optimization Strategies
 
 ### 1. Caching
+
 ```typescript
 // Cache sentiment results for 24 hours
 // Reduces API calls by 60-80%
@@ -341,6 +365,7 @@ if (cache.has(text)) return cache.get(text);
 ```
 
 ### 2. Batch Processing
+
 ```typescript
 // Process 100 reviews at once
 // Reduces overhead by 30-40%
@@ -348,6 +373,7 @@ const results = await batchAnalyze(reviews);
 ```
 
 ### 3. Smart Thresholds
+
 ```typescript
 // Only use AI when confidence is low
 if (traditionalResult.confidence < 0.6) {
@@ -356,6 +382,7 @@ if (traditionalResult.confidence < 0.6) {
 ```
 
 ### 4. Rate Limiting
+
 ```typescript
 // Cap API calls per day
 // Prevents cost spikes
@@ -367,6 +394,7 @@ if (dailyApiCalls > 1000) return traditionalFallback();
 ## Monitoring & Alerts
 
 ### Cost Monitoring
+
 ```typescript
 // Track spending in real-time
 const costTracker = {
@@ -383,10 +411,11 @@ if (costTracker.sentiment > 100) {
 ```
 
 ### Performance Monitoring
+
 ```typescript
 // Track latency percentiles
 const latencyStats = {
-  p50: 45,  // median
+  p50: 45, // median
   p95: 120, // 95th percentile
   p99: 250, // 99th percentile
 };

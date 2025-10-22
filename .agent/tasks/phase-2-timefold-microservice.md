@@ -38,6 +38,7 @@ Build a Quarkus-based Java microservice that reads tenant-specific constraints f
 ### 1. Project Setup (2-3 hours)
 
 **1.1 Create Quarkus Project**
+
 ```bash
 cd .agent/timefold-samples/
 mvn io.quarkus.platform:quarkus-maven-plugin:3.28.3:create \
@@ -48,6 +49,7 @@ mvn io.quarkus.platform:quarkus-maven-plugin:3.28.3:create \
 ```
 
 **1.2 Configure application.properties**
+
 ```properties
 # Database
 quarkus.datasource.db-kind=postgresql
@@ -76,6 +78,7 @@ quarkus.timefold.solver.termination.spent-limit=30s
 **2.1 Create Entity Classes**
 
 File: `src/main/java/ai/hospitality/domain/GuestBooking.java`
+
 ```java
 @PlanningEntity
 public class GuestBooking {
@@ -93,6 +96,7 @@ public class GuestBooking {
 ```
 
 File: `src/main/java/ai/hospitality/domain/Room.java`
+
 ```java
 public class Room {
     private UUID id;
@@ -108,6 +112,7 @@ public class Room {
 ```
 
 File: `src/main/java/ai/hospitality/domain/HotelAllocation.java`
+
 ```java
 @PlanningSolution
 public class HotelAllocation {
@@ -131,6 +136,7 @@ public class HotelAllocation {
 **3.1 Create Panache Entities**
 
 File: `src/main/java/ai/hospitality/entity/TenantEntity.java`
+
 ```java
 @Entity
 @Table(name = "tenants")
@@ -149,6 +155,7 @@ public class TenantEntity extends PanacheEntityBase {
 ```
 
 File: `src/main/java/ai/hospitality/entity/ConstraintTemplateEntity.java`
+
 ```java
 @Entity
 @Table(name = "constraint_templates")
@@ -170,6 +177,7 @@ public class ConstraintTemplateEntity extends PanacheEntityBase {
 ```
 
 File: `src/main/java/ai/hospitality/entity/TenantConstraintConfigEntity.java`
+
 ```java
 @Entity
 @Table(name = "tenant_constraint_configs")
@@ -196,6 +204,7 @@ public class TenantConstraintConfigEntity extends PanacheEntityBase {
 **3.2 Create Repository**
 
 File: `src/main/java/ai/hospitality/repository/ConstraintConfigRepository.java`
+
 ```java
 @ApplicationScoped
 public class ConstraintConfigRepository {
@@ -227,6 +236,7 @@ public class ConstraintConfigRepository {
 **4.1 Create Constraint Builder**
 
 File: `src/main/java/ai/hospitality/solver/DynamicHotelConstraintProvider.java`
+
 ```java
 @ApplicationScoped
 public class DynamicHotelConstraintProvider implements ConstraintProvider {
@@ -303,6 +313,7 @@ public class DynamicHotelConstraintProvider implements ConstraintProvider {
 **5.1 Implement Cache**
 
 File: `src/main/java/ai/hospitality/solver/MultiTenantSolverCache.java`
+
 ```java
 @ApplicationScoped
 public class MultiTenantSolverCache {
@@ -364,6 +375,7 @@ public class MultiTenantSolverCache {
 **6.1 Create API Endpoints**
 
 File: `src/main/java/ai/hospitality/rest/AllocationResource.java`
+
 ```java
 @Path("/api/allocation")
 @Produces(MediaType.APPLICATION_JSON)
@@ -427,6 +439,7 @@ public record AllocationSolution(
 **7.1 Integration Tests**
 
 File: `src/test/java/ai/hospitality/AllocationResourceTest.java`
+
 ```java
 @QuarkusTest
 public class AllocationResourceTest {
@@ -464,6 +477,7 @@ public class AllocationResourceTest {
 **8.1 Create Dockerfile**
 
 File: `Dockerfile`
+
 ```dockerfile
 FROM maven:3.9.11-eclipse-temurin-21 AS build
 WORKDIR /app
@@ -485,7 +499,7 @@ services:
   timefold-service:
     build: .
     ports:
-      - "8081:8081"
+      - '8081:8081'
     environment:
       QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://postgres:5432/hospitality_ai_cms
     depends_on:
@@ -498,7 +512,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - '5432:5432'
 ```
 
 **Deliverable**: Dockerized Timefold microservice
@@ -520,6 +534,7 @@ services:
 ## Next Phase
 
 **Phase 3**: Next.js Integration & UI
+
 - Create TypeScript client for Timefold API
 - Build admin dashboard for monitoring
 - Add real-time solver status
@@ -527,17 +542,17 @@ services:
 
 ## Estimated Timeline
 
-| Task | Time | Dependencies |
-|------|------|-------------|
-| Project Setup | 2-3h | None |
-| Domain Model | 3-4h | Setup |
-| Database Integration | 4-5h | Domain Model |
-| Constraint Provider | 6-8h | Database |
-| Solver Cache | 4-5h | Constraint Provider |
-| REST API | 3-4h | Solver Cache |
-| Testing | 4-6h | REST API |
-| Docker | 2-3h | Testing |
-| **TOTAL** | **28-38h** | **3-5 days** |
+| Task                 | Time       | Dependencies        |
+| -------------------- | ---------- | ------------------- |
+| Project Setup        | 2-3h       | None                |
+| Domain Model         | 3-4h       | Setup               |
+| Database Integration | 4-5h       | Domain Model        |
+| Constraint Provider  | 6-8h       | Database            |
+| Solver Cache         | 4-5h       | Constraint Provider |
+| REST API             | 3-4h       | Solver Cache        |
+| Testing              | 4-6h       | REST API            |
+| Docker               | 2-3h       | Testing             |
+| **TOTAL**            | **28-38h** | **3-5 days**        |
 
 ---
 

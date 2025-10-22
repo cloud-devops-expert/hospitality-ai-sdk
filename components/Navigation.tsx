@@ -1,8 +1,8 @@
-import Link from 'next/link'
-import { ThemeToggle } from './ThemeToggle'
+import Link from 'next/link';
+import { ThemeToggle } from './ThemeToggle';
 
 interface NavigationProps {
-  title: string
+  title: string;
 }
 
 export function Navigation({ title }: NavigationProps) {
@@ -14,7 +14,12 @@ export function Navigation({ title }: NavigationProps) {
           className="text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 font-medium flex items-center gap-2"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
           </svg>
           Back to Home
         </Link>
@@ -23,5 +28,5 @@ export function Navigation({ title }: NavigationProps) {
       </div>
       <ThemeToggle />
     </nav>
-  )
+  );
 }

@@ -155,7 +155,7 @@ describe('Review Response Generator', () => {
     it('should handle different platforms', () => {
       const platforms: Array<Review['platform']> = ['google', 'tripadvisor', 'booking', 'expedia'];
 
-      platforms.forEach(platform => {
+      platforms.forEach((platform) => {
         const platformReview = { ...review, platform };
         const result = generateResponseTemplate(platformReview);
 

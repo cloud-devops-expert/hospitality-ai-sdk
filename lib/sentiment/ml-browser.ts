@@ -10,7 +10,7 @@ export async function analyzeBrowserML(text: string): Promise<SentimentResult> {
   const startTime = performance.now();
 
   // Simulate browser-based ML processing
-  await new Promise(resolve => setTimeout(resolve, 50)); // Simulated model inference time
+  await new Promise((resolve) => setTimeout(resolve, 50)); // Simulated model inference time
 
   // Simple ML-like scoring (in production, replace with actual model)
   const words = text.toLowerCase().split(/\s+/);
@@ -27,20 +27,34 @@ export async function analyzeBrowserML(text: string): Promise<SentimentResult> {
 
   // Simulated ML model output (trained weights)
   const positiveWeight =
-    features.exclamationCount * 0.3 +
-    features.capitalRatio * 0.2 +
-    (wordCount > 10 ? 0.1 : -0.1);
+    features.exclamationCount * 0.3 + features.capitalRatio * 0.2 + (wordCount > 10 ? 0.1 : -0.1);
 
-  const negativeWeight =
-    features.questionCount * 0.2 +
-    (features.avgWordLength > 7 ? 0.15 : 0);
+  const negativeWeight = features.questionCount * 0.2 + (features.avgWordLength > 7 ? 0.15 : 0);
 
   // Simple sentiment keywords for the simulation
-  const positiveWords = ['great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'love', 'perfect', 'beautiful'];
-  const negativeWords = ['terrible', 'awful', 'horrible', 'bad', 'worst', 'hate', 'disgusting', 'poor'];
+  const positiveWords = [
+    'great',
+    'excellent',
+    'amazing',
+    'wonderful',
+    'fantastic',
+    'love',
+    'perfect',
+    'beautiful',
+  ];
+  const negativeWords = [
+    'terrible',
+    'awful',
+    'horrible',
+    'bad',
+    'worst',
+    'hate',
+    'disgusting',
+    'poor',
+  ];
 
-  const positiveCount = words.filter(w => positiveWords.includes(w)).length;
-  const negativeCount = words.filter(w => negativeWords.includes(w)).length;
+  const positiveCount = words.filter((w) => positiveWords.includes(w)).length;
+  const negativeCount = words.filter((w) => negativeWords.includes(w)).length;
 
   const score = (positiveCount - negativeCount + positiveWeight - negativeWeight) / 10;
   const normalizedScore = Math.max(-1, Math.min(1, score));
@@ -51,7 +65,7 @@ export async function analyzeBrowserML(text: string): Promise<SentimentResult> {
     score: normalizedScore,
     sentiment: normalizedScore > 0.2 ? 'positive' : normalizedScore < -0.2 ? 'negative' : 'neutral',
     confidence: 0.75 + Math.random() * 0.15, // Simulated confidence
-    keywords: [...words.filter(w => positiveWords.includes(w) || negativeWords.includes(w))],
+    keywords: [...words.filter((w) => positiveWords.includes(w) || negativeWords.includes(w))],
     method: 'browser-ml',
     processingTime,
   };
@@ -86,7 +100,7 @@ export const ML_MODELS: Record<string, MLModelInfo> = {
   'openai-gpt': {
     name: 'OpenAI GPT-3.5',
     type: 'api',
-    cost: 0.50, // $0.50 per 1k tokens
+    cost: 0.5, // $0.50 per 1k tokens
     avgLatency: 800,
     accuracy: 0.92,
     description: 'Full LLM analysis. Highest accuracy, most expensive.',

@@ -197,24 +197,28 @@ Implement a hybrid room allocation system using traditional JavaScript algorithm
 ## Success Criteria
 
 ### Phase 1
+
 ✅ Traditional algorithm achieves 85%+ satisfaction
 ✅ Performance <20ms for typical scenarios
 ✅ Demo page functional
 ✅ Zero infrastructure cost
 
 ### Phase 2
+
 ✅ Timefold microservice solves allocations correctly
 ✅ All constraints satisfied (hard) or optimized (soft)
 ✅ GraalVM native image builds successfully
 ✅ Docker container runs and is <100MB
 
 ### Phase 3
+
 ✅ Hybrid logic works seamlessly
 ✅ Traditional handles 80%+ of cases
 ✅ Timefold escalation improves satisfaction to 95%+
 ✅ Cost tracking implemented
 
 ### Phase 4
+
 ✅ Documentation complete
 ✅ Deployment guide clear
 ✅ Community feedback positive
@@ -224,16 +228,19 @@ Implement a hybrid room allocation system using traditional JavaScript algorithm
 ## Resources
 
 ### Learning
+
 - Timefold Docs: https://docs.timefold.ai/
 - Quickstarts: https://github.com/TimefoldAI/timefold-quickstarts
 - Research: `.agent/docs/constraint-solving-research.md`
 
 ### Examples
+
 - Meeting Scheduling: `timefold-quickstarts/technology/java-quarkus/meeting-scheduling/`
 - Bed Allocation: `timefold-quickstarts/use-cases/bed-allocation/`
 - Employee Scheduling: `timefold-quickstarts/use-cases/employee-scheduling/`
 
 ### Community
+
 - GitHub Discussions: https://github.com/TimefoldAI/timefold-solver/discussions
 - Stack Overflow: Tag `timefold`
 

@@ -3,6 +3,7 @@
 ## The Challenge
 
 **Requirements**:
+
 1. ✅ Multi-tenant SaaS platform
 2. ✅ Tenant-specific rules (Hotel A has different rules than Hotel B)
 3. ✅ Rules configurable via UI (no code changes)
@@ -11,12 +12,14 @@
 6. ✅ Rule templates (predefined constraints with configurable parameters)
 
 **Traditional Timefold Problem**:
+
 ```java
 // ❌ Hard-coded constraints - same for all tenants
 .reward(HardSoftScore.ofSoft(100))  // Fixed weight
 ```
 
 **What We Need**:
+
 ```typescript
 // ✅ Database-driven constraints - different per tenant
 .reward(HardSoftScore.ofSoft(tenantConfig.vipOceanViewWeight))
@@ -66,6 +69,7 @@
 ## Database Schema
 
 ### Table 1: `tenants`
+
 ```sql
 CREATE TABLE tenants (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -77,6 +81,7 @@ CREATE TABLE tenants (
 ```
 
 ### Table 2: `constraint_templates`
+
 ```sql
 CREATE TABLE constraint_templates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -110,6 +115,7 @@ INSERT INTO constraint_templates (constraint_type, category, name, description, 
 ```
 
 ### Table 3: `tenant_constraint_configs`
+
 ```sql
 CREATE TABLE tenant_constraint_configs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -129,6 +135,7 @@ CREATE INDEX idx_tenant_constraints ON tenant_constraint_configs(tenant_id);
 ```
 
 ### Table 4: `constraint_config_history`
+
 ```sql
 CREATE TABLE constraint_config_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -482,7 +489,7 @@ public class TenantConstraintConfigResource {
 ```typescript
 // src/payload/collections/TenantConstraintConfigs.ts
 
-import { CollectionConfig } from 'payload/types'
+import { CollectionConfig } from 'payload/types';
 
 export const TenantConstraintConfigs: CollectionConfig = {
   slug: 'tenant-constraint-configs',
@@ -568,7 +575,7 @@ export const TenantConstraintConfigs: CollectionConfig = {
       },
     },
   ],
-}
+};
 ```
 
 ---
@@ -700,6 +707,7 @@ export default function TenantConstraintsPage({ params }: { params: { tenantId: 
 ## Example: Tenant-Specific Configurations
 
 ### Tenant A: Luxury Resort
+
 ```json
 {
   "tenant_id": "resort-oceanview",
@@ -707,14 +715,14 @@ export default function TenantConstraintsPage({ params }: { params: { tenantId: 
     {
       "type": "VIP_OCEAN_VIEW",
       "enabled": true,
-      "weight": 150,  // Very important (higher than default 100)
+      "weight": 150, // Very important (higher than default 100)
       "parameters": {
-        "minLoyaltyTier": 2  // Gold and Platinum get ocean view priority
+        "minLoyaltyTier": 2 // Gold and Platinum get ocean view priority
       }
     },
     {
       "type": "BUDGET_CONSTRAINT",
-      "enabled": false  // Luxury resort - ignore budget
+      "enabled": false // Luxury resort - ignore budget
     },
     {
       "type": "LOYALTY_UPGRADE",
@@ -724,7 +732,7 @@ export default function TenantConstraintsPage({ params }: { params: { tenantId: 
         "tierWeights": {
           "silver": 80,
           "gold": 120,
-          "platinum": 150  // Extra generous for platinum
+          "platinum": 150 // Extra generous for platinum
         }
       }
     }
@@ -733,31 +741,33 @@ export default function TenantConstraintsPage({ params }: { params: { tenantId: 
 ```
 
 ### Tenant B: Budget Hotel
+
 ```json
 {
   "tenant_id": "hotel-budget-inn",
   "constraints": [
     {
       "type": "VIP_OCEAN_VIEW",
-      "enabled": false  // No VIP program
+      "enabled": false // No VIP program
     },
     {
       "type": "BUDGET_CONSTRAINT",
       "enabled": true,
-      "weight": -100,  // Budget very important (higher penalty)
+      "weight": -100, // Budget very important (higher penalty)
       "parameters": {
-        "budgetBufferPercent": 5  // Only 5% buffer
+        "budgetBufferPercent": 5 // Only 5% buffer
       }
     },
     {
       "type": "LOYALTY_UPGRADE",
-      "enabled": false  // No loyalty program
+      "enabled": false // No loyalty program
     }
   ]
 }
 ```
 
 ### Tenant C: Business Hotel
+
 ```json
 {
   "tenant_id": "hotel-business-center",
@@ -765,15 +775,15 @@ export default function TenantConstraintsPage({ params }: { params: { tenantId: 
     {
       "type": "QUIET_LOCATION",
       "enabled": true,
-      "weight": 80,  // Very important for business travelers
+      "weight": 80, // Very important for business travelers
       "parameters": {
-        "quietFloorMin": 5  // Floors 5+ only for quiet
+        "quietFloorMin": 5 // Floors 5+ only for quiet
       }
     },
     {
       "type": "KITCHENETTE_PREFERENCE",
       "enabled": true,
-      "weight": 60,  // Important for extended stays
+      "weight": 60, // Important for extended stays
       "parameters": {}
     }
   ]
@@ -840,6 +850,7 @@ public class MultiTenantSolverCache {
 ## Migration Path
 
 ### Phase 1: Setup Database
+
 ```sql
 -- Run migration scripts
 -- Populate constraint templates
@@ -847,6 +858,7 @@ public class MultiTenantSolverCache {
 ```
 
 ### Phase 2: Update Timefold Service
+
 ```java
 // Replace static ConstraintProvider with DynamicHotelConstraintProvider
 // Add tenant_id to solve requests
@@ -854,6 +866,7 @@ public class MultiTenantSolverCache {
 ```
 
 ### Phase 3: Build Admin UI
+
 ```typescript
 // PayloadCMS collections
 // Next.js constraint management pages
@@ -861,6 +874,7 @@ public class MultiTenantSolverCache {
 ```
 
 ### Phase 4: Testing & Rollout
+
 ```
 // Test with multiple tenants
 // Verify hot-reloading works
@@ -887,4 +901,3 @@ public class MultiTenantSolverCache {
 - Java code: `.agent/timefold-samples/hotel-room-allocation-example.java`
 - Constraint guide: `.agent/docs/hotel-constraints-guide.md`
 - This architecture: `.agent/docs/timefold-multi-tenant-rules-architecture.md`
-

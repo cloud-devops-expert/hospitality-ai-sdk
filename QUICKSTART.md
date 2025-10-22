@@ -18,23 +18,28 @@ Open [http://localhost:3000](http://localhost:3000)
 ## Try the Features
 
 ### 1. Sentiment Analysis
+
 Navigate to `/sentiment`
 
 **Try this review:**
+
 ```
 The room was absolutely amazing! Clean, comfortable, and the staff were incredibly helpful. Would definitely recommend!
 ```
 
 **Expected Result:**
+
 - Sentiment: POSITIVE
 - Score: ~0.8
 - Method: Traditional (no API cost)
 - Processing time: ~5ms
 
 ### 2. Room Allocation
+
 Navigate to `/allocation`
 
 **Try this configuration:**
+
 - Guest Name: John Doe
 - Room Type: Double
 - VIP Status: ✓ Checked
@@ -42,31 +47,38 @@ Navigate to `/allocation`
 - Preferred Floor: High
 
 **Expected Result:**
+
 - Assigned Room: Room 802 (Deluxe, Ocean view, Floor 8)
 - Match Score: 90/100
 - Reasons: VIP ocean view priority, High floor preference matched
 
 ### 3. Dynamic Pricing
+
 Navigate to `/pricing`
 
 **Try this configuration:**
+
 - Base Price: $200
 - Room Type: Suite
 - Check-in Date: Any Friday in July
 - Occupancy Rate: 85%
 
 **Expected Result:**
+
 - Final Price: ~$450-500
 - Adjustments: High season +30%, Friday +15%, High demand +15%, Suite premium +50%
 
 ### 4. Demand Forecast
+
 Navigate to `/forecast`
 
 **Settings:**
+
 - Forecast Period: 14 days
 - Click "Generate Forecast"
 
 **Expected Result:**
+
 - Predicted occupancy for next 14 days
 - Trend detection (increasing/decreasing/stable)
 - Seasonality pattern (weekly)
@@ -75,11 +87,13 @@ Navigate to `/forecast`
 ## Enable AI Features (Optional)
 
 1. Create `.env` file:
+
 ```bash
 cp .env.example .env
 ```
 
 2. Add your OpenAI API key:
+
 ```
 OPENAI_API_KEY=sk-...your-key-here
 NEXT_PUBLIC_ENABLE_LLM=true
@@ -127,6 +141,7 @@ lib/
 ### Sentiment Analysis
 
 **Score Range**: -1 (very negative) to 1 (very positive)
+
 - 0.7 to 1.0: Very positive
 - 0.2 to 0.7: Positive
 - -0.2 to 0.2: Neutral
@@ -134,6 +149,7 @@ lib/
 - -1.0 to -0.7: Very negative
 
 **Confidence**: 0 to 1
+
 - > 0.7: High confidence (reliable result)
 - 0.3 to 0.7: Medium confidence
 - < 0.3: Low confidence (escalate to AI)
@@ -141,6 +157,7 @@ lib/
 ### Room Allocation
 
 **Match Score**: 0 to 100
+
 - 80-100: Excellent match
 - 60-80: Good match
 - 40-60: Acceptable match
@@ -149,6 +166,7 @@ lib/
 ### Dynamic Pricing
 
 **Price Adjustments**:
+
 - Positive (red): Price increase
 - Negative (green): Discount
 - Each adjustment shows factor, amount, and percentage
@@ -156,11 +174,13 @@ lib/
 ### Demand Forecast
 
 **Confidence**:
+
 - > 80%: Reliable forecast
 - 60-80%: Moderate confidence
 - < 60%: Use with caution
 
 **Trend**:
+
 - ↗ Increasing: Demand going up
 - ↘ Decreasing: Demand going down
 - → Stable: No significant change
@@ -168,17 +188,20 @@ lib/
 ## Common Issues
 
 ### Module not found
+
 ```bash
 npm install
 ```
 
 ### Port 3000 already in use
+
 ```bash
 # Use different port
 PORT=3001 npm run dev
 ```
 
 ### API key not working
+
 - Check `.env` file exists in root directory
 - Verify `OPENAI_API_KEY` format: `sk-...`
 - Restart dev server after changing `.env`
@@ -210,17 +233,21 @@ PORT=3001 npm run dev
 ## Production Deployment
 
 ### Vercel (Recommended)
+
 ```bash
 npm install -g vercel
 vercel
 ```
 
 ### Environment Variables
+
 Set in Vercel dashboard:
+
 - `OPENAI_API_KEY` (optional)
 - `NEXT_PUBLIC_ENABLE_LLM=true` (if using AI)
 
 ### Build
+
 ```bash
 npm run build
 npm start

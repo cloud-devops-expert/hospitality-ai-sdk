@@ -11,8 +11,8 @@ export function allocateRoomRuleBased(
   availableRooms: Room[]
 ): AllocationResult {
   // Filter rooms by type
-  const candidates = availableRooms.filter(room =>
-    room.type === booking.requestedRoomType && room.status === 'available'
+  const candidates = availableRooms.filter(
+    (room) => room.type === booking.requestedRoomType && room.status === 'available'
   );
 
   if (candidates.length === 0) {
@@ -21,12 +21,12 @@ export function allocateRoomRuleBased(
       assignedRoom: null,
       score: 0,
       reasons: ['No rooms available of requested type'],
-      method: 'rule-based'
+      method: 'rule-based',
     };
   }
 
   // Score each candidate room
-  const scoredRooms = candidates.map(room => {
+  const scoredRooms = candidates.map((room) => {
     let score = 50; // Base score
     const roomReasons: string[] = [];
 
@@ -105,7 +105,7 @@ export function allocateRoomRuleBased(
     assignedRoom: best.room,
     score: best.score,
     reasons: best.reasons,
-    method: 'rule-based'
+    method: 'rule-based',
   };
 }
 
@@ -140,7 +140,7 @@ export function batchAllocate(
     const guest = guests.get(booking.guestId);
     if (!guest) continue;
 
-    const availableRooms = rooms.filter(r => !assignedRoomIds.has(r.id));
+    const availableRooms = rooms.filter((r) => !assignedRoomIds.has(r.id));
     const result = allocateRoomRuleBased(booking, guest, availableRooms);
 
     if (result.assignedRoom) {

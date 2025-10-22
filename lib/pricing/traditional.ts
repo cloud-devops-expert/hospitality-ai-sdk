@@ -28,17 +28,17 @@ export interface PricingResult {
 const SEASONAL_PATTERNS = {
   high: [5, 6, 7, 11, 12], // June, July, August, December, January (month indices)
   shoulder: [3, 4, 8, 9], // April, May, September, October
-  low: [0, 1, 2, 10] // February, March, November, January
+  low: [0, 1, 2, 10], // February, March, November, January
 };
 
 const DAY_OF_WEEK_MULTIPLIERS = {
-  0: 0.9,  // Sunday
+  0: 0.9, // Sunday
   1: 0.85, // Monday
   2: 0.85, // Tuesday
-  3: 0.9,  // Wednesday
-  4: 1.0,  // Thursday
+  3: 0.9, // Wednesday
+  4: 1.0, // Thursday
   5: 1.15, // Friday
-  6: 1.1   // Saturday
+  6: 1.1, // Saturday
 };
 
 export function calculateDynamicPrice(params: PricingParams): PricingResult {
@@ -54,14 +54,14 @@ export function calculateDynamicPrice(params: PricingParams): PricingResult {
     adjustments.push({
       factor: 'High Season',
       amount: params.basePrice * 0.3,
-      percentage: 30
+      percentage: 30,
     });
   } else if (SEASONAL_PATTERNS.low.includes(month)) {
     seasonMultiplier = 0.8;
     adjustments.push({
       factor: 'Low Season',
       amount: -params.basePrice * 0.2,
-      percentage: -20
+      percentage: -20,
     });
   }
   currentPrice *= seasonMultiplier;
@@ -74,7 +74,7 @@ export function calculateDynamicPrice(params: PricingParams): PricingResult {
     adjustments.push({
       factor: 'Day of Week',
       amount: dowAdjustment,
-      percentage: (dowMultiplier - 1) * 100
+      percentage: (dowMultiplier - 1) * 100,
     });
   }
   currentPrice *= dowMultiplier;
@@ -85,7 +85,7 @@ export function calculateDynamicPrice(params: PricingParams): PricingResult {
     adjustments.push({
       factor: 'High Demand (>90% occupancy)',
       amount: demandAdjustment,
-      percentage: 25
+      percentage: 25,
     });
     currentPrice += demandAdjustment;
   } else if (params.occupancyRate > 0.75) {
@@ -93,7 +93,7 @@ export function calculateDynamicPrice(params: PricingParams): PricingResult {
     adjustments.push({
       factor: 'Medium Demand (>75% occupancy)',
       amount: demandAdjustment,
-      percentage: 15
+      percentage: 15,
     });
     currentPrice += demandAdjustment;
   } else if (params.occupancyRate < 0.4) {
@@ -101,7 +101,7 @@ export function calculateDynamicPrice(params: PricingParams): PricingResult {
     adjustments.push({
       factor: 'Low Demand (<40% occupancy)',
       amount: demandAdjustment,
-      percentage: -15
+      percentage: -15,
     });
     currentPrice += demandAdjustment;
   }
@@ -112,7 +112,7 @@ export function calculateDynamicPrice(params: PricingParams): PricingResult {
     adjustments.push({
       factor: 'Early Booking (>60 days)',
       amount: earlyBirdDiscount,
-      percentage: -10
+      percentage: -10,
     });
     currentPrice += earlyBirdDiscount;
   } else if (params.daysUntilStay < 3 && params.occupancyRate < 0.7) {
@@ -121,17 +121,17 @@ export function calculateDynamicPrice(params: PricingParams): PricingResult {
     adjustments.push({
       factor: 'Last Minute Deal',
       amount: lastMinuteDiscount,
-      percentage: -20
+      percentage: -20,
     });
     currentPrice += lastMinuteDiscount;
   }
 
   // 5. Room type premium
   const roomTypePremiums: Record<string, number> = {
-    'suite': 0.5,
-    'deluxe': 0.3,
-    'double': 0.1,
-    'single': 0
+    suite: 0.5,
+    deluxe: 0.3,
+    double: 0.1,
+    single: 0,
   };
   const typePremium = roomTypePremiums[params.roomType.toLowerCase()] || 0;
   if (typePremium > 0) {
@@ -139,7 +139,7 @@ export function calculateDynamicPrice(params: PricingParams): PricingResult {
     adjustments.push({
       factor: `${params.roomType} Premium`,
       amount: premiumAmount,
-      percentage: typePremium * 100
+      percentage: typePremium * 100,
     });
     currentPrice += premiumAmount;
   }
@@ -148,14 +148,11 @@ export function calculateDynamicPrice(params: PricingParams): PricingResult {
     originalPrice: params.basePrice,
     finalPrice: Math.round(currentPrice * 100) / 100,
     adjustments,
-    method: 'traditional'
+    method: 'traditional',
   };
 }
 
-export function calculateMovingAverage(
-  historicalPrices: number[],
-  windowSize: number = 7
-): number {
+export function calculateMovingAverage(historicalPrices: number[], windowSize: number = 7): number {
   if (historicalPrices.length === 0) return 0;
 
   const relevantPrices = historicalPrices.slice(-windowSize);
@@ -171,7 +168,7 @@ export function predictOccupancy(
   const targetMonth = targetDate.getMonth();
   const targetDay = targetDate.getDay();
 
-  const similarDays = historicalOccupancy.filter(record => {
+  const similarDays = historicalOccupancy.filter((record) => {
     const recordMonth = record.date.getMonth();
     const recordDay = record.date.getDay();
     return recordMonth === targetMonth && recordDay === targetDay;
@@ -180,7 +177,7 @@ export function predictOccupancy(
   if (similarDays.length === 0) {
     // Fallback to monthly average
     const monthlyData = historicalOccupancy.filter(
-      record => record.date.getMonth() === targetMonth
+      (record) => record.date.getMonth() === targetMonth
     );
     if (monthlyData.length === 0) return 0.5; // Default 50%
 

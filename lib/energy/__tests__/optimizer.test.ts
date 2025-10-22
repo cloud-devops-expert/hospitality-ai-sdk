@@ -24,11 +24,11 @@ describe('Energy Optimization', () => {
       const result = optimizeEnergyScheduleBased(sampleRooms, 28);
 
       const settingsArray = Array.from(result.roomSettings.entries());
-      const vacantSettings = settingsArray.filter(([roomId]) =>
-        !sampleRooms.find(r => r.roomId === roomId)?.occupied
+      const vacantSettings = settingsArray.filter(
+        ([roomId]) => !sampleRooms.find((r) => r.roomId === roomId)?.occupied
       );
-      const occupiedSettings = settingsArray.filter(([roomId]) =>
-        sampleRooms.find(r => r.roomId === roomId)?.occupied
+      const occupiedSettings = settingsArray.filter(
+        ([roomId]) => sampleRooms.find((r) => r.roomId === roomId)?.occupied
       );
 
       vacantSettings.forEach(([, setting]) => {
@@ -40,15 +40,17 @@ describe('Energy Optimization', () => {
     it('should respect guest temperature preferences', () => {
       const result = optimizeEnergyScheduleBased(sampleRooms, 28);
 
-      sampleRooms.filter(r => r.occupied && r.guestPreferences).forEach(room => {
-        const setting = result.roomSettings.get(room.roomId);
-        expect(setting?.targetTemp).toBe(room.guestPreferences!.preferredTemp);
-      });
+      sampleRooms
+        .filter((r) => r.occupied && r.guestPreferences)
+        .forEach((room) => {
+          const setting = result.roomSettings.get(room.roomId);
+          expect(setting?.targetTemp).toBe(room.guestPreferences!.preferredTemp);
+        });
     });
 
     it('should calculate cost correctly', () => {
-      const allOccupied = sampleRooms.map(r => ({ ...r, occupied: true }));
-      const allVacant = sampleRooms.map(r => ({ ...r, occupied: false }));
+      const allOccupied = sampleRooms.map((r) => ({ ...r, occupied: true }));
+      const allVacant = sampleRooms.map((r) => ({ ...r, occupied: false }));
 
       const occupiedResult = optimizeEnergyScheduleBased(allOccupied, 28);
       const vacantResult = optimizeEnergyScheduleBased(allVacant, 28);
@@ -76,7 +78,7 @@ describe('Energy Optimization', () => {
 
     it('should have higher savings with more vacant rooms', () => {
       const lowOccupancy = sampleRooms.map((r, i) => ({ ...r, occupied: i === 0 }));
-      const highOccupancy = sampleRooms.map(r => ({ ...r, occupied: true }));
+      const highOccupancy = sampleRooms.map((r) => ({ ...r, occupied: true }));
 
       const lowResult = optimizeEnergyScheduleBased(lowOccupancy, 28);
       const highResult = optimizeEnergyScheduleBased(highOccupancy, 28);
@@ -87,7 +89,7 @@ describe('Energy Optimization', () => {
 
   describe('Edge Cases', () => {
     it('should handle all occupied rooms', () => {
-      const allOccupied = sampleRooms.map(r => ({ ...r, occupied: true }));
+      const allOccupied = sampleRooms.map((r) => ({ ...r, occupied: true }));
       const result = optimizeEnergyScheduleBased(allOccupied, 28);
 
       expect(result.roomSettings.size).toBe(allOccupied.length);
@@ -95,7 +97,7 @@ describe('Energy Optimization', () => {
     });
 
     it('should handle all vacant rooms', () => {
-      const allVacant = sampleRooms.map(r => ({ ...r, occupied: false }));
+      const allVacant = sampleRooms.map((r) => ({ ...r, occupied: false }));
       const result = optimizeEnergyScheduleBased(allVacant, 28);
 
       expect(result.roomSettings.size).toBe(allVacant.length);

@@ -3,6 +3,7 @@
 ## Active Development
 
 ### Phase 1: Foundation (In Progress)
+
 - [x] Set up Next.js project structure
 - [x] Configure TypeScript and Tailwind
 - [x] Create .agent folder structure
@@ -10,6 +11,7 @@
 - [ ] Set up environment variables
 
 ### Phase 2: Core Modules
+
 - [ ] Sentiment Analysis Module
   - [ ] Traditional keyword-based analysis
   - [ ] LLM-based analysis
@@ -28,12 +30,14 @@
   - [ ] Visualization
 
 ### Phase 3: Integration
+
 - [ ] API routes for each module
 - [ ] Error handling and fallbacks
 - [ ] Result caching
 - [ ] Performance optimization
 
 ### Phase 4: Documentation
+
 - [ ] Usage examples
 - [ ] API documentation
 - [ ] Cost analysis

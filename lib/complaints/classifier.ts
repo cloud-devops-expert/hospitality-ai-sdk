@@ -52,9 +52,13 @@ export function classifyComplaintKeyword(complaint: Complaint): ComplaintClassif
   }
 
   const sentiment: ComplaintClassification['sentiment'] =
-    text.includes('terrible') || text.includes('worst') ? 'angry' :
-    text.includes('disappointed') ? 'disappointed' :
-    text.includes('frustrated') ? 'frustrated' : 'neutral';
+    text.includes('terrible') || text.includes('worst')
+      ? 'angry'
+      : text.includes('disappointed')
+        ? 'disappointed'
+        : text.includes('frustrated')
+          ? 'frustrated'
+          : 'neutral';
 
   return {
     id: complaint.id,
@@ -69,7 +73,25 @@ export function classifyComplaintKeyword(complaint: Complaint): ComplaintClassif
 }
 
 export const COMPLAINT_MODELS = {
-  'keyword': { name: 'Keyword-Based', cost: 0, avgLatency: 3, accuracy: 0.71, description: 'Rule-based categorization' },
-  'ml': { name: 'Text Classification', cost: 0, avgLatency: 25, accuracy: 0.84, description: 'Local ML model' },
-  'llm': { name: 'LLM Analysis', cost: 0.01, avgLatency: 400, accuracy: 0.94, description: 'Deep understanding' },
+  keyword: {
+    name: 'Keyword-Based',
+    cost: 0,
+    avgLatency: 3,
+    accuracy: 0.71,
+    description: 'Rule-based categorization',
+  },
+  ml: {
+    name: 'Text Classification',
+    cost: 0,
+    avgLatency: 25,
+    accuracy: 0.84,
+    description: 'Local ML model',
+  },
+  llm: {
+    name: 'LLM Analysis',
+    cost: 0.01,
+    avgLatency: 400,
+    accuracy: 0.94,
+    description: 'Deep understanding',
+  },
 };

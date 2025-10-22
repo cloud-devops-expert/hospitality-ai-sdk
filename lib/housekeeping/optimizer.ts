@@ -23,14 +23,14 @@ export interface CleaningRoute {
 export function optimizeRouteGreedy(rooms: Room[], currentFloor: number = 1): CleaningRoute {
   const startTime = Date.now();
   const route: Room[] = [];
-  const remaining = [...rooms].filter(r => r.status === 'dirty');
+  const remaining = [...rooms].filter((r) => r.status === 'dirty');
 
   let floor = currentFloor;
   let distance = 0;
 
   // Sort by priority first
   remaining.sort((a, b) => {
-    const priorityScore = { 'vip': 3, 'priority': 2, 'normal': 1 };
+    const priorityScore = { vip: 3, priority: 2, normal: 1 };
     return priorityScore[b.priority] - priorityScore[a.priority];
   });
 
@@ -106,14 +106,33 @@ export function optimizeRouteTSP(rooms: Room[], currentFloor: number = 1): Clean
 function calculateDistance(route: Room[]): number {
   let dist = 0;
   for (let i = 0; i < route.length - 1; i++) {
-    dist += Math.abs(route[i].floor - route[i + 1].floor) * 100 +
-            Math.abs(parseInt(route[i].number) - parseInt(route[i + 1].number));
+    dist +=
+      Math.abs(route[i].floor - route[i + 1].floor) * 100 +
+      Math.abs(parseInt(route[i].number) - parseInt(route[i + 1].number));
   }
   return dist;
 }
 
 export const HOUSEKEEPING_MODELS = {
-  'greedy': { name: 'Greedy', cost: 0, avgLatency: 10, efficiency: 0.72, description: 'Nearest-neighbor heuristic' },
-  'tsp': { name: '2-opt TSP', cost: 0, avgLatency: 25, efficiency: 0.84, description: 'Classic route optimization' },
-  'genetic': { name: 'Genetic', cost: 0, avgLatency: 45, efficiency: 0.89, description: 'Evolutionary optimization' },
+  greedy: {
+    name: 'Greedy',
+    cost: 0,
+    avgLatency: 10,
+    efficiency: 0.72,
+    description: 'Nearest-neighbor heuristic',
+  },
+  tsp: {
+    name: '2-opt TSP',
+    cost: 0,
+    avgLatency: 25,
+    efficiency: 0.84,
+    description: 'Classic route optimization',
+  },
+  genetic: {
+    name: 'Genetic',
+    cost: 0,
+    avgLatency: 45,
+    efficiency: 0.89,
+    description: 'Evolutionary optimization',
+  },
 };

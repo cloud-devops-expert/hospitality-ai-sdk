@@ -188,11 +188,14 @@ describe('No-Show Prediction', () => {
 
       expect(result.recommendedActions).toBeInstanceOf(Array);
       expect(result.recommendedActions.length).toBeGreaterThan(0);
-      expect(result.recommendedActions.some(action =>
-        action.toLowerCase().includes('confirmation') ||
-        action.toLowerCase().includes('deposit') ||
-        action.toLowerCase().includes('contact')
-      )).toBe(true);
+      expect(
+        result.recommendedActions.some(
+          (action) =>
+            action.toLowerCase().includes('confirmation') ||
+            action.toLowerCase().includes('deposit') ||
+            action.toLowerCase().includes('contact')
+        )
+      ).toBe(true);
     });
 
     it('should provide minimal actions for low risk bookings', () => {

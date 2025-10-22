@@ -3,18 +3,46 @@ import type { Asset } from '../predictor';
 
 describe('Maintenance Prediction', () => {
   const sampleAssets: Asset[] = [
-    { id: '1', name: 'HVAC-1', type: 'hvac', ageMonths: 36, usageHours: 2000, lastMaintenance: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
-    { id: '2', name: 'Elevator-1', type: 'elevator', ageMonths: 48, usageHours: 3000, lastMaintenance: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000) },
-    { id: '3', name: 'Plumbing-1', type: 'plumbing', ageMonths: 12, usageHours: 1000, lastMaintenance: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000) },
-    { id: '4', name: 'Electrical-1', type: 'electrical', ageMonths: 24, usageHours: 1500, lastMaintenance: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000) },
+    {
+      id: '1',
+      name: 'HVAC-1',
+      type: 'hvac',
+      ageMonths: 36,
+      usageHours: 2000,
+      lastMaintenance: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: '2',
+      name: 'Elevator-1',
+      type: 'elevator',
+      ageMonths: 48,
+      usageHours: 3000,
+      lastMaintenance: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: '3',
+      name: 'Plumbing-1',
+      type: 'plumbing',
+      ageMonths: 12,
+      usageHours: 1000,
+      lastMaintenance: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+    },
+    {
+      id: '4',
+      name: 'Electrical-1',
+      type: 'electrical',
+      ageMonths: 24,
+      usageHours: 1500,
+      lastMaintenance: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
+    },
   ];
 
   describe('Usage-Based Prediction', () => {
     it('should predict maintenance for each asset', () => {
-      const predictions = sampleAssets.map(asset => predictMaintenanceUsageBased(asset));
+      const predictions = sampleAssets.map((asset) => predictMaintenanceUsageBased(asset));
 
       expect(predictions).toHaveLength(sampleAssets.length);
-      predictions.forEach(prediction => {
+      predictions.forEach((prediction) => {
         expect(prediction.daysUntilMaintenance).toBeGreaterThanOrEqual(0);
         expect(prediction.failureRisk).toBeGreaterThanOrEqual(0);
         expect(prediction.failureRisk).toBeLessThanOrEqual(1);

@@ -26,16 +26,7 @@ export default buildConfig({
     },
   },
 
-  collections: [
-    Posts,
-    Pages,
-    Authors,
-    Categories,
-    Tags,
-    CaseStudies,
-    Media,
-    Users,
-  ],
+  collections: [Posts, Pages, Authors, Categories, Tags, CaseStudies, Media, Users],
 
   editor: lexicalEditor({}),
 
@@ -63,11 +54,7 @@ export default buildConfig({
     schemaOutputFile: path.resolve(__dirname, 'generated-schema.graphql'),
   },
 
-  cors: [
-    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
-  ],
+  cors: [process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'],
 
-  csrf: [
-    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
-  ],
+  csrf: [process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'],
 });

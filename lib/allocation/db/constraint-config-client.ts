@@ -49,7 +49,7 @@ export class ConstraintConfigClient {
 
     const result = await this.pool.query(query, [tenantId]);
 
-    return result.rows.map(row => ({
+    return result.rows.map((row) => ({
       id: row.id,
       tenantId: row.tenantId,
       templateId: row.templateId,

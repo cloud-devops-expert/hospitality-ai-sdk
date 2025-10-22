@@ -28,7 +28,7 @@ export async function analyzeHybrid(
     return {
       ...traditionalResult,
       usedAI: false,
-      processingTime: Date.now() - startTime
+      processingTime: Date.now() - startTime,
     };
   }
 
@@ -39,18 +39,18 @@ export async function analyzeHybrid(
       ...aiResult,
       usedAI: true,
       traditionalResult,
-      processingTime: Date.now() - startTime
+      processingTime: Date.now() - startTime,
     };
   } catch {
     // Fallback to traditional if AI fails
     return {
       ...traditionalResult,
       usedAI: false,
-      processingTime: Date.now() - startTime
+      processingTime: Date.now() - startTime,
     };
   }
 }
 
 export function batchAnalyze(texts: string[]): Promise<HybridAnalysisResult[]> {
-  return Promise.all(texts.map(text => analyzeHybrid(text)));
+  return Promise.all(texts.map((text) => analyzeHybrid(text)));
 }

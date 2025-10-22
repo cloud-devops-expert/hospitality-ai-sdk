@@ -13,17 +13,60 @@ export interface SentimentResult {
 }
 
 const POSITIVE_KEYWORDS = [
-  'excellent', 'amazing', 'wonderful', 'fantastic', 'great', 'love', 'loved',
-  'perfect', 'best', 'awesome', 'outstanding', 'superb', 'beautiful',
-  'comfortable', 'clean', 'friendly', 'helpful', 'recommend', 'enjoy',
-  'pleasant', 'nice', 'good', 'happy', 'satisfied', 'impressed'
+  'excellent',
+  'amazing',
+  'wonderful',
+  'fantastic',
+  'great',
+  'love',
+  'loved',
+  'perfect',
+  'best',
+  'awesome',
+  'outstanding',
+  'superb',
+  'beautiful',
+  'comfortable',
+  'clean',
+  'friendly',
+  'helpful',
+  'recommend',
+  'enjoy',
+  'pleasant',
+  'nice',
+  'good',
+  'happy',
+  'satisfied',
+  'impressed',
 ];
 
 const NEGATIVE_KEYWORDS = [
-  'terrible', 'awful', 'horrible', 'worst', 'bad', 'poor', 'disappointing',
-  'disappointed', 'dirty', 'rude', 'unfriendly', 'uncomfortable', 'noisy',
-  'broken', 'problem', 'issue', 'complaint', 'never', 'avoid', 'waste',
-  'overpriced', 'expensive', 'small', 'outdated', 'old', 'smell'
+  'terrible',
+  'awful',
+  'horrible',
+  'worst',
+  'bad',
+  'poor',
+  'disappointing',
+  'disappointed',
+  'dirty',
+  'rude',
+  'unfriendly',
+  'uncomfortable',
+  'noisy',
+  'broken',
+  'problem',
+  'issue',
+  'complaint',
+  'never',
+  'avoid',
+  'waste',
+  'overpriced',
+  'expensive',
+  'small',
+  'outdated',
+  'old',
+  'smell',
 ];
 
 const INTENSIFIERS = ['very', 'extremely', 'absolutely', 'really', 'so', 'too'];
@@ -56,9 +99,8 @@ export function analyzeTraditional(text: string): SentimentResult {
 
   // Normalize score to -1 to 1 range
   const maxPossibleScore = words.length * 1.5; // worst case: all words are intensified keywords
-  const normalizedScore = maxPossibleScore > 0
-    ? Math.max(-1, Math.min(1, score / (maxPossibleScore * 0.3)))
-    : 0;
+  const normalizedScore =
+    maxPossibleScore > 0 ? Math.max(-1, Math.min(1, score / (maxPossibleScore * 0.3))) : 0;
 
   // Determine sentiment
   let sentiment: 'positive' | 'negative' | 'neutral';
@@ -75,7 +117,7 @@ export function analyzeTraditional(text: string): SentimentResult {
     sentiment,
     confidence,
     keywords: foundKeywords,
-    method: 'traditional'
+    method: 'traditional',
   };
 }
 

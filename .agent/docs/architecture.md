@@ -10,21 +10,25 @@
 ## System Components
 
 ### 1. Sentiment Analysis
+
 - **LLM Approach**: Use AI SDK for complex sentiment understanding
 - **Traditional Approach**: Rule-based keyword analysis for quick classification
 - **Cost-Effective**: Use traditional first, escalate to LLM for edge cases
 
 ### 2. Room Allocation
+
 - **Rule-Based Engine**: Constraint-based allocation (preferences, accessibility)
 - **AI-Assisted**: Optimize for guest satisfaction using ML patterns
 - **Hybrid**: Rules first, AI for optimization and conflict resolution
 
 ### 3. Dynamic Pricing
+
 - **Statistical Models**: Historical pricing algorithms (moving averages, seasonality)
 - **AI Forecasting**: Demand prediction using simple ML models
 - **Real-time Adjustment**: Combine both for optimal pricing
 
 ### 4. Demand Forecasting
+
 - **Time Series Analysis**: Traditional statistical methods (ARIMA-like)
 - **Pattern Recognition**: Simple ML for trend detection
 - **Ensemble**: Combine multiple approaches for robustness

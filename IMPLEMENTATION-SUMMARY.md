@@ -11,6 +11,7 @@
 ### 1. Complete PayloadCMS Infrastructure ✅
 
 **Main Configuration:**
+
 - `src/payload/payload.config.ts` - Full Payload setup
 - Database: PostgreSQL with uuid v7 + valid_period (following global CLAUDE.md)
 - Editor: Lexical rich text editor
@@ -73,11 +74,13 @@
 **Landing Page Content** (`content/marketing/landing-page-content.md`)
 
 **Hero Section:**
+
 - Headline: "Enterprise AI for Independent Hotels at $0 Cost"
 - 6 key value props with strong bullets
 - Clear CTAs
 
 **Key Sections Created:**
+
 1. **Problem Statement:** The $10k Problem (why 80% can't afford AI)
 2. **Solution Overview:** Hybrid AI approach explained
 3. **Feature Comparison:** Enterprise vs. SDK (detailed table)
@@ -86,6 +89,7 @@
 6. **Technical Credibility:** Performance benchmarks, test coverage
 
 **Bullet-Point Highlights:**
+
 - 💰 Save $23k-98k/year vs. enterprise
 - 🔒 Privacy-first (self-hosted, GDPR-compliant)
 - 🚀 10 production-ready features
@@ -102,6 +106,7 @@
 **Reading Time:** 8 minutes
 
 **Structure:**
+
 1. TL;DR (Executive Summary)
 2. The $10k Problem Nobody Talks About
 3. What's Wrong with Enterprise AI
@@ -114,6 +119,7 @@
 10. Call-to-Action
 
 **Key Points (Bullet-Driven):**
+
 - Enterprise pricing breakdown ($31k/year minimum)
 - 70-80% of tasks don't need AI
 - Code examples (traditional vs. enterprise approaches)
@@ -125,6 +131,7 @@
 ### 3. Configuration Updates ✅
 
 **Next.js Config** (`next.config.js`)
+
 - Updated to use `withPayload` wrapper
 - ESM export format
 - React compiler disabled (Payload compatibility)
@@ -136,6 +143,7 @@
 **Installation Guide** (`INSTALLATION-PAYLOADCMS.md`)
 
 **Covers:**
+
 1. **Prerequisites:** Fix npm cache permissions
 2. **Package Installation:** Exact commands with versions
 3. **Database Setup:** Local PostgreSQL + Docker options
@@ -145,6 +153,7 @@
 7. **Production Deployment:** Platform recommendations
 
 **Database Options:**
+
 - Local PostgreSQL (Homebrew)
 - Docker Compose (included config)
 - Managed PostgreSQL (AWS RDS, Supabase, Railway)
@@ -179,6 +188,7 @@ npm install \
 ```
 
 **Why we use stable v3.60.0 (not beta):**
+
 - Fully stable release as of October 2025
 - Requires Next.js 15+ (we have 15.5.6 ✅)
 - Production-ready with PostgreSQL support
@@ -186,6 +196,7 @@ npm install \
 ### Step 3: Set Up Database
 
 **Option A: Local PostgreSQL**
+
 ```bash
 brew install postgresql@15
 brew services start postgresql@15
@@ -193,12 +204,14 @@ createdb hospitality_ai_cms
 ```
 
 **Option B: Docker**
+
 ```bash
 # docker-compose.yml already created
 docker-compose up -d
 ```
 
 **Create `.env.local`:**
+
 ```bash
 DATABASE_URL=postgresql://localhost:5432/hospitality_ai_cms
 PAYLOAD_SECRET=$(openssl rand -base64 32)
@@ -295,6 +308,7 @@ payload_migrations (schema version tracking)
 ## Features Implemented
 
 ### Content Management
+
 - ✅ Rich text editing (Lexical)
 - ✅ Media upload and management
 - ✅ SEO optimization (meta tags, OG, Twitter cards)
@@ -305,6 +319,7 @@ payload_migrations (schema version tracking)
 - ✅ Role-based access control
 
 ### Marketing Platform
+
 - ✅ Block-based page builder
 - ✅ Reusable content blocks (Hero, Features, Pricing, etc.)
 - ✅ Blog with categories and tags
@@ -312,6 +327,7 @@ payload_migrations (schema version tracking)
 - ✅ Author profiles with social links
 
 ### Developer Experience
+
 - ✅ TypeScript-first (full type generation)
 - ✅ GraphQL API (auto-generated)
 - ✅ REST API (auto-generated)
@@ -326,6 +342,7 @@ payload_migrations (schema version tracking)
 Following your request to use AI for bullet-list strengthening:
 
 ### Landing Page
+
 - **6 value propositions** with impactful bullets
 - **Problem statement** with quantified pain points
 - **Comparison table** with clear differentiation
@@ -333,6 +350,7 @@ Following your request to use AI for bullet-list strengthening:
 - **Social proof** framework (ready for real data)
 
 ### Blog Post #1
+
 - **4,000 words** of comprehensive content
 - **Code examples** comparing approaches
 - **Performance benchmarks** with real numbers
@@ -341,6 +359,7 @@ Following your request to use AI for bullet-list strengthening:
 - **Business case** for hotel owners
 
 **Content Principles Applied:**
+
 1. **Quantify everything:** "$25k-100k/year", "80% of hotels", "147/147 tests"
 2. **Code over prose:** Show, don't tell with real TypeScript examples
 3. **Honest comparisons:** We're 85% vs. enterprise 95%, but at 1% of cost
@@ -352,6 +371,7 @@ Following your request to use AI for bullet-list strengthening:
 ## Next Steps (Roadmap)
 
 ### Immediate (After Installation)
+
 1. **Create initial content in admin:**
    - First author profile
    - 2-3 categories (Technical, Philosophy, Case Study)
@@ -369,6 +389,7 @@ Following your request to use AI for bullet-list strengthening:
    - GitHub/npm tracking
 
 ### Week 2-3
+
 4. **Create 3 more blog posts:**
    - "The $10k Problem: Deep Dive"
    - "Hybrid AI: Technical Deep Dive"
@@ -384,6 +405,7 @@ Following your request to use AI for bullet-list strengthening:
    - Optimize meta tags
 
 ### Month 2
+
 7. **PMS Integrations:**
    - Mews connector
    - Cloudbeds connector
@@ -399,31 +421,40 @@ Following your request to use AI for bullet-list strengthening:
 ## Technical Decisions Made
 
 ### 1. PayloadCMS v3.60.0 (Stable, Not Beta)
+
 **Why:** Next.js 15 compatibility, production-ready, active development
 
 ### 2. PostgreSQL over MongoDB
+
 **Why:**
+
 - Aligns with global CLAUDE.md patterns (uuid v7, valid_period)
 - Better for structured content (relationships)
 - ACID compliance
 - Enterprise standard
 
 ### 3. Self-Hosted Media (vs. Cloud Storage)
+
 **Why:**
+
 - Privacy-first philosophy
 - Zero recurring costs
 - Full control
 - Can migrate to cloud later if needed
 
 ### 4. Lexical Editor (vs. Slate/TipTap)
+
 **Why:**
+
 - PayloadCMS native
 - Modern architecture
 - Extensible
 - Better performance
 
 ### 5. Block-Based Pages (vs. Full Wysiwyg)
+
 **Why:**
+
 - Reusable components
 - Consistent design
 - Developer-friendly
@@ -434,24 +465,28 @@ Following your request to use AI for bullet-list strengthening:
 ## Success Metrics (When Live)
 
 ### Week 1
+
 - [ ] Admin panel accessible
 - [ ] First blog post published
 - [ ] Landing page live
 - [ ] Analytics tracking
 
 ### Month 1
+
 - [ ] 5+ blog posts published
 - [ ] 1,000+ page views
 - [ ] 10+ GitHub stars
 - [ ] Google indexed
 
 ### Month 3
+
 - [ ] 20+ blog posts
 - [ ] 5,000+ monthly visitors
 - [ ] 100+ GitHub stars
 - [ ] 1+ case study
 
 ### Year 1 (From PRD)
+
 - [ ] 50,000+ monthly visitors
 - [ ] 1,000+ GitHub stars
 - [ ] 10,000+ npm downloads/month
@@ -466,6 +501,7 @@ Following your request to use AI for bullet-list strengthening:
 ### If Installation Fails
 
 **npm Permission Errors:**
+
 ```bash
 sudo chown -R $(whoami) ~/.npm
 rm -rf node_modules package-lock.json
@@ -473,6 +509,7 @@ npm install --legacy-peer-deps
 ```
 
 **Database Connection Errors:**
+
 ```bash
 # Check PostgreSQL is running
 psql -l
@@ -482,6 +519,7 @@ cat .env.local | grep DATABASE_URL
 ```
 
 **Payload Not Loading:**
+
 ```bash
 # Check Next.js logs
 npm run dev
@@ -495,17 +533,20 @@ npx tsc --noEmit src/payload/payload.config.ts
 ## Resources
 
 **Documentation:**
+
 - [PayloadCMS Docs](https://payloadcms.com/docs)
 - [Next.js 15 Docs](https://nextjs.org/docs)
 - [PostgreSQL Docs](https://www.postgresql.org/docs/)
 
 **Our Docs:**
+
 - `INSTALLATION-PAYLOADCMS.md` - Setup guide
 - `.agent/docs/prd-marketing-platform.md` - Full PRD
 - `.agent/docs/competitor-analysis.md` - Market research
 - `.agent/docs/architecture.md` - Technical architecture
 
 **Community:**
+
 - GitHub Issues (for bugs)
 - GitHub Discussions (for questions)
 - Discord (coming soon)
@@ -515,6 +556,7 @@ npx tsc --noEmit src/payload/payload.config.ts
 ## Conclusion
 
 **What You Have:**
+
 - ✅ Complete PayloadCMS setup (pending installation)
 - ✅ 8 production-ready collections
 - ✅ AI-strengthened marketing content
@@ -524,18 +566,21 @@ npx tsc --noEmit src/payload/payload.config.ts
 - ✅ Comprehensive documentation
 
 **What You Need:**
+
 - [ ] 15 minutes to fix npm cache + install packages
 - [ ] 5 minutes to set up PostgreSQL
 - [ ] 2 minutes to create first admin user
 - [ ] Ready to ship! 🚀
 
 **Expected Timeline:**
+
 - Installation: 30 minutes
 - First content: 2 hours
 - Marketing pages: 1-2 days
 - Full launch: 1-2 weeks
 
 **ROI:**
+
 - vs. Enterprise CMS: Save $5k-15k/year
 - vs. Custom build: Save 4-6 weeks dev time
 - Open source: Infinite flexibility + no lock-in

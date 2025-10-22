@@ -40,6 +40,7 @@ This is the **Hospitality AI SDK** - a cost-effective, sustainability-first AI t
 ### Testing New Features
 
 When adding new features:
+
 1. Implement traditional/algorithmic version first
 2. Add AI enhancement as optional
 3. Create hybrid decision logic
@@ -67,24 +68,28 @@ When adding new features:
 ## Module Responsibilities
 
 ### `lib/sentiment/`
+
 - Traditional keyword-based analysis
 - AI-powered analysis (optional)
 - Hybrid escalation logic
 - **Goal**: 70%+ handled by traditional, <30% AI
 
 ### `lib/allocation/`
+
 - Rule-based constraint satisfaction
 - Weighted scoring algorithm
 - Batch optimization
 - **Goal**: 85%+ satisfaction match at zero cost
 
 ### `lib/pricing/`
+
 - Multi-factor algorithmic pricing
 - Seasonal adjustments
 - Occupancy-based pricing
 - **Goal**: +30% revenue vs fixed pricing
 
 ### `lib/forecast/`
+
 - Statistical time-series methods
 - Ensemble forecasting
 - Seasonality detection
@@ -93,6 +98,7 @@ When adding new features:
 ## Common Tasks
 
 ### Adding a New Algorithm
+
 1. Create in appropriate `lib/` subdirectory
 2. Add TypeScript types
 3. Implement traditional version
@@ -101,6 +107,7 @@ When adding new features:
 6. Add cost analysis in `.agent/experiments/`
 
 ### Optimizing Performance
+
 1. Profile current implementation
 2. Identify bottlenecks
 3. Optimize without adding dependencies
@@ -108,6 +115,7 @@ When adding new features:
 5. Document in experiments
 
 ### Adding AI Enhancement
+
 1. Ensure traditional method exists
 2. Implement AI version with error handling
 3. Create hybrid decision logic
@@ -139,12 +147,14 @@ When adding new features:
 ## Hard Rules (from hotel-pro-assistant-monorepo)
 
 ### Code Quality & Commits
+
 - **RULE 1**: Push to remote every 2 commits
 - **RULE 2**: MUST fix all lint errors before committing
 - **RULE 3**: Run lint/typecheck and fix ALL errors before commits
 - **RULE 4**: Never commit code with lint, type, or test errors
 
 ### Configuration Standards
+
 - **RULE 5**: Use `.ts` files for configuration instead of `.mjs` or `.cjs`
   - Prefer: `eslint.config.ts`, `vite.config.ts`, etc.
   - Exception: Use `.mjs`/`.cjs` only when tool doesn't support TypeScript
@@ -153,12 +163,14 @@ When adding new features:
   - Configuration file structures follow consistent patterns
 
 ### TypeScript Standards
+
 - **RULE 7**: TypeScript for all new code
 - **RULE 8**: Clear type definitions required
 - **RULE 9**: No `any` types without explicit justification
 - **RULE 10**: Prefer explicit return types on functions
 
 ### Code Organization
+
 - **RULE 11**: Analysis files go in `.agent/Analysis/` ONLY (never root)
 - **RULE 12**: Documentation goes in `.agent/` subfolders ONLY
 - **RULE 13**: Tests go in `tests/` or `__tests__/` folders
@@ -166,12 +178,14 @@ When adding new features:
 - **RULE 15**: Keep root folder clean (<30 files, no scattered .sh, .py, .md files)
 
 ### Local-First Development
+
 - **RULE 16**: Process data locally when possible
 - **RULE 17**: Minimize external API calls
 - **RULE 18**: Implement offline-capable features where feasible
 - **RULE 19**: Cache results to reduce computational resources
 
 ### Brand Guidelines
+
 - **RULE 20**: Use Rubik font as the primary brand font
 - **RULE 21**: Use navy blue (#1e3a8a) as the primary brand color
 - **RULE 22**: ALWAYS implement both light and dark modes
@@ -187,6 +201,7 @@ When adding new features:
 ## Quality Checklist
 
 Before marking a feature complete:
+
 - [ ] Traditional implementation exists
 - [ ] AI enhancement is optional
 - [ ] Hybrid logic implemented
@@ -202,6 +217,7 @@ Before marking a feature complete:
 See `.agent/docs/project-summary.md` for detailed roadmap.
 
 Priority areas:
+
 1. Browser-based AI (Transformers.js)
 2. Result caching layer
 3. ARIMA forecasting
@@ -220,6 +236,7 @@ Priority areas:
 > **The best solution is the one that works, ships, and doesn't break the bank.**
 
 Always optimize for:
+
 1. User value
 2. Cost efficiency
 3. Sustainability

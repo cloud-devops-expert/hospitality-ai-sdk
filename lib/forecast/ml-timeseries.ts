@@ -9,12 +9,9 @@ import { DataPoint, ForecastResult } from './statistical';
  * Simple ARIMA Implementation (Autoregressive Integrated Moving Average)
  * Simplified version for demonstration
  */
-export function forecastARIMA(
-  historicalData: DataPoint[],
-  daysAhead: number
-): ForecastResult[] {
+export function forecastARIMA(historicalData: DataPoint[], daysAhead: number): ForecastResult[] {
   const forecasts: ForecastResult[] = [];
-  const values = historicalData.map(d => d.value);
+  const values = historicalData.map((d) => d.value);
 
   // ARIMA parameters (p=2, d=1, q=1)
   const p = 2; // Autoregressive order
@@ -52,14 +49,17 @@ export function forecastARIMA(
     const error = Math.random() * 5 - 2.5; // Simulated error
     errors.push(error);
 
-    const trend = prediction > currentData[currentData.length - 1] + 2 ? 'increasing'
-                : prediction < currentData[currentData.length - 1] - 2 ? 'decreasing'
-                : 'stable';
+    const trend =
+      prediction > currentData[currentData.length - 1] + 2
+        ? 'increasing'
+        : prediction < currentData[currentData.length - 1] - 2
+          ? 'decreasing'
+          : 'stable';
 
     forecasts.push({
       date: forecastDate,
       predicted: prediction,
-      confidence: 0.85 - (i * 0.02), // Confidence decreases with time
+      confidence: 0.85 - i * 0.02, // Confidence decreases with time
       trend,
       method: 'arima',
     });
@@ -74,12 +74,9 @@ export function forecastARIMA(
  * Prophet-like Forecasting
  * Additive model: y(t) = trend + seasonality + holidays + error
  */
-export function forecastProphet(
-  historicalData: DataPoint[],
-  daysAhead: number
-): ForecastResult[] {
+export function forecastProphet(historicalData: DataPoint[], daysAhead: number): ForecastResult[] {
   const forecasts: ForecastResult[] = [];
-  const values = historicalData.map(d => d.value);
+  const values = historicalData.map((d) => d.value);
 
   // Estimate trend component (linear regression)
   const trend = estimateTrend(values);
@@ -105,14 +102,13 @@ export function forecastProphet(
     let prediction = trendValue + seasonalValue;
     prediction = Math.max(0, Math.min(100, prediction));
 
-    const trendDirection = trend.slope > 0.5 ? 'increasing'
-                         : trend.slope < -0.5 ? 'decreasing'
-                         : 'stable';
+    const trendDirection =
+      trend.slope > 0.5 ? 'increasing' : trend.slope < -0.5 ? 'decreasing' : 'stable';
 
     forecasts.push({
       date: forecastDate,
       predicted: prediction,
-      confidence: 0.88 - (i * 0.015),
+      confidence: 0.88 - i * 0.015,
       trend: trendDirection,
       method: 'prophet',
     });
@@ -125,17 +121,14 @@ export function forecastProphet(
  * LSTM-like Sequential Model (Simplified)
  * Simulates a recurrent neural network for sequence prediction
  */
-export function forecastLSTM(
-  historicalData: DataPoint[],
-  daysAhead: number
-): ForecastResult[] {
+export function forecastLSTM(historicalData: DataPoint[], daysAhead: number): ForecastResult[] {
   const forecasts: ForecastResult[] = [];
-  const values = historicalData.map(d => d.value);
+  const values = historicalData.map((d) => d.value);
 
   // Normalize data
   const min = Math.min(...values);
   const max = Math.max(...values);
-  const normalized = values.map(v => (v - min) / (max - min));
+  const normalized = values.map((v) => (v - min) / (max - min));
 
   // Sequence length for LSTM
   const seqLength = 7;
@@ -159,14 +152,17 @@ export function forecastLSTM(
     prediction = Math.max(0, Math.min(100, prediction));
 
     const avgRecent = values.slice(-3).reduce((a, b) => a + b, 0) / 3;
-    const trend = prediction > avgRecent + 2 ? 'increasing'
-                : prediction < avgRecent - 2 ? 'decreasing'
-                : 'stable';
+    const trend =
+      prediction > avgRecent + 2
+        ? 'increasing'
+        : prediction < avgRecent - 2
+          ? 'decreasing'
+          : 'stable';
 
     forecasts.push({
       date: forecastDate,
       predicted: prediction,
-      confidence: 0.82 - (i * 0.018),
+      confidence: 0.82 - i * 0.018,
       trend,
       method: 'lstm',
     });
@@ -219,7 +215,7 @@ function estimateSeasonality(data: DataPoint[]): number[] {
   const dayAverages: number[] = Array(7).fill(0);
   const dayCounts: number[] = Array(7).fill(0);
 
-  data.forEach(dp => {
+  data.forEach((dp) => {
     const day = dp.date.getDay();
     dayAverages[day] += dp.value;
     dayCounts[day]++;
@@ -256,7 +252,7 @@ export interface MLForecastModel {
 }
 
 export const ML_FORECAST_MODELS: Record<string, MLForecastModel> = {
-  'arima': {
+  arima: {
     name: 'ARIMA',
     type: 'arima',
     cost: 0,
@@ -264,7 +260,7 @@ export const ML_FORECAST_MODELS: Record<string, MLForecastModel> = {
     accuracy: 0.85,
     description: 'Classic statistical model. Good for stable patterns.',
   },
-  'prophet': {
+  prophet: {
     name: 'Prophet-like',
     type: 'prophet',
     cost: 0,
@@ -272,7 +268,7 @@ export const ML_FORECAST_MODELS: Record<string, MLForecastModel> = {
     accuracy: 0.88,
     description: 'Additive model with trend and seasonality. Robust.',
   },
-  'lstm': {
+  lstm: {
     name: 'LSTM Neural Network',
     type: 'lstm',
     cost: 0,
@@ -280,7 +276,7 @@ export const ML_FORECAST_MODELS: Record<string, MLForecastModel> = {
     accuracy: 0.83,
     description: 'Recurrent neural network. Learns complex patterns.',
   },
-  'ensemble': {
+  ensemble: {
     name: 'Ensemble (All Models)',
     type: 'ensemble',
     cost: 0,

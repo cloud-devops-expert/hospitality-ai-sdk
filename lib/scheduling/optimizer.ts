@@ -17,7 +17,11 @@ export interface ScheduleResult {
   processingTime?: number;
 }
 
-export function scheduleStaffOccupancyBased(staff: StaffMember[], occupancyRate: number, days: number = 7): ScheduleResult {
+export function scheduleStaffOccupancyBased(
+  staff: StaffMember[],
+  occupancyRate: number,
+  days: number = 7
+): ScheduleResult {
   const startTime = Date.now();
   const shifts = [];
 
@@ -46,7 +50,25 @@ export function scheduleStaffOccupancyBased(staff: StaffMember[], occupancyRate:
 }
 
 export const SCHEDULING_MODELS = {
-  'fixed': { name: 'Fixed Ratios', cost: 0, avgLatency: 1, accuracy: 0.65, description: 'Industry standard levels' },
-  'occupancy': { name: 'Occupancy-Based', cost: 0, avgLatency: 15, accuracy: 0.78, description: 'Dynamic staffing' },
-  'demand': { name: 'Demand Forecasting', cost: 0, avgLatency: 40, accuracy: 0.86, description: 'Multi-factor prediction' },
+  fixed: {
+    name: 'Fixed Ratios',
+    cost: 0,
+    avgLatency: 1,
+    accuracy: 0.65,
+    description: 'Industry standard levels',
+  },
+  occupancy: {
+    name: 'Occupancy-Based',
+    cost: 0,
+    avgLatency: 15,
+    accuracy: 0.78,
+    description: 'Dynamic staffing',
+  },
+  demand: {
+    name: 'Demand Forecasting',
+    cost: 0,
+    avgLatency: 40,
+    accuracy: 0.86,
+    description: 'Multi-factor prediction',
+  },
 };

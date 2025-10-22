@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Booking, NoShowPrediction } from '@/lib/no-show/types';
 import { predictNoShowRuleBased } from '@/lib/no-show/traditional';
-import { predictNoShowLogisticRegression, predictNoShowGradientBoosting, NO_SHOW_MODELS } from '@/lib/no-show/ml';
+import {
+  predictNoShowLogisticRegression,
+  predictNoShowGradientBoosting,
+  NO_SHOW_MODELS,
+} from '@/lib/no-show/ml';
 
 type AlgorithmType = 'rule-based' | 'logistic-regression' | 'gradient-boosting';
 
@@ -31,11 +35,14 @@ export default function NoShowPage() {
       totalAmount: 300,
       paymentMethod: payment,
       hasSpecialRequests: hasRequests,
-      guestHistory: totalStays > 0 ? {
-        totalStays,
-        noShowCount: noShows,
-        cancellationCount: 0,
-      } : undefined,
+      guestHistory:
+        totalStays > 0
+          ? {
+              totalStays,
+              noShowCount: noShows,
+              cancellationCount: 0,
+            }
+          : undefined,
     };
 
     let prediction: NoShowPrediction;
@@ -59,10 +66,14 @@ export default function NoShowPage() {
 
   const getRiskColor = (level: string) => {
     switch (level) {
-      case 'low': return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30';
-      case 'medium': return 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30';
-      case 'high': return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30';
-      default: return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
+      case 'low':
+        return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900/30';
+      case 'medium':
+        return 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900/30';
+      case 'high':
+        return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30';
+      default:
+        return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
     }
   };
 
@@ -76,7 +87,9 @@ export default function NoShowPage() {
         </p>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Select Algorithm</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            Select Algorithm
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {(['rule-based', 'logistic-regression', 'gradient-boosting'] as const).map((algo) => {
               const info = getAlgorithmInfo(algo);
@@ -94,9 +107,15 @@ export default function NoShowPage() {
                     {info.name}
                   </div>
                   <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
-                    <div><strong>Cost:</strong> ${info.cost}</div>
-                    <div><strong>Latency:</strong> ~{info.avgLatency}ms</div>
-                    <div><strong>Accuracy:</strong> {(info.accuracy * 100).toFixed(0)}%</div>
+                    <div>
+                      <strong>Cost:</strong> ${info.cost}
+                    </div>
+                    <div>
+                      <strong>Latency:</strong> ~{info.avgLatency}ms
+                    </div>
+                    <div>
+                      <strong>Accuracy:</strong> {(info.accuracy * 100).toFixed(0)}%
+                    </div>
                     <div className="text-gray-500 mt-2">{info.description}</div>
                   </div>
                 </button>
@@ -107,19 +126,32 @@ export default function NoShowPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Booking Details</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+              Booking Details
+            </h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Guest Name</label>
-                <input type="text" value={guestName} onChange={(e) => setGuestName(e.target.value)}
-                  className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Guest Name
+                </label>
+                <input
+                  type="text"
+                  value={guestName}
+                  onChange={(e) => setGuestName(e.target.value)}
+                  className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Booking Channel</label>
-                <select value={channel} onChange={(e) => setChannel(e.target.value as Booking['bookingChannel'])}
-                  className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Booking Channel
+                </label>
+                <select
+                  value={channel}
+                  onChange={(e) => setChannel(e.target.value as Booking['bookingChannel'])}
+                  className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                >
                   <option value="direct">Direct</option>
                   <option value="ota">OTA</option>
                   <option value="phone">Phone</option>
@@ -129,15 +161,28 @@ export default function NoShowPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Lead Time: {leadTime} days</label>
-                <input type="range" value={leadTime} onChange={(e) => setLeadTime(Number(e.target.value))}
-                  className="w-full" min="0" max="90" />
+                <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  Lead Time: {leadTime} days
+                </label>
+                <input
+                  type="range"
+                  value={leadTime}
+                  onChange={(e) => setLeadTime(Number(e.target.value))}
+                  className="w-full"
+                  min="0"
+                  max="90"
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Payment Method</label>
-                <select value={payment} onChange={(e) => setPayment(e.target.value as Booking['paymentMethod'])}
-                  className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Payment Method
+                </label>
+                <select
+                  value={payment}
+                  onChange={(e) => setPayment(e.target.value as Booking['paymentMethod'])}
+                  className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                >
                   <option value="prepaid">Prepaid</option>
                   <option value="pay-at-property">Pay at Property</option>
                   <option value="corporate-billing">Corporate Billing</option>
@@ -146,23 +191,44 @@ export default function NoShowPage() {
 
               <div>
                 <label className="flex items-center">
-                  <input type="checkbox" checked={hasRequests} onChange={(e) => setHasRequests(e.target.checked)} className="mr-2" />
-                  <span className="text-sm text-gray-900 dark:text-gray-100">Has Special Requests</span>
+                  <input
+                    type="checkbox"
+                    checked={hasRequests}
+                    onChange={(e) => setHasRequests(e.target.checked)}
+                    className="mr-2"
+                  />
+                  <span className="text-sm text-gray-900 dark:text-gray-100">
+                    Has Special Requests
+                  </span>
                 </label>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Guest History (optional)</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Guest History (optional)
+                </label>
                 <div className="grid grid-cols-2 gap-2">
-                  <input type="number" placeholder="Total Stays" value={totalStays} onChange={(e) => setTotalStays(Number(e.target.value))}
-                    className="p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
-                  <input type="number" placeholder="No-Shows" value={noShows} onChange={(e) => setNoShows(Number(e.target.value))}
-                    className="p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
+                  <input
+                    type="number"
+                    placeholder="Total Stays"
+                    value={totalStays}
+                    onChange={(e) => setTotalStays(Number(e.target.value))}
+                    className="p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
+                  <input
+                    type="number"
+                    placeholder="No-Shows"
+                    value={noShows}
+                    onChange={(e) => setNoShows(Number(e.target.value))}
+                    className="p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  />
                 </div>
               </div>
 
-              <button onClick={handlePredict}
-                className="w-full bg-brand-600 dark:bg-brand-500 text-white py-2 px-4 rounded-lg hover:bg-brand-700 mt-4">
+              <button
+                onClick={handlePredict}
+                className="w-full bg-brand-600 dark:bg-brand-500 text-white py-2 px-4 rounded-lg hover:bg-brand-700 mt-4"
+              >
                 Predict No-Show Risk
               </button>
             </div>
@@ -171,11 +237,15 @@ export default function NoShowPage() {
           <div className="space-y-6">
             {result && (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Prediction Results</h2>
+                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+                  Prediction Results
+                </h2>
 
                 <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded mb-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Risk Level</p>
-                  <p className={`text-3xl font-bold px-3 py-2 rounded inline-block ${getRiskColor(result.riskLevel)}`}>
+                  <p
+                    className={`text-3xl font-bold px-3 py-2 rounded inline-block ${getRiskColor(result.riskLevel)}`}
+                  >
                     {result.riskLevel.toUpperCase()}
                   </p>
                 </div>
@@ -183,19 +253,28 @@ export default function NoShowPage() {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded">
                     <p className="text-xs text-gray-600 dark:text-gray-400">Probability</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{(result.probability * 100).toFixed(1)}%</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      {(result.probability * 100).toFixed(1)}%
+                    </p>
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded">
                     <p className="text-xs text-gray-600 dark:text-gray-400">Confidence</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{(result.confidence * 100).toFixed(0)}%</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      {(result.confidence * 100).toFixed(0)}%
+                    </p>
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <p className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Reasons</p>
+                  <p className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Reasons
+                  </p>
                   <ul className="space-y-1">
                     {result.reasons.map((reason, idx) => (
-                      <li key={idx} className="text-sm text-gray-700 dark:text-gray-300 flex items-start">
+                      <li
+                        key={idx}
+                        className="text-sm text-gray-700 dark:text-gray-300 flex items-start"
+                      >
                         <span className="text-brand-600 dark:text-brand-400 mr-2">•</span>
                         {reason}
                       </li>
@@ -204,10 +283,15 @@ export default function NoShowPage() {
                 </div>
 
                 <div>
-                  <p className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Recommended Actions</p>
+                  <p className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Recommended Actions
+                  </p>
                   <ul className="space-y-1">
                     {result.recommendedActions.map((action, idx) => (
-                      <li key={idx} className="text-sm bg-blue-50 dark:bg-blue-900/20 p-2 rounded text-gray-700 dark:text-gray-300">
+                      <li
+                        key={idx}
+                        className="text-sm bg-blue-50 dark:bg-blue-900/20 p-2 rounded text-gray-700 dark:text-gray-300"
+                      >
                         {action}
                       </li>
                     ))}
@@ -218,7 +302,9 @@ export default function NoShowPage() {
 
             {!result && (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center text-gray-500 dark:text-gray-400">
-                <p>Enter booking details and click &ldquo;Predict No-Show Risk&rdquo; to see results</p>
+                <p>
+                  Enter booking details and click &ldquo;Predict No-Show Risk&rdquo; to see results
+                </p>
               </div>
             )}
           </div>

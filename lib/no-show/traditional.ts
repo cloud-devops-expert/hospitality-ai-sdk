@@ -12,11 +12,11 @@ export function predictNoShowRuleBased(booking: Booking): NoShowPrediction {
 
   // Channel reliability (0-30 points)
   const channelScores: Record<Booking['bookingChannel'], number> = {
-    'direct': 5,
-    'phone': 10,
-    'email': 12,
-    'corporate': 8,
-    'ota': 20,
+    direct: 5,
+    phone: 10,
+    email: 12,
+    corporate: 8,
+    ota: 20,
   };
   riskScore += channelScores[booking.bookingChannel];
   if (booking.bookingChannel === 'ota') {
@@ -40,7 +40,7 @@ export function predictNoShowRuleBased(booking: Booking): NoShowPrediction {
 
   // Payment method (0-25 points)
   const paymentScores: Record<Booking['paymentMethod'], number> = {
-    'prepaid': 0,
+    prepaid: 0,
     'corporate-billing': 5,
     'pay-at-property': 25,
   };

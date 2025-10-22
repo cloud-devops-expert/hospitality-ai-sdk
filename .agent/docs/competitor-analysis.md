@@ -22,12 +22,14 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 ## Market Landscape
 
 ### Market Size & Growth
+
 - **2023 Market Size:** $90 million
 - **2033 Projected:** $8 billion
 - **Growth Rate:** 60% annually
 - **Tech Investment:** Up 14% in 2024, with 91% of travel companies planning "moderate to aggressive" growth
 
 ### Guest Adoption & Preferences
+
 - **58%** of guests believe AI can improve hotel stays
 - **70%** find chatbots helpful for simple inquiries (prefer humans for complex)
 - **68%** prefer chatbots/virtual assistants for common queries
@@ -44,6 +46,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 #### Major Players
 
 **IDeaS Revenue Solutions**
+
 - **Position:** Industry pioneer, AI-driven pricing
 - **Target:** All sizes (independent to global chains)
 - **ML Focus:** Demand forecasting, dynamic pricing, revenue optimization
@@ -51,6 +54,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - **Differentiators:** Sophisticated AI models, proven track record
 
 **Duetto**
+
 - **Position:** #1 RMS (HotelTechAwards 2022-2025)
 - **Customer Base:** 6,800+ hotels, casinos, resorts globally
 - **ML Focus:**
@@ -62,6 +66,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - **Key Results:** Clients report RevPAR increases
 
 **Lighthouse (formerly OTA Insight)**
+
 - **Position:** Cloud platform for market intelligence
 - **Target:** Medium-large hotels, chains (Europe, NA, APAC)
 - **ML Focus:**
@@ -73,18 +78,21 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - **Competitors:** Duetto, IDeaS, Knowland, Atomize, MyForecast RMS, RoomPriceGenie
 
 #### Market Results
+
 - **10-15%** average RevPAR increase (McKinsey study)
 - **Up to 35%** higher RevPAR with ML engines
 - **Up to 37%** higher ADR in 18 months
 - **20-30 hours/month** saved on manual pricing per property
 
 #### ML Technology Used
+
 - Demand forecasting (booking patterns, seasonality, weather, economics)
 - Customer segmentation (behavior-based personalization)
 - Real-time optimization (competitor pricing, events, holidays)
 - Deep learning models for price prediction
 
 #### Barriers to Entry
+
 - Need for clean, organized datasets (demand, bookings, cancellations, competitor pricing)
 - Lack of expertise/infrastructure at many properties
 - High cost of enterprise solutions
@@ -96,6 +104,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 #### Major Players
 
 **TrustYou**
+
 - **Position:** "#1 Hospitality AI Platform"
 - **Recent Launch:** TrustYou Hospitality AI - "industry's first fully orchestrated platform"
 - **Technology Stack:**
@@ -111,6 +120,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - **Pricing:** Enterprise (undisclosed)
 
 **Revinate**
+
 - **Position:** Versatile hospitality technology platform
 - **ML Focus:**
   - Guest engagement throughout journey
@@ -122,6 +132,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - **Pricing:** Enterprise (undisclosed)
 
 **Canary Technologies**
+
 - **Position:** AI-powered operations & guest experience
 - **Target:** Small hotels (digitization focus)
 - **ML Focus:**
@@ -132,15 +143,18 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - **Integration:** Works with ALICE and other platforms
 
 **The Cosmopolitan (Las Vegas) - "Rose" AI**
+
 - **Real-World Example:** Personal concierge chatbot
 - **Capabilities:** Restaurant reservations, towel delivery, personalized service
 - **Result:** Rapid, personalized guest service
 
 **Marriott International**
+
 - **Platforms:** Facebook Messenger, Slack
 - **Capabilities:** Instant responses, booking streamlining, local travel tips
 
 #### Market Results
+
 - **15-20%** reduction in operational costs through AI
 - **Market gap:** Only 23% receive personalized service despite 61% willing to pay more
 
@@ -151,32 +165,39 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 #### Major Players
 
 **ALICE by Actabl**
+
 - **Position:** AI-driven operations platform
 - **ML Focus:** Housekeeping and maintenance optimization
 - **Integration:** Works with Canary Technologies and other platforms
 
 **HotelOps.AI**
+
 - **Position:** AI hotel operations software
 - **Focus Areas:** Housekeeping, maintenance, guest services
 
 #### Real-World Results
 
 **Ritz-Carlton San Francisco**
+
 - **System:** AI considering check-out times, priority rooms, staff patterns
 - **Result:** **20% increase in housekeeping efficiency**
 
 **AMIS Framework Study**
+
 - **Room turnaround:** **50%+ reduction** in average time
 - **Task completion:** **99%+ rate**
 - **Workload:** Balanced with reduced employee hours
 
 **Boutique Hotel Group**
+
 - **Staff scheduling AI:** **12% reduction in labor costs** without service quality loss
 
 **Eco-Friendly Hotel Chain**
+
 - **Smart building AI:** **30% reduction in energy costs**
 
 #### ML Applications
+
 - Workforce management (staffing level optimization based on predicted occupancy)
 - Energy optimization (smart HVAC, lighting based on occupancy/preferences)
 - Housekeeping route optimization
@@ -190,6 +211,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 #### Major Players
 
 **GuestRevu**
+
 - **ML Focus:**
   - AI-powered management responses
   - "One-click" professional responses
@@ -198,14 +220,17 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - **Value Proposition:** High-quality, personalized responses in seconds
 
 **Exely**
+
 - **Position:** Hotel reputation management & AI review tools
 - **ML Focus:** Review management automation
 
 **ReviewPro / Customer Alliance**
+
 - **Position:** Enterprise review management platforms
 - **ML Focus:** Multi-platform review aggregation and sentiment analysis
 
 #### Technology Capabilities
+
 - Automatic sentiment detection (NLP + ML)
 - Tone and key topic detection
 - Visualization by room category, facility
@@ -213,6 +238,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - Automated response generation (multilingual)
 
 #### Market Impact
+
 - **84%** of TripAdvisor users say appropriate management response improves hotel impression
 - Helps identify strengths/weaknesses for targeted improvements
 
@@ -223,11 +249,13 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 #### Applications
 
 **No-Show Prediction**
+
 - Anticipate cancellations/no-shows
 - Enable overbooking strategies
 - Mitigate revenue loss
 
 **Demand Forecasting**
+
 - Historical booking data analysis
 - Seasonal trend identification
 - Local event integration
@@ -235,6 +263,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - Competitor pricing analysis
 
 **Revenue Forecasting**
+
 - Occupancy prediction
 - Channel optimization
 - Dynamic inventory management
@@ -242,6 +271,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 #### Real-World Results
 
 **Hilton + IBM Watson**
+
 - **Technology:** Predictive analytics platform analyzing millions of data points
 - **Results:**
   - **5% increase** in off-peak occupancy
@@ -249,6 +279,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - **Capabilities:** Demand forecasting, pricing optimization, personalized marketing
 
 #### ML Techniques
+
 - Deep learning for hotel occupancy forecasting
 - Time series analysis
 - Principal component analysis
@@ -259,47 +290,57 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 
 ## Competitive Positioning Matrix
 
-| Category | Enterprise Solutions | Affordable Solutions | Market Gap |
-|----------|---------------------|---------------------|------------|
-| **Revenue Mgmt** | IDeaS, Duetto, Lighthouse (>$10k/yr est.) | RoomPriceGenie, Atomize | Open-source, hybrid approach |
-| **Guest Experience** | TrustYou, Revinate (>$5k/yr est.) | Canary Technologies | Self-hosted, privacy-first |
-| **Operations** | ALICE, HotelOps.AI (>$8k/yr est.) | Generic scheduling tools | Integrated, affordable suite |
-| **Review Mgmt** | ReviewPro, GuestRevu (>$3k/yr est.) | Manual processes | Free tier, API-first |
-| **Predictive Analytics** | IBM Watson + Hotel Partnerships | Spreadsheet forecasting | Embedded in PMS systems |
+| Category                 | Enterprise Solutions                      | Affordable Solutions     | Market Gap                   |
+| ------------------------ | ----------------------------------------- | ------------------------ | ---------------------------- |
+| **Revenue Mgmt**         | IDeaS, Duetto, Lighthouse (>$10k/yr est.) | RoomPriceGenie, Atomize  | Open-source, hybrid approach |
+| **Guest Experience**     | TrustYou, Revinate (>$5k/yr est.)         | Canary Technologies      | Self-hosted, privacy-first   |
+| **Operations**           | ALICE, HotelOps.AI (>$8k/yr est.)         | Generic scheduling tools | Integrated, affordable suite |
+| **Review Mgmt**          | ReviewPro, GuestRevu (>$3k/yr est.)       | Manual processes         | Free tier, API-first         |
+| **Predictive Analytics** | IBM Watson + Hotel Partnerships           | Spreadsheet forecasting  | Embedded in PMS systems      |
 
 ---
 
 ## Key Investment Areas Ranked by ROI
 
 ### 1. Revenue Management & Dynamic Pricing
+
 **Investment Level:** 🔥🔥🔥🔥🔥 (Highest)
+
 - **ROI:** 10-35% RevPAR increase
 - **Time Savings:** 20-30 hours/month
 - **ML Complexity:** High (deep learning, real-time optimization)
 - **Barrier to Entry:** High (data quality, infrastructure)
 
 ### 2. Operational Automation
+
 **Investment Level:** 🔥🔥🔥🔥
+
 - **ROI:** 15-20% cost reduction, 20-50% efficiency gains
 - **ML Complexity:** Medium (optimization algorithms, scheduling)
 - **Barrier to Entry:** Medium (integration complexity)
 
 ### 3. Guest Experience Personalization
+
 **Investment Level:** 🔥🔥🔥🔥
+
 - **ROI:** 61% willing to pay more (revenue potential)
 - **Adoption Gap:** 55% (only 23% receive it, 78% want it)
 - **ML Complexity:** Medium (NLP, recommendation systems)
 - **Barrier to Entry:** Low-Medium (chatbot platforms available)
 
 ### 4. Reputation Management
+
 **Investment Level:** 🔥🔥🔥
+
 - **ROI:** 84% brand improvement potential
 - **Time Savings:** High (automated responses)
 - **ML Complexity:** Low-Medium (sentiment analysis, text generation)
 - **Barrier to Entry:** Low (many affordable tools)
 
 ### 5. Predictive Analytics
+
 **Investment Level:** 🔥🔥🔥
+
 - **ROI:** 5-7% occupancy/revenue increase
 - **ML Complexity:** High (time series, ensemble models)
 - **Barrier to Entry:** High (data science expertise)
@@ -309,6 +350,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 ## Technology Trends
 
 ### 1. AI/ML Techniques Being Used
+
 - **Deep Learning:** Price prediction, demand forecasting, image recognition
 - **Natural Language Processing:** Review sentiment, chatbots, automated responses
 - **Reinforcement Learning:** Dynamic pricing optimization
@@ -317,12 +359,14 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - **Computer Vision:** (Emerging) Housekeeping quality control, security
 
 ### 2. Integration Patterns
+
 - **Cloud-First:** Most solutions are SaaS, cloud-based
 - **API-Driven:** Integration with PMS, channel managers, booking engines
 - **Real-Time Processing:** Streaming data for dynamic pricing
 - **Multi-Platform:** Mobile apps, web portals, messaging integrations
 
 ### 3. Data Sources
+
 - **Internal:** PMS, booking data, guest history, operational logs
 - **External:** Competitor rates (web scraping), events calendars, weather, economic indicators
 - **Third-Party:** OTA data, market intelligence platforms
@@ -332,36 +376,43 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 ## Market Gaps & Opportunities
 
 ### 1. **Pricing Accessibility Gap** ⭐⭐⭐⭐⭐
+
 **Problem:** Enterprise solutions ($10k-50k+/year) exclude 80%+ of independent hotels
 **Opportunity:** Open-source, self-hosted, or freemium models with premium support
 **Our Advantage:** Cost-effective SDK approach, hybrid traditional+AI
 
 ### 2. **Hybrid Traditional+AI Gap** ⭐⭐⭐⭐⭐
+
 **Problem:** Most solutions are 100% AI (expensive) or 0% AI (limited)
 **Opportunity:** Smart escalation - traditional for 70-80%, AI for complex cases
 **Our Advantage:** Core philosophy of SDK - "cheapest method that works"
 
 ### 3. **Privacy & Data Sovereignty Gap** ⭐⭐⭐⭐
+
 **Problem:** Cloud solutions require sending sensitive guest data to third parties
 **Opportunity:** Self-hosted, privacy-first solutions (local processing)
 **Our Advantage:** Local-first approach, browser-based ML (Transformers.js)
 
 ### 4. **Integration Complexity Gap** ⭐⭐⭐⭐
+
 **Problem:** Enterprise solutions require complex integrations, professional services
 **Opportunity:** Simple API, plug-and-play modules, clear documentation
 **Our Advantage:** Developer-friendly SDK with demo pages
 
 ### 5. **Transparency & Explainability Gap** ⭐⭐⭐
+
 **Problem:** Black-box AI systems don't explain decisions
 **Opportunity:** Explainable AI with reasoning, confidence scores
 **Our Advantage:** Documented algorithms, confidence metrics, reason codes
 
 ### 6. **Small Hotel Feature Gap** ⭐⭐⭐⭐
+
 **Problem:** Enterprise features irrelevant to small properties (multi-property, complex hierarchies)
 **Opportunity:** Right-sized features for 1-50 room properties
 **Our Advantage:** Modular approach - use what you need
 
 ### 7. **Customization Gap** ⭐⭐⭐
+
 **Problem:** SaaS solutions are one-size-fits-all
 **Opportunity:** Open-source customization, white-label options
 **Our Advantage:** MIT license, full code access
@@ -373,8 +424,10 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 ### Where to Compete (Focus Areas)
 
 #### 1. Revenue Management - Hybrid Approach ✅
+
 **Why:** Highest ROI (10-35%), but expensive ($10k+/year)
 **Our Angle:**
+
 - Traditional algorithmic pricing (0-80% accuracy, $0 cost) ✅ Implemented
 - AI enhancement for edge cases (80-95% accuracy, <$0.01/prediction)
 - Self-hosted demand forecasting (ARIMA, seasonal decomposition)
@@ -382,8 +435,10 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 **Differentiator:** $0 base cost vs. $10k-50k/year
 
 #### 2. Operational Automation - Local-First ✅
+
 **Why:** High ROI (15-20% cost reduction), integration complexity is barrier
 **Our Angle:**
+
 - Staff scheduling optimization ✅ Implemented
 - Housekeeping route optimization ✅ Implemented
 - Energy management ✅ Implemented
@@ -392,8 +447,10 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 **Differentiator:** Self-hosted, no recurring fees
 
 #### 3. Sentiment Analysis - Browser-Based ML ✅
+
 **Why:** Low barrier, high demand (84% value responses)
 **Our Angle:**
+
 - Traditional keyword-based (70% accuracy, instant) ✅ Implemented
 - Browser-based Transformers.js (85% accuracy, privacy-first)
 - Review response templates ✅ Implemented
@@ -402,8 +459,10 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 **Differentiator:** Free tier + optional AI, runs in browser
 
 #### 4. Predictive Analytics - Statistical Methods ✅
+
 **Why:** High value (5-7% revenue boost) but requires data science
 **Our Angle:**
+
 - No-show prediction (rule-based + logistic regression) ✅ Implemented
 - Demand forecasting (moving average, ARIMA)
 - Inventory forecasting ✅ Implemented
@@ -414,14 +473,17 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 ### Where NOT to Compete (Avoid)
 
 #### ❌ Guest-Facing Chatbots
+
 **Why:** Commoditized (many affordable options), high stakes (guest satisfaction)
 **Alternative:** Focus on backend intelligence, let others handle UI/UX
 
 #### ❌ Channel Management / Distribution
+
 **Why:** Highly regulated, complex integrations, dominated by established players
 **Alternative:** Integrate with existing channel managers
 
 #### ❌ PMS (Property Management System)
+
 **Why:** Massive scope, high switching costs, saturated market
 **Alternative:** Build integrations, not replacements
 
@@ -429,34 +491,37 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 
 ## Value Proposition Comparison
 
-| Feature | Enterprise Solutions | Our SDK Approach | Advantage |
-|---------|---------------------|------------------|-----------|
-| **Cost** | $5k-50k+/year | $0 (MIT license) | 💰💰💰💰💰 |
-| **Privacy** | Cloud, data sharing | Local-first, self-hosted | 🔒🔒🔒🔒 |
-| **Customization** | Limited/none | Full source access | ⚙️⚙️⚙️⚙️ |
-| **AI vs. Traditional** | 100% AI (expensive) | Hybrid (smart escalation) | 🧠🧠🧠🧠 |
-| **Vendor Lock-in** | High | None (MIT) | 🔓🔓🔓🔓🔓 |
-| **Setup Complexity** | High (prof. services) | Medium (good docs) | 📖📖📖 |
-| **Accuracy** | 90-95% | 70-85% (traditional), 85-95% (with AI) | 🎯🎯🎯 |
-| **Speed** | Fast (cloud scale) | <20ms (traditional), <1s (AI) | ⚡⚡⚡⚡ |
-| **Transparency** | Black box | Explainable algorithms | 🔍🔍🔍🔍 |
-| **Target Market** | Enterprise, chains | SMB, independent | 🏨🏨🏨🏨 |
+| Feature                | Enterprise Solutions  | Our SDK Approach                       | Advantage  |
+| ---------------------- | --------------------- | -------------------------------------- | ---------- |
+| **Cost**               | $5k-50k+/year         | $0 (MIT license)                       | 💰💰💰💰💰 |
+| **Privacy**            | Cloud, data sharing   | Local-first, self-hosted               | 🔒🔒🔒🔒   |
+| **Customization**      | Limited/none          | Full source access                     | ⚙️⚙️⚙️⚙️   |
+| **AI vs. Traditional** | 100% AI (expensive)   | Hybrid (smart escalation)              | 🧠🧠🧠🧠   |
+| **Vendor Lock-in**     | High                  | None (MIT)                             | 🔓🔓🔓🔓🔓 |
+| **Setup Complexity**   | High (prof. services) | Medium (good docs)                     | 📖📖📖     |
+| **Accuracy**           | 90-95%                | 70-85% (traditional), 85-95% (with AI) | 🎯🎯🎯     |
+| **Speed**              | Fast (cloud scale)    | <20ms (traditional), <1s (AI)          | ⚡⚡⚡⚡   |
+| **Transparency**       | Black box             | Explainable algorithms                 | 🔍🔍🔍🔍   |
+| **Target Market**      | Enterprise, chains    | SMB, independent                       | 🏨🏨🏨🏨   |
 
 ---
 
 ## Competitive Threats
 
 ### Short-Term (6-12 months)
+
 1. **Affordable entrants** (RoomPriceGenie, etc.) adding more features
 2. **Enterprise players** launching "lite" versions for SMB
 3. **PMS vendors** building AI features natively
 
 ### Medium-Term (1-2 years)
+
 1. **Consolidation** - M&A creating comprehensive suites
 2. **OpenAI/Anthropic** releasing hospitality-specific models
 3. **Browser ML maturity** - Transformers.js becoming mainstream
 
 ### Long-Term (2-5 years)
+
 1. **Commoditization** - AI features becoming table stakes in PMS
 2. **Regulatory** - Data privacy laws restricting cloud AI
 3. **Economic** - Recession reducing tech spending
@@ -494,24 +559,28 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 ### Target Segments (Priority Order)
 
 **1. Independent Hotels (1-50 rooms)** 🎯
+
 - **Size:** 80% of global hotels
 - **Pain:** Can't afford enterprise ($10k+)
 - **Message:** "Enterprise AI at $0 cost"
 - **Channel:** Developer communities, hotel tech forums
 
 **2. Hotel Tech Developers** 🎯
+
 - **Size:** Growing ecosystem
 - **Pain:** Build vs. buy for AI features
 - **Message:** "MIT-licensed building blocks"
 - **Channel:** GitHub, dev conferences, API docs
 
 **3. Budget Hotel Chains (50-500 rooms)**
+
 - **Size:** Medium market segment
 - **Pain:** Need customization, not locked-in
 - **Message:** "Self-hosted, customizable"
 - **Channel:** Hotel tech trade shows
 
 **4. Hospitality Consultants**
+
 - **Size:** Influence buyers
 - **Pain:** Need cost-effective solutions for clients
 - **Message:** "White-label, professional"
@@ -520,22 +589,26 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 ### Pricing Strategy
 
 **Free Tier (Core SDK)**
+
 - All traditional algorithms (sentiment, allocation, forecasting)
 - Basic demos and documentation
 - MIT License (commercial use OK)
 
 **Premium Support ($99-499/month)**
+
 - Priority issue resolution
 - Implementation consulting
 - Custom feature development
 
 **Enterprise ($2k-10k/year)**
+
 - White-label licensing
 - Custom integrations
 - On-site training
 - SLA guarantees
 
 **AI Add-Ons (Pay-as-you-go)**
+
 - LLM sentiment analysis ($0.001/review)
 - Advanced forecasting ($0.01/prediction)
 - Bring-your-own-API-key model
@@ -545,6 +618,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 ## Success Metrics & Benchmarks
 
 ### Adoption Targets (Year 1)
+
 - **GitHub Stars:** 1,000+
 - **NPM Downloads:** 10,000+/month
 - **Production Deployments:** 100+ hotels
@@ -552,15 +626,17 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 - **Demo Page Visits:** 50,000+
 
 ### Performance Benchmarks
-| Metric | Our Target | Enterprise Solutions |
-|--------|------------|---------------------|
-| **Sentiment Accuracy** | 71% (traditional), 85% (ML) | 84-94% |
-| **Allocation Satisfaction** | 85%+ | 90%+ |
-| **Forecast MAPE** | <20% | <15% |
-| **Response Time** | <20ms (trad), <1s (AI) | <500ms |
-| **Cost per Operation** | <$0.0001 | $0.01-0.10 |
+
+| Metric                      | Our Target                  | Enterprise Solutions |
+| --------------------------- | --------------------------- | -------------------- |
+| **Sentiment Accuracy**      | 71% (traditional), 85% (ML) | 84-94%               |
+| **Allocation Satisfaction** | 85%+                        | 90%+                 |
+| **Forecast MAPE**           | <20%                        | <15%                 |
+| **Response Time**           | <20ms (trad), <1s (AI)      | <500ms               |
+| **Cost per Operation**      | <$0.0001                    | $0.01-0.10           |
 
 ### Business Impact Targets
+
 - **RevPAR Increase:** 5-15% (vs. manual pricing)
 - **Cost Reduction:** 10-20% (operations automation)
 - **Time Savings:** 10-20 hours/month
@@ -571,6 +647,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 ## Key Takeaways
 
 ### ✅ What We're Doing Right
+
 1. **Hybrid approach** - Traditional first, AI optional (unique in market)
 2. **Cost-effectiveness** - $0 base vs. $5k-50k/year competition
 3. **Local-first** - Privacy-preserving, GDPR-friendly
@@ -578,6 +655,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 5. **Modular** - Use what you need, not monolithic
 
 ### 🚀 Where to Double Down
+
 1. **Revenue management** - Highest ROI (10-35% RevPAR)
 2. **Operational automation** - Clear cost savings (15-20%)
 3. **Browser-based ML** - Privacy advantage, zero infrastructure
@@ -585,6 +663,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 5. **Documentation & demos** - Lower barrier to adoption
 
 ### ⚠️ Gaps to Address
+
 1. **Brand awareness** - Unknown vs. established players
 2. **Enterprise features** - Multi-property, SSO, advanced reporting
 3. **Integration ecosystem** - Need PMS connectors (Mews, Cloudbeds, etc.)
@@ -592,6 +671,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 5. **Case studies** - No proven production deployments yet
 
 ### 🎯 Next Steps
+
 1. **Launch marketing site** - Separate from demo, focus on value prop
 2. **Publish case study** - Even 1-2 hotels showing ROI
 3. **Build PMS integrations** - Start with most popular (Mews, Cloudbeds)
@@ -606,31 +686,35 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 ## Appendix: Competitor Quick Reference
 
 ### Revenue Management
-| Company | Focus | Target | Key Differentiator |
-|---------|-------|--------|-------------------|
-| IDeaS | AI pricing | All sizes | Industry pioneer |
-| Duetto | Revenue OS | Enterprise | #1 rated RMS |
-| Lighthouse | Market intel | Mid-large | 19% RevPAR increase |
-| RoomPriceGenie | SMB pricing | Independent | Affordable |
-| Atomize | Auto pricing | All sizes | Ease of use |
+
+| Company        | Focus        | Target      | Key Differentiator  |
+| -------------- | ------------ | ----------- | ------------------- |
+| IDeaS          | AI pricing   | All sizes   | Industry pioneer    |
+| Duetto         | Revenue OS   | Enterprise  | #1 rated RMS        |
+| Lighthouse     | Market intel | Mid-large   | 19% RevPAR increase |
+| RoomPriceGenie | SMB pricing  | Independent | Affordable          |
+| Atomize        | Auto pricing | All sizes   | Ease of use         |
 
 ### Guest Experience
-| Company | Focus | Target | Key Differentiator |
-|---------|-------|--------|-------------------|
-| TrustYou | CDP+CXP+AI | Enterprise | Fully orchestrated |
-| Revinate | Guest engagement | Mid-enterprise | Data-driven insights |
-| Canary | Ops automation | SMB | Affordable, integrations |
+
+| Company  | Focus            | Target         | Key Differentiator       |
+| -------- | ---------------- | -------------- | ------------------------ |
+| TrustYou | CDP+CXP+AI       | Enterprise     | Fully orchestrated       |
+| Revinate | Guest engagement | Mid-enterprise | Data-driven insights     |
+| Canary   | Ops automation   | SMB            | Affordable, integrations |
 
 ### Operations
-| Company | Focus | Target | Key Differentiator |
-|---------|-------|--------|-------------------|
-| ALICE | Housekeeping/maint | Mid-large | Comprehensive ops |
-| HotelOps.AI | Full ops suite | All sizes | AI-native |
+
+| Company     | Focus              | Target    | Key Differentiator |
+| ----------- | ------------------ | --------- | ------------------ |
+| ALICE       | Housekeeping/maint | Mid-large | Comprehensive ops  |
+| HotelOps.AI | Full ops suite     | All sizes | AI-native          |
 
 ### Reputation
-| Company | Focus | Target | Key Differentiator |
-|---------|-------|--------|-------------------|
-| GuestRevu | Review mgmt | All sizes | One-click responses |
+
+| Company   | Focus          | Target     | Key Differentiator      |
+| --------- | -------------- | ---------- | ----------------------- |
+| GuestRevu | Review mgmt    | All sizes  | One-click responses     |
 | ReviewPro | Multi-platform | Enterprise | Comprehensive analytics |
 
 ---
@@ -640,6 +724,7 @@ The hospitality AI/ML market is experiencing explosive growth, projected to rise
 The hospitality AI market is booming, but there's a clear **white space for affordable, transparent, privacy-first solutions**. Our SDK's hybrid approach (traditional + optional AI) is **unique and defensible**. The biggest opportunities are in **revenue management** (highest ROI) and **operational automation** (clear cost savings), targeting the **80% of independent hotels** priced out of enterprise solutions.
 
 **Key Success Factors:**
+
 1. Maintain cost advantage ($0 vs. $5k-50k)
 2. Build open-source community (network effects)
 3. Prove ROI with case studies (even 1-2 hotels)
@@ -647,6 +732,7 @@ The hospitality AI market is booming, but there's a clear **white space for affo
 5. Focus on developer experience (easy to integrate)
 
 **Recommended Immediate Actions:**
+
 1. Create marketing site with clear value proposition
 2. Build integration with 1-2 popular PMS systems
 3. Publish blog post: "Why We Built an Open-Source Hospitality AI SDK"
@@ -655,5 +741,5 @@ The hospitality AI market is booming, but there's a clear **white space for affo
 
 ---
 
-*Generated: October 2025*
-*Next Review: January 2026*
+_Generated: October 2025_
+_Next Review: January 2026_

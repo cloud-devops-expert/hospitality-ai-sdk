@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
-import { forecastRange, DataPoint, ForecastResult, detectSeasonality } from '@/lib/forecast/statistical';
+import {
+  forecastRange,
+  DataPoint,
+  ForecastResult,
+  detectSeasonality,
+} from '@/lib/forecast/statistical';
 import { forecastARIMA, forecastProphet, forecastLSTM } from '@/lib/forecast/ml-timeseries';
 
 type AlgorithmType = 'statistical' | 'arima' | 'prophet' | 'lstm';
@@ -32,7 +37,7 @@ function generateSampleData(): DataPoint[] {
 
     data.push({
       date,
-      value: Math.max(0, Math.min(100, value))
+      value: Math.max(0, Math.min(100, value)),
     });
   }
 
@@ -75,29 +80,55 @@ export default function ForecastPage() {
   const getAlgorithmInfo = (algo: AlgorithmType) => {
     switch (algo) {
       case 'statistical':
-        return { cost: '$0', latency: '~20ms', accuracy: '19% MAPE', description: 'Moving average baseline' };
+        return {
+          cost: '$0',
+          latency: '~20ms',
+          accuracy: '19% MAPE',
+          description: 'Moving average baseline',
+        };
       case 'arima':
-        return { cost: '$0', latency: '~35ms', accuracy: '15% MAPE', description: 'AutoRegressive model' };
+        return {
+          cost: '$0',
+          latency: '~35ms',
+          accuracy: '15% MAPE',
+          description: 'AutoRegressive model',
+        };
       case 'prophet':
-        return { cost: '$0', latency: '~28ms', accuracy: '12% MAPE', description: 'Trend + seasonality' };
+        return {
+          cost: '$0',
+          latency: '~28ms',
+          accuracy: '12% MAPE',
+          description: 'Trend + seasonality',
+        };
       case 'lstm':
-        return { cost: '$0', latency: '~45ms', accuracy: '17% MAPE', description: 'Neural network' };
+        return {
+          cost: '$0',
+          latency: '~45ms',
+          accuracy: '17% MAPE',
+          description: 'Neural network',
+        };
     }
   };
 
   const getTrendColor = (trend: string) => {
     switch (trend) {
-      case 'increasing': return 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30';
-      case 'decreasing': return 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30';
-      default: return 'text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800';
+      case 'increasing':
+        return 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30';
+      case 'decreasing':
+        return 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30';
+      default:
+        return 'text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800';
     }
   };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'increasing': return '↗';
-      case 'decreasing': return '↘';
-      default: return '→';
+      case 'increasing':
+        return '↗';
+      case 'decreasing':
+        return '↘';
+      default:
+        return '→';
     }
   };
 
@@ -113,7 +144,9 @@ export default function ForecastPage() {
         </header>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Select Algorithm</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            Select Algorithm
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {(['statistical', 'arima', 'prophet', 'lstm'] as const).map((algo) => {
               const info = getAlgorithmInfo(algo);
@@ -131,9 +164,15 @@ export default function ForecastPage() {
                     {algo}
                   </div>
                   <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
-                    <div><strong>Cost:</strong> {info.cost}</div>
-                    <div><strong>Latency:</strong> {info.latency}</div>
-                    <div><strong>Accuracy:</strong> {info.accuracy}</div>
+                    <div>
+                      <strong>Cost:</strong> {info.cost}
+                    </div>
+                    <div>
+                      <strong>Latency:</strong> {info.latency}
+                    </div>
+                    <div>
+                      <strong>Accuracy:</strong> {info.accuracy}
+                    </div>
                     <div className="text-gray-500 dark:text-gray-500 mt-1">{info.description}</div>
                   </div>
                 </button>
@@ -145,7 +184,9 @@ export default function ForecastPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Historical Data Points</p>
-            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{historicalData.length}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {historicalData.length}
+            </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Last 60 days</p>
           </div>
 
@@ -153,7 +194,9 @@ export default function ForecastPage() {
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Current Trend</p>
             <div className="flex items-center">
               {forecasts.length > 0 && (
-                <span className={`text-2xl font-bold px-3 py-1 rounded ${getTrendColor(forecasts[0].trend)}`}>
+                <span
+                  className={`text-2xl font-bold px-3 py-1 rounded ${getTrendColor(forecasts[0].trend)}`}
+                >
                   {getTrendIcon(forecasts[0].trend)} {forecasts[0].trend}
                 </span>
               )}
@@ -176,7 +219,9 @@ export default function ForecastPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Forecast Settings</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+              Forecast Settings
+            </h2>
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -206,7 +251,9 @@ export default function ForecastPage() {
             </button>
 
             <div className="mt-6 pt-6 border-t border-gray-300 dark:border-gray-600">
-              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Historical Occupancy (Last 7 Days)</h3>
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                Historical Occupancy (Last 7 Days)
+              </h3>
               <div className="space-y-2">
                 {historicalData.slice(-7).map((dp, idx) => (
                   <div key={idx} className="flex justify-between items-center">
@@ -231,7 +278,9 @@ export default function ForecastPage() {
 
             {seasonality?.hasSeasonality && seasonality.pattern && (
               <div className="mt-6 pt-6 border-t border-gray-300 dark:border-gray-600">
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Weekly Pattern</h3>
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                  Weekly Pattern
+                </h3>
                 <div className="space-y-1">
                   {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, idx) => (
                     <div key={day} className="flex items-center justify-between text-xs">
@@ -239,7 +288,9 @@ export default function ForecastPage() {
                       <div className="flex-1 mx-2 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                         <div
                           className="bg-brand-500 dark:bg-brand-400 h-1.5 rounded-full"
-                          style={{ width: `${((seasonality.pattern![idx] || 0) / Math.max(...seasonality.pattern!)) * 100}%` }}
+                          style={{
+                            width: `${((seasonality.pattern![idx] || 0) / Math.max(...seasonality.pattern!)) * 100}%`,
+                          }}
                         />
                       </div>
                       <span className="text-gray-700 dark:text-gray-300 w-8 text-right">
@@ -256,20 +307,34 @@ export default function ForecastPage() {
             {forecasts.length > 0 ? (
               <>
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                  <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Forecast Results</h2>
+                  <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+                    Forecast Results
+                  </h2>
 
                   <div className="bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-700 rounded-lg p-4 mb-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Average Predicted</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                          Average Predicted
+                        </p>
                         <p className="text-2xl font-bold text-brand-700 dark:text-brand-400">
-                          {(forecasts.reduce((sum, f) => sum + f.predicted, 0) / forecasts.length).toFixed(1)}%
+                          {(
+                            forecasts.reduce((sum, f) => sum + f.predicted, 0) / forecasts.length
+                          ).toFixed(1)}
+                          %
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Avg Confidence</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                          Avg Confidence
+                        </p>
                         <p className="text-2xl font-bold text-brand-700 dark:text-brand-400">
-                          {(forecasts.reduce((sum, f) => sum + f.confidence, 0) / forecasts.length * 100).toFixed(0)}%
+                          {(
+                            (forecasts.reduce((sum, f) => sum + f.confidence, 0) /
+                              forecasts.length) *
+                            100
+                          ).toFixed(0)}
+                          %
                         </p>
                       </div>
                     </div>
@@ -277,14 +342,17 @@ export default function ForecastPage() {
 
                   <div className="max-h-96 overflow-y-auto">
                     {forecasts.map((forecast, idx) => (
-                      <div key={idx} className="mb-3 p-3 bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-600">
+                      <div
+                        key={idx}
+                        className="mb-3 p-3 bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-600"
+                      >
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <p className="font-semibold text-gray-900 dark:text-gray-100">
                               {forecast.date.toLocaleDateString('en-US', {
                                 weekday: 'short',
                                 month: 'short',
-                                day: 'numeric'
+                                day: 'numeric',
                               })}
                             </p>
                             <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -307,7 +375,9 @@ export default function ForecastPage() {
                               style={{ width: `${Math.min(100, forecast.predicted)}%` }}
                             />
                           </div>
-                          <span className={`text-xs px-2 py-0.5 rounded ${getTrendColor(forecast.trend)}`}>
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded ${getTrendColor(forecast.trend)}`}
+                          >
                             {getTrendIcon(forecast.trend)}
                           </span>
                         </div>
@@ -317,7 +387,9 @@ export default function ForecastPage() {
                 </div>
 
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                  <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Insights</h3>
+                  <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
+                    Insights
+                  </h3>
                   <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                     {forecasts[0].trend === 'increasing' && (
                       <li className="flex items-start">
@@ -340,7 +412,8 @@ export default function ForecastPage() {
                     <li className="flex items-start">
                       <span className="text-purple-600 dark:text-purple-400 mr-2">•</span>
                       <span>
-                        Based on {historicalData.length} days of historical data using statistical methods.
+                        Based on {historicalData.length} days of historical data using statistical
+                        methods.
                       </span>
                     </li>
                   </ul>
@@ -349,26 +422,42 @@ export default function ForecastPage() {
             ) : (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 text-center text-gray-500 dark:text-gray-400">
                 <p className="mb-4">No forecast generated yet</p>
-                <p className="text-sm">Click &ldquo;Generate Forecast&rdquo; to predict future occupancy</p>
+                <p className="text-sm">
+                  Click &ldquo;Generate Forecast&rdquo; to predict future occupancy
+                </p>
               </div>
             )}
           </div>
         </div>
 
         <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Methods Used</h3>
+          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
+            Methods Used
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
-              <p className="font-semibold text-purple-700 dark:text-purple-400 mb-1">Moving Average</p>
-              <p className="text-gray-600 dark:text-gray-400">Simple average of recent values for baseline prediction</p>
+              <p className="font-semibold text-purple-700 dark:text-purple-400 mb-1">
+                Moving Average
+              </p>
+              <p className="text-gray-600 dark:text-gray-400">
+                Simple average of recent values for baseline prediction
+              </p>
             </div>
             <div>
-              <p className="font-semibold text-purple-700 dark:text-purple-400 mb-1">Exponential Smoothing</p>
-              <p className="text-gray-600 dark:text-gray-400">Weight recent data more heavily for responsive forecasts</p>
+              <p className="font-semibold text-purple-700 dark:text-purple-400 mb-1">
+                Exponential Smoothing
+              </p>
+              <p className="text-gray-600 dark:text-gray-400">
+                Weight recent data more heavily for responsive forecasts
+              </p>
             </div>
             <div>
-              <p className="font-semibold text-purple-700 dark:text-purple-400 mb-1">Trend Analysis</p>
-              <p className="text-gray-600 dark:text-gray-400">Linear regression to identify upward/downward trends</p>
+              <p className="font-semibold text-purple-700 dark:text-purple-400 mb-1">
+                Trend Analysis
+              </p>
+              <p className="text-gray-600 dark:text-gray-400">
+                Linear regression to identify upward/downward trends
+              </p>
             </div>
           </div>
         </div>

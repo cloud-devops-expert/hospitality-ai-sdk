@@ -12,6 +12,7 @@ This directory contains AI agent tasks, documentation, prompts, and experimental
 ## Purpose
 
 This folder serves as the central hub for:
+
 1. Tracking AI-related development tasks
 2. Documenting approaches and methodologies
 3. Storing prompt templates for different hospitality scenarios

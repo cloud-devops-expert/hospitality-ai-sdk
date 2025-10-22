@@ -9,11 +9,13 @@ This guide explains how to model hotel room allocation as a constraint satisfact
 ## Constraint Types
 
 ### Hard Constraints (Must NEVER be violated)
+
 - Score format: `-1hard` per violation
 - **Score MUST be 0hard** for a valid solution
 - These are non-negotiable business rules or legal requirements
 
 ### Soft Constraints (Preferences to optimize)
+
 - Score format: `+50soft` per match (or `-50soft` per penalty)
 - **Maximize soft score** while keeping hard score at 0
 - Trade-offs can be made between different soft constraints
@@ -55,6 +57,7 @@ This guide explains how to model hotel room allocation as a constraint satisfact
 ```
 
 **Room Distribution**:
+
 - Accessible rooms: 4 (R101, R201, R301, R401, R501)
 - Pet-friendly rooms: 2 (R302, R402)
 - Smoking rooms: 2 (R404, R503)
@@ -66,11 +69,13 @@ This guide explains how to model hotel room allocation as a constraint satisfact
 ## Hard Constraints (5 total)
 
 ### 1. Room Type Match
+
 **Rule**: Guest MUST receive the room type they requested (Standard, Deluxe, or Suite)
 
 **Why Hard**: Contractual obligation - guest paid for specific room type
 
 **Example**:
+
 ```java
 // VALID
 Guest requests DELUXE → Gets R201 (Deluxe) ✅
@@ -81,6 +86,7 @@ Score: -1hard/-0soft
 ```
 
 **Code**:
+
 ```java
 Constraint roomTypeMatch(ConstraintFactory factory) {
     return factory
@@ -95,11 +101,13 @@ Constraint roomTypeMatch(ConstraintFactory factory) {
 ---
 
 ### 2. No Double Booking
+
 **Rule**: No two guests can be assigned the same room on overlapping dates
 
 **Why Hard**: Physical impossibility + legal liability
 
 **Example**:
+
 ```java
 // VALID
 Guest A: R201, Oct 25-27
@@ -112,6 +120,7 @@ Score: -1hard/-0soft
 ```
 
 **Code**:
+
 ```java
 Constraint noDoubleBooking(ConstraintFactory factory) {
     return factory
@@ -129,11 +138,13 @@ Constraint noDoubleBooking(ConstraintFactory factory) {
 ---
 
 ### 3. Accessibility Required
+
 **Rule**: Guests requiring accessible rooms MUST get accessible rooms
 
 **Why Hard**: ADA/legal compliance + moral obligation
 
 **Example**:
+
 ```java
 // VALID
 Guest needs accessible → Gets R201 (Accessible) ✅
@@ -146,6 +157,7 @@ Score: -1hard/-0soft
 **Available Accessible Rooms**: R101, R201, R301, R401, R501
 
 **Code**:
+
 ```java
 Constraint accessibilityRequired(ConstraintFactory factory) {
     return factory
@@ -161,11 +173,13 @@ Constraint accessibilityRequired(ConstraintFactory factory) {
 ---
 
 ### 4. Smoking Policy Match
+
 **Rule**: Smoking guests MUST get smoking-allowed rooms
 
 **Why Hard**: Hotel policy + fire safety + legal regulations
 
 **Example**:
+
 ```java
 // VALID
 Guest smokes → Gets R404 (Smoking room) ✅
@@ -179,6 +193,7 @@ Score: -1hard/-0soft
 **Available Smoking Rooms**: R404, R503
 
 **Code**:
+
 ```java
 Constraint smokingPolicyMatch(ConstraintFactory factory) {
     return factory
@@ -196,11 +211,13 @@ Constraint smokingPolicyMatch(ConstraintFactory factory) {
 ---
 
 ### 5. Pet Policy Match
+
 **Rule**: Guests with pets MUST get pet-friendly rooms
 
 **Why Hard**: Hotel policy + allergies + damage liability
 
 **Example**:
+
 ```java
 // VALID
 Guest has pet → Gets R302 (Pet-friendly) ✅
@@ -213,6 +230,7 @@ Score: -1hard/-0soft
 **Available Pet-Friendly Rooms**: R302, R402
 
 **Code**:
+
 ```java
 Constraint petPolicyMatch(ConstraintFactory factory) {
     return factory
@@ -230,6 +248,7 @@ Constraint petPolicyMatch(ConstraintFactory factory) {
 ## Soft Constraints (9 total)
 
 ### 1. VIP Ocean View Priority
+
 **Rule**: VIP guests should get ocean view rooms when possible
 
 **Weight**: +100 soft points (very important)
@@ -237,6 +256,7 @@ Constraint petPolicyMatch(ConstraintFactory factory) {
 **Why Soft**: VIP satisfaction = repeat business + referrals
 
 **Example**:
+
 ```java
 // Best outcome
 VIP guest → R101 (Ocean view suite)
@@ -250,6 +270,7 @@ Score: 0hard/+0soft (no bonus, but valid)
 ```
 
 **Code**:
+
 ```java
 Constraint vipOceanViewPriority(ConstraintFactory factory) {
     return factory
@@ -265,11 +286,13 @@ Constraint vipOceanViewPriority(ConstraintFactory factory) {
 ---
 
 ### 2. View Preference Match
+
 **Rule**: Match guest's preferred view when possible
 
 **Weight**: +50 soft points
 
 **Example**:
+
 ```java
 // Guest prefers ocean view
 Best:  Gets R201 (Ocean) → +50 soft
@@ -278,6 +301,7 @@ Score difference: 50 points
 ```
 
 **Code**:
+
 ```java
 Constraint viewPreference(ConstraintFactory factory) {
     return factory
@@ -293,11 +317,13 @@ Constraint viewPreference(ConstraintFactory factory) {
 ---
 
 ### 3. Floor Preference Match
+
 **Rule**: Match guest's floor preference (Low=1-3, Medium=4-8, High=9+)
 
 **Weight**: +30 soft points
 
 **Example**:
+
 ```java
 // Guest prefers high floor
 Best:  Gets R101 (Floor 10)  → +30 soft
@@ -306,6 +332,7 @@ Bad:   Gets R501 (Floor 2)   → +0 soft (but worse than Floor 10)
 ```
 
 **Code**:
+
 ```java
 Constraint floorPreference(ConstraintFactory factory) {
     return factory
@@ -323,11 +350,13 @@ Constraint floorPreference(ConstraintFactory factory) {
 ---
 
 ### 4. Balcony Preference
+
 **Rule**: Give balcony rooms to guests who want them
 
 **Weight**: +40 soft points
 
 **Example**:
+
 ```java
 // Guest wants balcony
 Best:  Gets R201 (Has balcony)    → +40 soft
@@ -337,6 +366,7 @@ OK:    Gets R204 (No balcony)     → +0 soft
 **Balcony Rooms**: R101, R102, R201, R202, R203, R301, R302
 
 **Code**:
+
 ```java
 Constraint balconyPreference(ConstraintFactory factory) {
     return factory
@@ -352,11 +382,13 @@ Constraint balconyPreference(ConstraintFactory factory) {
 ---
 
 ### 5. Kitchenette Preference
+
 **Rule**: Give kitchenette rooms to guests who want them
 
 **Weight**: +35 soft points
 
 **Example**:
+
 ```java
 // Guest wants kitchenette (extended stay)
 Best:  Gets R101 (Has kitchenette)  → +35 soft
@@ -366,6 +398,7 @@ OK:    Gets R201 (No kitchenette)   → +0 soft
 **Kitchenette Rooms**: R101, R102, R303
 
 **Code**:
+
 ```java
 Constraint kitchenettePreference(ConstraintFactory factory) {
     return factory
@@ -381,11 +414,13 @@ Constraint kitchenettePreference(ConstraintFactory factory) {
 ---
 
 ### 6. Quiet Location Preference
+
 **Rule**: Guests wanting quiet should avoid floors 1-2 (near lobby, elevators, pool)
 
 **Weight**: +25 soft points
 
 **Example**:
+
 ```java
 // Guest wants quiet
 Best:  Gets R201 (Floor 9)   → +25 soft
@@ -393,6 +428,7 @@ OK:    Gets R501 (Floor 2)   → +0 soft (noisy area)
 ```
 
 **Code**:
+
 ```java
 Constraint quietLocationPreference(ConstraintFactory factory) {
     return factory
@@ -408,11 +444,13 @@ Constraint quietLocationPreference(ConstraintFactory factory) {
 ---
 
 ### 7. Budget Constraint
+
 **Rule**: Avoid assigning rooms that exceed guest's budget
 
 **Weight**: -60 soft points (penalty)
 
 **Example**:
+
 ```java
 // Guest budget: $250/night
 Best:  Gets R304 ($250)  → +0 soft
@@ -421,6 +459,7 @@ Bad:   Gets R201 ($350)  → -60 soft (over budget by $100)
 ```
 
 **Code**:
+
 ```java
 Constraint budgetConstraint(ConstraintFactory factory) {
     return factory
@@ -436,16 +475,19 @@ Constraint budgetConstraint(ConstraintFactory factory) {
 ---
 
 ### 8. Loyalty Tier Upgrade
+
 **Rule**: Reward guests with loyalty upgrades based on tier
 
 **Weight**: 70-90 soft points based on tier
 
 **Tiers**:
+
 - Platinum (Tier 3): +90 soft if get suite
 - Gold (Tier 2): +80 soft if get deluxe/suite
 - Silver (Tier 1): +70 soft if get deluxe
 
 **Example**:
+
 ```java
 // Platinum guest (Tier 3)
 Best:  Gets R101 (Suite)     → +90 soft
@@ -458,6 +500,7 @@ OK:    Gets R401 (Standard)  → +0 soft
 ```
 
 **Code**:
+
 ```java
 Constraint loyaltyTierUpgrade(ConstraintFactory factory) {
     return factory
@@ -479,6 +522,7 @@ Constraint loyaltyTierUpgrade(ConstraintFactory factory) {
 ---
 
 ### 9. Minimize Room Changes
+
 **Rule**: For consecutive bookings by same guest, keep them in same room
 
 **Weight**: -80 soft points penalty per room change
@@ -486,6 +530,7 @@ Constraint loyaltyTierUpgrade(ConstraintFactory factory) {
 **Why Important**: Guests hate packing/unpacking, moving rooms mid-stay
 
 **Example**:
+
 ```java
 // Guest has back-to-back bookings:
 // Booking 1: Oct 25-27
@@ -496,6 +541,7 @@ Bad:   R201, then R202 → -80 soft (had to change rooms)
 ```
 
 **Code**:
+
 ```java
 Constraint minimizeRoomChanges(ConstraintFactory factory) {
     return factory
@@ -518,6 +564,7 @@ Constraint minimizeRoomChanges(ConstraintFactory factory) {
 ## Constraint Priority (Weight Summary)
 
 ### Hard Constraints (Infinite weight - cannot violate)
+
 1. Room type match
 2. No double booking
 3. Accessibility required
@@ -525,6 +572,7 @@ Constraint minimizeRoomChanges(ConstraintFactory factory) {
 5. Pet policy match
 
 ### Soft Constraints (Prioritized by weight)
+
 1. **VIP ocean view** (+100) - Highest priority soft constraint
 2. **Loyalty upgrade** (+70 to +90) - Based on tier
 3. **Minimize room changes** (-80 penalty) - Guest convenience
@@ -546,6 +594,7 @@ Constraint minimizeRoomChanges(ConstraintFactory factory) {
 **Requested**: Deluxe room
 
 **Options**:
+
 ```
 Option A: R201 (Deluxe, Ocean, Floor 9, Balcony, $350)
   Score: 0hard/+190soft
@@ -573,6 +622,7 @@ Winner: Option A ✅
 **Requested**: Standard room
 
 **Options**:
+
 ```
 Option A: R401 (Standard, Garden, Floor 5, Accessible, $200)
   Score: 0hard/+80soft ✅
@@ -602,6 +652,7 @@ Winner: Option A (higher soft score) ✅
 **Requested**: Standard room
 
 **Options**:
+
 ```
 Option A: R402 (Standard, Garden, Floor 5, Pet-friendly, $200)
   Score: 0hard/+50soft ✅
@@ -626,11 +677,13 @@ Only Option: A ✅
 
 **Guest**: Emma (Staying 6 nights)
 **Bookings**:
+
 - Booking 1: Oct 25-28 (3 nights)
 - Booking 2: Oct 28-31 (3 nights)
-**Requested**: Standard room each time
+  **Requested**: Standard room each time
 
 **Options**:
+
 ```
 Option A: R403 for both bookings
   Score: 0hard/+0soft ✅
@@ -653,12 +706,14 @@ Winner: Option A (avoid -80 penalty) ✅
 ### Adjusting Weights
 
 If you find VIPs not getting ocean views often enough:
+
 ```java
 // Increase weight
 .reward(HardSoftScore.ofSoft(150))  // was 100
 ```
 
 If budget violations are too common:
+
 ```java
 // Increase penalty
 .penalize(HardSoftScore.ofSoft(100))  // was 60
@@ -667,6 +722,7 @@ If budget violations are too common:
 ### Adding New Constraints
 
 Example: Prefer corner rooms for suites:
+
 ```java
 Constraint cornerRoomForSuites(ConstraintFactory factory) {
     return factory
@@ -682,6 +738,7 @@ Constraint cornerRoomForSuites(ConstraintFactory factory) {
 ### Combining Constraints
 
 Bonus for VIP + Loyalty Platinum + Ocean View:
+
 ```java
 Constraint vipPlatinumOceanBonus(ConstraintFactory factory) {
     return factory
@@ -707,9 +764,9 @@ Constraint vipPlatinumOceanBonus(ConstraintFactory factory) {
 **File Location**: `.agent/timefold-samples/hotel-room-allocation-example.java`
 
 **Next Steps**:
+
 1. Review the Java code example
 2. Adapt constraint weights to your business priorities
 3. Add custom constraints for your specific needs
 4. Test with real booking data
 5. Integrate with Next.js via REST API
-

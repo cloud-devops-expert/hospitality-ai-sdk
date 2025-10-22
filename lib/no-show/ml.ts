@@ -18,16 +18,16 @@ interface Features {
 function extractFeatures(booking: Booking): Features {
   // Channel encoding
   const channelMap: Record<Booking['bookingChannel'], number> = {
-    'direct': 0.2,
-    'corporate': 0.3,
-    'phone': 0.4,
-    'email': 0.5,
-    'ota': 0.8,
+    direct: 0.2,
+    corporate: 0.3,
+    phone: 0.4,
+    email: 0.5,
+    ota: 0.8,
   };
 
   // Payment encoding
   const paymentMap: Record<Booking['paymentMethod'], number> = {
-    'prepaid': 0.1,
+    prepaid: 0.1,
     'corporate-billing': 0.3,
     'pay-at-property': 0.9,
   };
@@ -150,7 +150,10 @@ export function predictNoShowGradientBoosting(booking: Booking): NoShowPredictio
   const tree3Score = gradientBoostingTree3(features);
 
   // Weighted ensemble
-  const probability = Math.max(0, Math.min(1, 0.3 * tree1Score + 0.35 * tree2Score + 0.35 * tree3Score));
+  const probability = Math.max(
+    0,
+    Math.min(1, 0.3 * tree1Score + 0.35 * tree2Score + 0.35 * tree3Score)
+  );
 
   // Feature importance-based reasons
   const reasons: string[] = [];
@@ -175,10 +178,10 @@ export function predictNoShowGradientBoosting(booking: Booking): NoShowPredictio
 
   // Determine risk level
   let riskLevel: NoShowPrediction['riskLevel'];
-  if (probability < 0.30) {
+  if (probability < 0.3) {
     riskLevel = 'low';
     recommendedActions.push('Standard confirmation process');
-  } else if (probability < 0.60) {
+  } else if (probability < 0.6) {
     riskLevel = 'medium';
     recommendedActions.push('Enhanced confirmation protocol');
     recommendedActions.push('24-hour pre-arrival reminder');
@@ -207,7 +210,7 @@ function gradientBoostingTree1(f: Features): number {
   if (f.payment > 0.7) {
     if (f.leadTime < 0.2) return 0.85;
     if (f.guestReliability < 0.4) return 0.75;
-    return 0.60;
+    return 0.6;
   } else {
     if (f.guestReliability > 0.8) return 0.15;
     return 0.35;
@@ -216,24 +219,24 @@ function gradientBoostingTree1(f: Features): number {
 
 function gradientBoostingTree2(f: Features): number {
   if (f.channel > 0.6) {
-    if (f.hasRequests === 1.0) return 0.70;
-    if (f.bookingValue > 0.5) return 0.50;
+    if (f.hasRequests === 1.0) return 0.7;
+    if (f.bookingValue > 0.5) return 0.5;
     return 0.55;
   } else {
-    if (f.guestReliability > 0.7) return 0.20;
-    return 0.40;
+    if (f.guestReliability > 0.7) return 0.2;
+    return 0.4;
   }
 }
 
 function gradientBoostingTree3(f: Features): number {
   if (f.guestReliability < 0.3) {
-    if (f.payment > 0.6) return 0.90;
+    if (f.payment > 0.6) return 0.9;
     return 0.65;
   } else if (f.guestReliability > 0.8) {
-    if (f.channel < 0.5) return 0.10;
+    if (f.channel < 0.5) return 0.1;
     return 0.25;
   } else {
-    if (f.leadTime < 0.1) return 0.70;
+    if (f.leadTime < 0.1) return 0.7;
     return 0.45;
   }
 }

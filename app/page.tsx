@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import { ThemeToggle } from '@/components/ThemeToggle'
+import Link from 'next/link';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
   const coreFeatures = [
@@ -28,63 +28,64 @@ export default function Home() {
   const newFeatures = [
     {
       name: 'No-Show Prediction',
-      description: 'Predict booking no-show risk with rule-based, logistic regression, and gradient boosting',
+      description:
+        'Predict booking no-show risk with rule-based, logistic regression, and gradient boosting',
       href: '/no-show',
-      status: 'new'
+      status: 'new',
     },
     {
       name: 'Review Response Generator',
       description: 'Generate professional responses to guest reviews with sentiment analysis',
       href: '/review-response',
-      status: 'new'
+      status: 'new',
     },
     {
       name: 'Housekeeping Routes',
       description: 'Optimize cleaning routes with greedy, TSP, and genetic algorithms',
       href: '/housekeeping',
-      status: 'new'
+      status: 'new',
     },
     {
       name: 'Upsell Recommendations',
       description: 'Generate personalized upsell offers based on guest profiles',
       href: '/upsell',
-      status: 'new'
+      status: 'new',
     },
     {
       name: 'Energy Management',
       description: 'Optimize HVAC settings to reduce energy costs',
       href: '/energy',
-      status: 'new'
+      status: 'new',
     },
     {
       name: 'Staff Scheduling',
       description: 'Optimize staff schedules based on occupancy forecasts',
       href: '/scheduling',
-      status: 'new'
+      status: 'new',
     },
     {
       name: 'F&B Inventory',
       description: 'Forecast inventory needs to reduce waste and prevent stockouts',
       href: '/inventory',
-      status: 'new'
+      status: 'new',
     },
     {
       name: 'Complaint Classification',
       description: 'Automatically classify and route guest complaints',
       href: '/complaints',
-      status: 'new'
+      status: 'new',
     },
     {
       name: 'Maintenance Prediction',
       description: 'Predict equipment maintenance needs to prevent failures',
       href: '/maintenance',
-      status: 'new'
+      status: 'new',
     },
     {
       name: 'Check-in Time Prediction',
       description: 'Predict actual guest check-in times to optimize staffing',
       href: '/checkin',
-      status: 'new'
+      status: 'new',
     },
   ];
 
@@ -116,7 +117,9 @@ export default function Home() {
         </header>
 
         <section className="mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Core Features</h2>
+          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+            Core Features
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {coreFeatures.map((feature) => (
               <Link
@@ -136,7 +139,9 @@ export default function Home() {
         <section className="mb-8">
           <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
             New: Additional Use Cases
-            <span className="ml-3 text-sm bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 px-3 py-1 rounded-full">NEW</span>
+            <span className="ml-3 text-sm bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 px-3 py-1 rounded-full">
+              NEW
+            </span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {newFeatures.map((feature) => (
@@ -178,5 +183,5 @@ export default function Home() {
         </footer>
       </div>
     </main>
-  )
+  );
 }

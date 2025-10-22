@@ -10,7 +10,7 @@ export async function analyzeWithAI(text: string): Promise<SentimentResult> {
     const response = await fetch('/api/sentiment/ai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ text }),
     });
 
     if (!response.ok) {
@@ -25,7 +25,7 @@ export async function analyzeWithAI(text: string): Promise<SentimentResult> {
       sentiment: 'neutral',
       confidence: 0,
       keywords: [],
-      method: 'ai'
+      method: 'ai',
     };
   }
 }

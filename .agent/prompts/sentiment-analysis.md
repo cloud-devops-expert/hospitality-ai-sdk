@@ -13,11 +13,13 @@ You are a sentiment analysis expert for hospitality reviews. Analyze the sentime
 ## Sample Prompts
 
 ### Basic Analysis
+
 ```
 Analyze this guest review: "{review_text}"
 ```
 
 ### Detailed Analysis with Context
+
 ```
 Analyze this hotel guest review and identify specific aspects:
 Review: "{review_text}"
@@ -34,6 +36,7 @@ Return JSON with sentiment analysis and aspect-specific scores.
 ```
 
 ### Comparative Analysis
+
 ```
 Compare these two reviews and determine which guest had a better experience:
 
@@ -44,6 +47,7 @@ Return JSON with individual sentiments and comparative analysis.
 ```
 
 ### Trend Analysis
+
 ```
 Analyze this batch of reviews and identify trends:
 
@@ -60,6 +64,7 @@ Return JSON with:
 ## Response Format
 
 ### Basic Response
+
 ```json
 {
   "score": 0.85,
@@ -70,6 +75,7 @@ Return JSON with:
 ```
 
 ### Detailed Response
+
 ```json
 {
   "score": 0.75,
@@ -90,6 +96,7 @@ Return JSON with:
 ## Escalation Criteria
 
 Escalate to AI when traditional analysis shows:
+
 - Confidence < 30%
 - Sentiment is neutral (edge cases)
 - Mixed positive and negative keywords

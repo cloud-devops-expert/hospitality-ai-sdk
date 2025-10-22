@@ -32,12 +32,48 @@ export interface UpsellResult {
 }
 
 const OFFERS: UpsellOffer[] = [
-  { id: '1', name: 'Suite Upgrade', category: 'room-upgrade', price: 80, description: 'Upgrade to ocean view suite' },
-  { id: '2', name: 'Late Checkout', category: 'service', price: 40, description: 'Checkout at 2 PM instead of 11 AM' },
-  { id: '3', name: 'Spa Package', category: 'service', price: 120, description: 'Couples massage and spa access' },
-  { id: '4', name: 'Champagne & Flowers', category: 'amenity', price: 60, description: 'Romance package' },
-  { id: '5', name: 'Breakfast Included', category: 'dining', price: 25, description: 'Full breakfast buffet' },
-  { id: '6', name: 'Airport Transfer', category: 'service', price: 50, description: 'Private car service' },
+  {
+    id: '1',
+    name: 'Suite Upgrade',
+    category: 'room-upgrade',
+    price: 80,
+    description: 'Upgrade to ocean view suite',
+  },
+  {
+    id: '2',
+    name: 'Late Checkout',
+    category: 'service',
+    price: 40,
+    description: 'Checkout at 2 PM instead of 11 AM',
+  },
+  {
+    id: '3',
+    name: 'Spa Package',
+    category: 'service',
+    price: 120,
+    description: 'Couples massage and spa access',
+  },
+  {
+    id: '4',
+    name: 'Champagne & Flowers',
+    category: 'amenity',
+    price: 60,
+    description: 'Romance package',
+  },
+  {
+    id: '5',
+    name: 'Breakfast Included',
+    category: 'dining',
+    price: 25,
+    description: 'Full breakfast buffet',
+  },
+  {
+    id: '6',
+    name: 'Airport Transfer',
+    category: 'service',
+    price: 50,
+    description: 'Private car service',
+  },
 ];
 
 export function recommendUpsellsRuleBased(profile: GuestProfile): UpsellResult {
@@ -107,7 +143,25 @@ export function recommendUpsellsRuleBased(profile: GuestProfile): UpsellResult {
 }
 
 export const UPSELL_MODELS = {
-  'rule-based': { name: 'Rule-Based', cost: 0, avgLatency: 5, conversion: 0.08, description: 'Profile + occasion matching' },
-  'collaborative': { name: 'Collaborative Filtering', cost: 0, avgLatency: 18, conversion: 0.12, description: 'Similar guest purchases' },
-  'neural': { name: 'Neural Recommendation', cost: 0, avgLatency: 30, conversion: 0.16, description: 'Deep learning model' },
+  'rule-based': {
+    name: 'Rule-Based',
+    cost: 0,
+    avgLatency: 5,
+    conversion: 0.08,
+    description: 'Profile + occasion matching',
+  },
+  collaborative: {
+    name: 'Collaborative Filtering',
+    cost: 0,
+    avgLatency: 18,
+    conversion: 0.12,
+    description: 'Similar guest purchases',
+  },
+  neural: {
+    name: 'Neural Recommendation',
+    cost: 0,
+    avgLatency: 30,
+    conversion: 0.16,
+    description: 'Deep learning model',
+  },
 };

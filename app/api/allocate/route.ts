@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Convert request to domain model
-    const guests: Guest[] = body.bookings.map(b => ({
+    const guests: Guest[] = body.bookings.map((b) => ({
       id: b.guestId,
       name: b.guestName,
       vip: b.vip || false,
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       lateCheckout: b.lateCheckout,
     }));
 
-    const rooms: Room[] = body.rooms.map(r => ({
+    const rooms: Room[] = body.rooms.map((r) => ({
       id: r.id,
       number: r.number,
       type: r.type,
@@ -93,8 +93,8 @@ export async function POST(request: NextRequest) {
 
     // Build response
     const assignments = solution.bookings
-      .filter(b => b.assignedRoom)
-      .map(b => ({
+      .filter((b) => b.assignedRoom)
+      .map((b) => ({
         bookingId: b.id,
         guestName: b.guest.name,
         roomNumber: b.assignedRoom!.number,
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
       }));
 
     const constraintViolations = (solution.constraintMatches || []).filter(
-      m => m.score.hardScore < 0 || m.score.softScore < 0
+      (m) => m.score.hardScore < 0 || m.score.softScore < 0
     );
 
     const response: AllocationResponse = {

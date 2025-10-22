@@ -7,6 +7,7 @@ A cost-effective, sustainability-first AI toolkit for hospitality management. Th
 > **Not every problem needs AI. But every solution needs to work.**
 
 This SDK embraces:
+
 - **Cost-effectiveness**: Use the cheapest method that works
 - **Local-first**: Process data locally when possible
 - **Hybrid approach**: Combine traditional algorithms with AI
@@ -16,7 +17,9 @@ This SDK embraces:
 ## Features
 
 ### 1. Sentiment Analysis
+
 Multiple approaches with cost/accuracy tradeoffs:
+
 - **Traditional**: Keyword-based (5ms, $0, 72% accuracy)
 - **Browser ML**: Transformers.js (50ms, $0, 75% accuracy)
 - **OpenAI Embeddings**: Semantic understanding (300ms, $0.01/1K, 88% accuracy)
@@ -24,21 +27,27 @@ Multiple approaches with cost/accuracy tradeoffs:
 - **Hybrid**: Smart escalation (70% traditional, 30% ML = $15/month for 10K ops)
 
 ### 2. Room Allocation
+
 Intelligent room assignment with ML options:
+
 - **Rule-Based**: Constraint satisfaction (10ms, $0, 87% accuracy)
 - **Feature-Based ML**: Neural network (15ms, $0, 89% accuracy)
 - **K-Means Clustering**: Guest segmentation (25ms, $0, 82% accuracy)
 - **Collaborative Filtering**: Recommendation (30ms, $0, 85% accuracy)
 
 ### 3. Dynamic Pricing
+
 From simple to sophisticated pricing models:
+
 - **Algorithmic**: Multi-factor formula (5ms, $0, 75% R²)
 - **Linear Regression**: Trend learning (8ms, $0, 78% R²)
 - **Neural Network**: Non-linear patterns (12ms, $0, 86% R²)
 - **Random Forest**: Ensemble method (18ms, $0, 89% R²)
 
 ### 4. Demand Forecasting
+
 Statistical and ML time-series methods:
+
 - **Moving Average**: Baseline (20ms, $0, 19% MAPE)
 - **ARIMA**: AutoRegressive model (35ms, $0, 15% MAPE)
 - **Prophet-like**: Trend + seasonality (28ms, $0, 12% MAPE)
@@ -46,7 +55,9 @@ Statistical and ML time-series methods:
 - **Ensemble**: Combined models (85ms, $0, 9% MAPE)
 
 ### 5. ML Benchmarks
+
 Interactive comparison tool:
+
 - **Real-time cost calculator** based on monthly operations
 - **Side-by-side comparison** of all methods
 - **Color-coded metrics** for latency, cost, and accuracy
@@ -78,6 +89,7 @@ cp .env.example .env
 ```
 
 **Optional**: Add your OpenAI API key to enable AI features:
+
 ```
 OPENAI_API_KEY=your_key_here
 NEXT_PUBLIC_ENABLE_LLM=true
@@ -144,7 +156,7 @@ hospitality-ai-sdk/
 import { analyzeHybrid } from '@/lib/sentiment/hybrid';
 
 const result = await analyzeHybrid(
-  "The room was absolutely amazing! Clean and comfortable.",
+  'The room was absolutely amazing! Clean and comfortable.',
   false // forceAI
 );
 
@@ -185,7 +197,7 @@ const result = calculateDynamicPrice({
   date: new Date('2025-07-15'),
   occupancyRate: 0.85,
   daysUntilStay: 45,
-  roomType: 'double'
+  roomType: 'double',
 });
 
 console.log(result);
@@ -214,16 +226,19 @@ console.log(forecasts);
 ## Cost Analysis
 
 ### Traditional Only
+
 - **Cost**: $0/month
 - **Speed**: <10ms
 - **Accuracy**: 70-75%
 
 ### AI Only
+
 - **Cost**: ~$100/month (1000 reviews)
 - **Speed**: ~800ms
 - **Accuracy**: 85-90%
 
 ### Hybrid (Recommended)
+
 - **Cost**: ~$30/month (70% savings)
 - **Speed**: ~180ms average
 - **Accuracy**: 82-85%
@@ -232,15 +247,15 @@ See `.agent/experiments/cost-analysis.md` for detailed breakdown.
 
 ## Performance Benchmarks
 
-| Use Case | Method | Speed | Accuracy | Cost/Op |
-|----------|--------|-------|----------|---------|
-| Sentiment | Traditional | 5ms | 72% | $0 |
-| Sentiment | Hybrid | 180ms* | 84% | $0.00003 |
-| Allocation | Rule-based | 10ms | 87% | $0 |
-| Pricing | Algorithmic | 5ms | N/A | $0 |
-| Forecast | Statistical | 20ms | 81% | $0 |
+| Use Case   | Method      | Speed   | Accuracy | Cost/Op  |
+| ---------- | ----------- | ------- | -------- | -------- |
+| Sentiment  | Traditional | 5ms     | 72%      | $0       |
+| Sentiment  | Hybrid      | 180ms\* | 84%      | $0.00003 |
+| Allocation | Rule-based  | 10ms    | 87%      | $0       |
+| Pricing    | Algorithmic | 5ms     | N/A      | $0       |
+| Forecast   | Statistical | 20ms    | 81%      | $0       |
 
-*Average including AI escalations
+\*Average including AI escalations
 
 ## Documentation
 
@@ -257,18 +272,21 @@ Comprehensive documentation is available in the `.agent` folder:
 ## Roadmap
 
 ### Phase 1: Foundation ✓
+
 - [x] Sentiment analysis (hybrid)
 - [x] Room allocation (rule-based)
 - [x] Dynamic pricing (algorithmic)
 - [x] Demand forecast (statistical)
 
 ### Phase 2: Enhancements
+
 - [ ] Browser-based AI (Transformers.js)
 - [ ] ARIMA forecasting
 - [ ] Multi-objective allocation
 - [ ] Competitor price monitoring
 
 ### Phase 3: Production
+
 - [ ] Result caching
 - [ ] Batch processing API
 - [ ] Performance monitoring

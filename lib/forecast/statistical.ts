@@ -13,16 +13,19 @@ export interface ForecastResult {
   predicted: number;
   confidence: number; // 0-1
   trend: 'increasing' | 'decreasing' | 'stable';
-  method: 'moving-average' | 'exponential-smoothing' | 'trend-analysis' | 'arima' | 'prophet' | 'lstm';
+  method:
+    | 'moving-average'
+    | 'exponential-smoothing'
+    | 'trend-analysis'
+    | 'arima'
+    | 'prophet'
+    | 'lstm';
 }
 
 /**
  * Simple Moving Average
  */
-export function movingAverage(
-  historicalData: DataPoint[],
-  windowSize: number = 7
-): number {
+export function movingAverage(historicalData: DataPoint[], windowSize: number = 7): number {
   if (historicalData.length < windowSize) {
     windowSize = historicalData.length;
   }
@@ -68,8 +71,8 @@ export function calculateTrend(historicalData: DataPoint[]): {
 
   // Convert dates to numeric values (days since first date)
   const firstDate = historicalData[0].date.getTime();
-  const x = historicalData.map(dp => (dp.date.getTime() - firstDate) / (1000 * 60 * 60 * 24));
-  const y = historicalData.map(dp => dp.value);
+  const x = historicalData.map((dp) => (dp.date.getTime() - firstDate) / (1000 * 60 * 60 * 24));
+  const y = historicalData.map((dp) => dp.value);
 
   const sumX = x.reduce((a, b) => a + b, 0);
   const sumY = y.reduce((a, b) => a + b, 0);
@@ -90,17 +93,14 @@ export function calculateTrend(historicalData: DataPoint[]): {
 /**
  * Forecast next period
  */
-export function forecastNext(
-  historicalData: DataPoint[],
-  daysAhead: number = 1
-): ForecastResult {
+export function forecastNext(historicalData: DataPoint[], daysAhead: number = 1): ForecastResult {
   if (historicalData.length === 0) {
     return {
       date: new Date(),
       predicted: 0,
       confidence: 0,
       trend: 'stable',
-      method: 'moving-average'
+      method: 'moving-average',
     };
   }
 
@@ -113,13 +113,13 @@ export function forecastNext(
   const predicted = ma * 0.4 + es * 0.4 + (ma + trendAnalysis.slope * daysAhead) * 0.2;
 
   // Calculate confidence based on data variance
-  const values = historicalData.slice(-14).map(dp => dp.value);
+  const values = historicalData.slice(-14).map((dp) => dp.value);
   const mean = values.reduce((a, b) => a + b, 0) / values.length;
   const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
   const stdDev = Math.sqrt(variance);
 
   // Lower variance = higher confidence
-  const confidence = Math.max(0, Math.min(1, 1 - (stdDev / mean)));
+  const confidence = Math.max(0, Math.min(1, 1 - stdDev / mean));
 
   const lastDate = historicalData[historicalData.length - 1].date;
   const forecastDate = new Date(lastDate);
@@ -130,17 +130,14 @@ export function forecastNext(
     predicted: Math.max(0, predicted),
     confidence,
     trend: trendAnalysis.trend,
-    method: 'exponential-smoothing'
+    method: 'exponential-smoothing',
   };
 }
 
 /**
  * Forecast multiple periods ahead
  */
-export function forecastRange(
-  historicalData: DataPoint[],
-  daysAhead: number
-): ForecastResult[] {
+export function forecastRange(historicalData: DataPoint[], daysAhead: number): ForecastResult[] {
   const forecasts: ForecastResult[] = [];
   const currentData = [...historicalData];
 
@@ -151,7 +148,7 @@ export function forecastRange(
     // Add forecast to data for next iteration
     currentData.push({
       date: forecast.date,
-      value: forecast.predicted
+      value: forecast.predicted,
     });
   }
 
@@ -173,13 +170,13 @@ export function detectSeasonality(historicalData: DataPoint[]): {
   // Group by day of week
   const byDayOfWeek: number[][] = [[], [], [], [], [], [], []];
 
-  historicalData.forEach(dp => {
+  historicalData.forEach((dp) => {
     const day = dp.date.getDay();
     byDayOfWeek[day].push(dp.value);
   });
 
   // Calculate average for each day
-  const dayAverages = byDayOfWeek.map(values => {
+  const dayAverages = byDayOfWeek.map((values) => {
     if (values.length === 0) return 0;
     return values.reduce((a, b) => a + b, 0) / values.length;
   });
@@ -187,16 +184,14 @@ export function detectSeasonality(historicalData: DataPoint[]): {
   const overallMean = dayAverages.reduce((a, b) => a + b, 0) / dayAverages.length;
 
   // Check if there's significant variation by day
-  const variance = dayAverages.reduce(
-    (sum, avg) => sum + Math.pow(avg - overallMean, 2),
-    0
-  ) / dayAverages.length;
+  const variance =
+    dayAverages.reduce((sum, avg) => sum + Math.pow(avg - overallMean, 2), 0) / dayAverages.length;
 
   const hasSeasonality = variance / overallMean > 0.1; // 10% threshold
 
   return {
     hasSeasonality,
     period: 7,
-    pattern: hasSeasonality ? dayAverages : undefined
+    pattern: hasSeasonality ? dayAverages : undefined,
   };
 }

@@ -93,6 +93,7 @@ npx payload migrate
 ## Create Admin User
 
 After running `npm run dev`, navigate to:
+
 ```
 http://localhost:3000/admin
 ```
@@ -109,13 +110,17 @@ Create your first admin user.
 ## Troubleshooting
 
 ### Issue: "Cannot find module 'payload'"
+
 **Solution:** Re-run `npm install --legacy-peer-deps`
 
 ### Issue: Database connection failed
+
 **Solution:** Check DATABASE_URL in .env.local, verify PostgreSQL is running
 
 ### Issue: Sharp installation error
+
 **Solution:**
+
 ```bash
 npm install sharp --force
 # Or use pre-built binaries
@@ -123,11 +128,13 @@ npm install --platform=darwin --arch=arm64 sharp
 ```
 
 ### Issue: Permission errors
+
 **Solution:** Fix npm cache ownership (see Prerequisites above)
 
 ## Next Steps
 
 Once installed:
+
 1. Configure collections (already created in `src/payload/collections/`)
 2. Customize admin UI theme
 3. Add media storage (local or cloud)
@@ -137,12 +144,14 @@ Once installed:
 ## Production Deployment
 
 For production, you'll need:
+
 1. Production PostgreSQL (managed: AWS RDS, Supabase, Railway)
 2. Environment variables set on hosting platform
 3. Build command: `npm run build`
 4. Start command: `npm run start`
 
 Recommended platforms:
+
 - **Vercel** (easiest, auto-deploy from Git)
 - **Railway** (includes PostgreSQL)
 - **Render** (free tier with PostgreSQL)

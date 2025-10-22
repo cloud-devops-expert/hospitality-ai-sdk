@@ -275,7 +275,7 @@ describe('Check-in Time Prediction', () => {
     it('should handle all guest types', () => {
       const guestTypes: Array<CheckInBooking['guestType']> = ['business', 'leisure', 'family'];
 
-      guestTypes.forEach(guestType => {
+      guestTypes.forEach((guestType) => {
         const booking: CheckInBooking = {
           id: `test-${guestType}`,
           guestName: `${guestType} Guest`,
@@ -293,7 +293,7 @@ describe('Check-in Time Prediction', () => {
     it('should handle both booking sources', () => {
       const sources: Array<CheckInBooking['bookingSource']> = ['direct', 'ota'];
 
-      sources.forEach(source => {
+      sources.forEach((source) => {
         const booking: CheckInBooking = {
           id: `test-${source}`,
           guestName: 'Test Guest',

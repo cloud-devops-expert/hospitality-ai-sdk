@@ -25,12 +25,15 @@ export interface EnergyResult {
   processingTime?: number;
 }
 
-export function optimizeEnergyScheduleBased(rooms: RoomOccupancy[], outsideTemp: number): EnergyResult {
+export function optimizeEnergyScheduleBased(
+  rooms: RoomOccupancy[],
+  outsideTemp: number
+): EnergyResult {
   const startTime = Date.now();
   const settings = new Map<string, EnergySettings>();
   let totalCost = 0;
 
-  rooms.forEach(room => {
+  rooms.forEach((room) => {
     let targetTemp = 22; // default
     let hvacMode: 'cool' | 'heat' | 'off' = 'off';
 
@@ -66,7 +69,25 @@ export function optimizeEnergyScheduleBased(rooms: RoomOccupancy[], outsideTemp:
 }
 
 export const ENERGY_MODELS = {
-  'schedule': { name: 'Schedule-Based', cost: 0, avgLatency: 1, savings: 15, description: 'Fixed temperature schedules' },
-  'occupancy': { name: 'Occupancy Prediction', cost: 0, avgLatency: 20, savings: 28, description: 'Forecast-based pre-conditioning' },
-  'weather': { name: 'Weather-Adaptive', cost: 0, avgLatency: 50, savings: 35, description: 'External data integration' },
+  schedule: {
+    name: 'Schedule-Based',
+    cost: 0,
+    avgLatency: 1,
+    savings: 15,
+    description: 'Fixed temperature schedules',
+  },
+  occupancy: {
+    name: 'Occupancy Prediction',
+    cost: 0,
+    avgLatency: 20,
+    savings: 28,
+    description: 'Forecast-based pre-conditioning',
+  },
+  weather: {
+    name: 'Weather-Adaptive',
+    cost: 0,
+    avgLatency: 50,
+    savings: 35,
+    description: 'External data integration',
+  },
 };

@@ -2,7 +2,12 @@
 
 import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
-import { Asset, MaintenancePrediction, predictMaintenanceUsageBased, MAINTENANCE_MODELS } from '@/lib/maintenance/predictor';
+import {
+  Asset,
+  MaintenancePrediction,
+  predictMaintenanceUsageBased,
+  MAINTENANCE_MODELS,
+} from '@/lib/maintenance/predictor';
 
 type AlgorithmType = 'schedule' | 'usage' | 'ml';
 
@@ -42,7 +47,9 @@ export default function MaintenancePage() {
         </p>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Select Algorithm</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            Select Algorithm
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {(['schedule', 'usage', 'ml'] as const).map((algo) => {
               const info = getAlgorithmInfo(algo);
@@ -56,18 +63,26 @@ export default function MaintenancePage() {
                     selectedAlgorithm === algo
                       ? 'border-brand-600 dark:border-brand-400 bg-brand-50 dark:bg-brand-900/20'
                       : isAvailable
-                      ? 'border-gray-300 dark:border-gray-600 hover:border-brand-400'
-                      : 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed'
+                        ? 'border-gray-300 dark:border-gray-600 hover:border-brand-400'
+                        : 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed'
                   }`}
                 >
                   <div className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                     {info.name}
-                    {!isAvailable && <span className="ml-2 text-xs text-gray-500">(Coming Soon)</span>}
+                    {!isAvailable && (
+                      <span className="ml-2 text-xs text-gray-500">(Coming Soon)</span>
+                    )}
                   </div>
                   <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
-                    <div><strong>Effectiveness:</strong> {(info.effectiveness * 100).toFixed(0)}%</div>
-                    <div><strong>Cost:</strong> ${info.cost}</div>
-                    <div><strong>Latency:</strong> ~{info.avgLatency}ms</div>
+                    <div>
+                      <strong>Effectiveness:</strong> {(info.effectiveness * 100).toFixed(0)}%
+                    </div>
+                    <div>
+                      <strong>Cost:</strong> ${info.cost}
+                    </div>
+                    <div>
+                      <strong>Latency:</strong> ~{info.avgLatency}ms
+                    </div>
                   </div>
                 </button>
               );
@@ -77,11 +92,15 @@ export default function MaintenancePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Asset Configuration</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+              Asset Configuration
+            </h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Asset Type</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Asset Type
+                </label>
                 <select
                   value={assetType}
                   onChange={(e) => {
@@ -92,7 +111,7 @@ export default function MaintenancePage() {
                       hvac: 'HVAC Unit #3',
                       elevator: 'Main Elevator',
                       plumbing: 'Water System',
-                      electrical: 'Main Panel'
+                      electrical: 'Main Panel',
                     };
                     setAssetName(names[type]);
                   }}
@@ -106,7 +125,9 @@ export default function MaintenancePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Asset Name</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Asset Name
+                </label>
                 <input
                   type="text"
                   value={assetName}
@@ -170,11 +191,15 @@ export default function MaintenancePage() {
           <div className="space-y-6">
             {result && (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Prediction Results</h2>
+                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+                  Prediction Results
+                </h2>
 
                 <div className="space-y-4">
                   <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Days Until Maintenance</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Days Until Maintenance
+                    </p>
                     <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                       {result.daysUntilMaintenance}
                     </p>
@@ -189,8 +214,8 @@ export default function MaintenancePage() {
                             result.failureRisk > 0.7
                               ? 'bg-red-500'
                               : result.failureRisk > 0.4
-                              ? 'bg-yellow-500'
-                              : 'bg-green-500'
+                                ? 'bg-yellow-500'
+                                : 'bg-green-500'
                           }`}
                           style={{ width: `${result.failureRisk * 100}%` }}
                         />
@@ -208,8 +233,8 @@ export default function MaintenancePage() {
                         result.priority === 'high'
                           ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                           : result.priority === 'medium'
-                          ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
-                          : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                            ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
+                            : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
                       }`}
                     >
                       {result.priority.toUpperCase()}

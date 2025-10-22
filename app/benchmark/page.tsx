@@ -16,7 +16,9 @@ interface BenchmarkResult {
 }
 
 export default function BenchmarkPage() {
-  const [selectedModule, setSelectedModule] = useState<'sentiment' | 'allocation' | 'pricing' | 'forecast'>('sentiment');
+  const [selectedModule, setSelectedModule] = useState<
+    'sentiment' | 'allocation' | 'pricing' | 'forecast'
+  >('sentiment');
   const [monthlyOperations, setMonthlyOperations] = useState(10000);
 
   const getBenchmarks = (): BenchmarkResult[] => {
@@ -180,7 +182,9 @@ export default function BenchmarkPage() {
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Monthly Operations</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Monthly Operations
+            </h2>
             <span className="text-3xl font-bold text-brand-600 dark:text-brand-400">
               {monthlyOperations.toLocaleString()}
             </span>
@@ -228,14 +232,19 @@ export default function BenchmarkPage() {
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {benchmarks.map((benchmark, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <tr
+                    key={idx}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {benchmark.method}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className={`text-sm font-semibold ${getLatencyColor(benchmark.latency)}`}>
+                      <div
+                        className={`text-sm font-semibold ${getLatencyColor(benchmark.latency)}`}
+                      >
                         {benchmark.latency}ms
                       </div>
                     </td>
@@ -250,7 +259,9 @@ export default function BenchmarkPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className={`text-sm font-semibold ${getAccuracyColor(benchmark.accuracy)}`}>
+                      <div
+                        className={`text-sm font-semibold ${getAccuracyColor(benchmark.accuracy)}`}
+                      >
                         {(benchmark.accuracy * 100).toFixed(0)}%
                       </div>
                     </td>
@@ -268,11 +279,19 @@ export default function BenchmarkPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Cost Analysis</h3>
+            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
+              Cost Analysis
+            </h3>
             <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-              <p><strong>Free Methods:</strong> Traditional, browser-based ML</p>
-              <p><strong>Low Cost:</strong> $0.01-0.10 per 1K operations</p>
-              <p><strong>Premium:</strong> $0.50+ per 1K operations</p>
+              <p>
+                <strong>Free Methods:</strong> Traditional, browser-based ML
+              </p>
+              <p>
+                <strong>Low Cost:</strong> $0.01-0.10 per 1K operations
+              </p>
+              <p>
+                <strong>Premium:</strong> $0.50+ per 1K operations
+              </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
                 Choose based on your volume and budget constraints
               </p>
@@ -280,7 +299,9 @@ export default function BenchmarkPage() {
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Latency Guidelines</h3>
+            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
+              Latency Guidelines
+            </h3>
             <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
               <p className="flex items-center">
                 <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
@@ -298,7 +319,9 @@ export default function BenchmarkPage() {
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Accuracy Targets</h3>
+            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
+              Accuracy Targets
+            </h3>
             <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
               <p className="flex items-center">
                 <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
@@ -317,18 +340,24 @@ export default function BenchmarkPage() {
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mt-6">
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">Recommendations</h3>
+          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
+            Recommendations
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded">
-              <p className="font-semibold text-green-800 dark:text-green-300 mb-2">Cost-Effective Choice</p>
+              <p className="font-semibold text-green-800 dark:text-green-300 mb-2">
+                Cost-Effective Choice
+              </p>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Start with traditional methods. Upgrade to browser-based ML for better accuracy with zero API costs.
+                Start with traditional methods. Upgrade to browser-based ML for better accuracy with
+                zero API costs.
               </p>
             </div>
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded">
               <p className="font-semibold text-blue-800 dark:text-blue-300 mb-2">Hybrid Approach</p>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Use traditional for 70-80% of cases. Escalate complex cases to ML/AI for optimal cost-accuracy balance.
+                Use traditional for 70-80% of cases. Escalate complex cases to ML/AI for optimal
+                cost-accuracy balance.
               </p>
             </div>
           </div>

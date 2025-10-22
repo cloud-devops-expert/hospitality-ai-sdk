@@ -66,7 +66,10 @@ export function generateResponseTemplate(review: Review): ResponseSuggestion {
     .replace('{name}', review.guestName)
     .replace('{highlights}', highlights)
     .replace('{highlights_sentence}', `Especially your comments about ${highlights}!`)
-    .replace('{issues}', keyTopics.length > 0 ? keyTopics.join(' and ') : 'the issues you experienced')
+    .replace(
+      '{issues}',
+      keyTopics.length > 0 ? keyTopics.join(' and ') : 'the issues you experienced'
+    )
     .replace('{positives}', keyTopics.slice(0, 2).join(' and '))
     .replace('{negatives}', keyTopics.slice(2).join(' and '));
 
@@ -92,21 +95,21 @@ export interface ResponseModel {
 }
 
 export const RESPONSE_MODELS: Record<string, ResponseModel> = {
-  'template': {
+  template: {
     name: 'Template-Based',
     cost: 0,
     avgLatency: 5,
     quality: 0.65,
     description: 'Keyword matching + curated templates',
   },
-  'rag': {
+  rag: {
     name: 'RAG Enhanced',
     cost: 0.02,
     avgLatency: 600,
     quality: 0.82,
     description: 'Template + AI personalization',
   },
-  'llm': {
+  llm: {
     name: 'Full LLM',
     cost: 0.08,
     avgLatency: 1200,

@@ -3,26 +3,31 @@
 ## Hero Section
 
 ### Headline
+
 **Enterprise AI for Independent Hotels at $0 Cost**
 
 ### Subheadline
+
 Open-source hospitality AI toolkit that combines traditional algorithms with optional machine learning. Pay nothing for 70-80% of use cases. Escalate to AI only when needed.
 
 ### Key Value Props (Bullet Points - Strengthened)
 
 💰 **Zero Base Cost**
+
 - MIT-licensed: Free forever, no hidden fees
 - Traditional algorithms handle 70-80% of cases at $0
 - Optional AI features: Pay-as-you-go (<$0.01/operation)
 - **vs. Enterprise: Save $10k-50k/year**
 
 🔒 **Privacy-First Architecture**
+
 - Local processing: Your guest data never leaves your servers
 - Self-hosted option: Complete data sovereignty
 - GDPR-compliant by design
 - Browser-based ML: Run AI in the user's browser (zero cloud dependency)
 
 🚀 **Production-Ready Features**
+
 - **Revenue Management:** Dynamic pricing with 10-35% RevPAR increase
 - **No-Show Prediction:** 3 algorithms (rule-based, logistic regression, gradient boosting)
 - **Sentiment Analysis:** Keyword-based (70% accuracy) + optional LLM (94% accuracy)
@@ -30,18 +35,21 @@ Open-source hospitality AI toolkit that combines traditional algorithms with opt
 - **Review Response:** Template-based + AI enhancement
 
 ⚡ **Performance Guaranteed**
+
 - Traditional methods: <20ms response time
 - Hybrid approach: <200ms average
 - Static generation: Sub-second page loads
 - Cost per operation: <$0.0001 (vs. $0.01-0.10 for enterprise)
 
 🔓 **No Vendor Lock-In**
+
 - MIT License: Use commercially, modify freely
 - Full source code access
 - Self-hosted or cloud deployment
 - Migrate away anytime (but you won't want to)
 
 🛠️ **Developer-Friendly**
+
 - TypeScript-first with full type safety
 - Next.js 15 integration
 - Comprehensive documentation + live demos
@@ -52,29 +60,34 @@ Open-source hospitality AI toolkit that combines traditional algorithms with opt
 ## Problem Statement Section
 
 ### Title
+
 **The $10k Problem: Why 80% of Hotels Can't Afford AI**
 
 ### Content (Bullet-Driven)
 
 **Enterprise AI Solutions Cost a Fortune:**
+
 - Revenue management systems (IDeaS, Duetto, Lighthouse): **$10k-50k/year**
 - Guest experience platforms (TrustYou, Revinate): **$5k-30k/year**
 - Operations automation (ALICE, HotelOps.AI): **$8k-25k/year**
 - **Total AI stack: $25k-100k+/year** for a mid-size property
 
 **This Prices Out 80% of Hotels:**
+
 - Independent properties (1-50 rooms): **Can't justify the expense**
 - Budget chains: **Need customization, not cookie-cutter SaaS**
 - Regional operators: **Want self-hosted, not cloud dependency**
 - Tech-savvy hoteliers: **Prefer ownable solutions over subscriptions**
 
 **The Industry's Dirty Secret:**
+
 - Enterprise AI uses expensive LLMs for **everything**, even simple tasks
 - 70-80% of operations can be solved with **traditional algorithms** (free)
 - Only 20-30% need actual machine learning
 - **You're paying for AI you don't need**
 
 **Market Gap:**
+
 - **$90M market (2023) → $8B by 2033** (60% CAGR)
 - **No open-source alternative exists**
 - **No hybrid traditional+AI approach**
@@ -85,6 +98,7 @@ Open-source hospitality AI toolkit that combines traditional algorithms with opt
 ## Solution Overview Section
 
 ### Title
+
 **Hybrid AI: The Best of Both Worlds**
 
 ### Content (Strengthened Bullets)
@@ -116,19 +130,20 @@ Open-source hospitality AI toolkit that combines traditional algorithms with opt
 ## Feature Comparison Section
 
 ### Title
+
 **Open Source vs. Enterprise: The Real Comparison**
 
-| Feature | Enterprise Solutions | Hospitality AI SDK | Your Savings |
-|---------|---------------------|-------------------|--------------|
-| **Annual Cost** | $25k-100k | **$0-2k** | **$23k-98k/year** |
-| **Setup Fee** | $5k-25k | **$0** | **$5k-25k** |
-| **Vendor Lock-in** | High (proprietary) | **None (MIT)** | **Priceless** |
-| **Data Privacy** | Cloud-based | **Self-hosted** | **GDPR peace of mind** |
-| **Customization** | Limited/none | **Full source access** | **Infinite flexibility** |
-| **API Costs** | Included (but you pay for it) | **Pay-as-you-go** | **70-80% reduction** |
-| **Revenue Increase** | 10-35% RevPAR | **10-30% RevPAR** | **Comparable results** |
-| **Implementation** | 2-6 months | **1-4 weeks** | **Faster time-to-value** |
-| **Support** | Included ($$$ already paid) | **Community + Premium** | **Your choice** |
+| Feature              | Enterprise Solutions          | Hospitality AI SDK      | Your Savings             |
+| -------------------- | ----------------------------- | ----------------------- | ------------------------ |
+| **Annual Cost**      | $25k-100k                     | **$0-2k**               | **$23k-98k/year**        |
+| **Setup Fee**        | $5k-25k                       | **$0**                  | **$5k-25k**              |
+| **Vendor Lock-in**   | High (proprietary)            | **None (MIT)**          | **Priceless**            |
+| **Data Privacy**     | Cloud-based                   | **Self-hosted**         | **GDPR peace of mind**   |
+| **Customization**    | Limited/none                  | **Full source access**  | **Infinite flexibility** |
+| **API Costs**        | Included (but you pay for it) | **Pay-as-you-go**       | **70-80% reduction**     |
+| **Revenue Increase** | 10-35% RevPAR                 | **10-30% RevPAR**       | **Comparable results**   |
+| **Implementation**   | 2-6 months                    | **1-4 weeks**           | **Faster time-to-value** |
+| **Support**          | Included ($$$ already paid)   | **Community + Premium** | **Your choice**          |
 
 **Bottom Line: Same Results, 95% Lower Cost**
 
@@ -137,31 +152,36 @@ Open-source hospitality AI toolkit that combines traditional algorithms with opt
 ## Social Proof Section
 
 ### GitHub Stats (Live)
+
 - ⭐ Stars: **[GitHub API]**
 - 📦 npm Downloads: **[npm API]**
 - 🏨 Hotels Using: **[Manual count]**
 
 ### Early Adopters (Placeholder for real data)
+
 > "We reduced our annual software costs from $35k to $0 while maintaining 98% of the functionality we actually used."
-> — *Anonymous 24-room boutique hotel owner*
+> — _Anonymous 24-room boutique hotel owner_
 
 > "The hybrid approach is genius. Why would I pay for AI to handle simple keyword matching?"
-> — *Regional hotel chain CTO (45 properties)*
+> — _Regional hotel chain CTO (45 properties)_
 
 > "Finally, an AI solution we can actually afford and understand."
-> — *Independent hotelier*
+> — _Independent hotelier_
 
 ---
 
 ## Call-to-Action Section
 
 ### Primary CTA
+
 **Get Started Free**
+
 ```bash
 npm install @hospitality-ai-sdk/core
 ```
 
 ### Secondary CTAs
+
 - 📚 [Read Documentation](#) - 5-minute quick start
 - 🎮 [Try Live Demos](#) - See it in action
 - 💬 [Join Discord](#) - Ask questions, get help
@@ -172,18 +192,21 @@ npm install @hospitality-ai-sdk/core
 ## Trust Indicators
 
 ### Built on Proven Tech
+
 - ✅ TypeScript (type safety)
 - ✅ Next.js 15 (performance)
 - ✅ PostgreSQL (enterprise database)
 - ✅ Tested (147/147 tests passing, 90%+ coverage)
 
 ### Transparent Development
+
 - 📖 Open roadmap on GitHub
 - 🐛 Public issue tracker
 - 📊 Performance benchmarks published
 - 💰 Cost analysis documented
 
 ### Community-Driven
+
 - 🤝 Accepting contributions
 - 📝 Clear contributing guidelines
 - 🎯 Responsive maintainers
@@ -213,6 +236,7 @@ A: Check the roadmap, open an issue, or contribute! That's the beauty of open so
 ## Technical Credibility Section
 
 ### Performance Benchmarks
+
 ```typescript
 // Real numbers from our test suite
 Sentiment Analysis (Traditional):  <20ms, 71% accuracy, $0 cost
@@ -226,12 +250,14 @@ Revenue Optimization (Algorithm): <20ms, 85% satisfaction
 ```
 
 ### Test Coverage
+
 - **147/147 tests passing** (100%)
 - **90%+ code coverage**
 - **0 critical vulnerabilities**
 - **TypeScript strict mode**
 
 ### Production Ready
+
 - Used by **[X]** hotels globally
 - Processing **[Y]** predictions/day
 - **99.9%** uptime (self-hosted)

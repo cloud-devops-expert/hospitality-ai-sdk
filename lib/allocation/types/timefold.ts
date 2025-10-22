@@ -78,8 +78,8 @@ export interface ConstraintTemplate {
   constraintType: ConstraintType;
   defaultWeight: number;
   category: ConstraintCategory;
-  parameterSchema?: any;
-  exampleParameters?: any;
+  parameterSchema?: Record<string, unknown>;
+  exampleParameters?: Record<string, unknown>;
   javaClassName?: string;
 }
 
@@ -90,7 +90,7 @@ export interface TenantConstraintConfig {
   template: ConstraintTemplate;
   enabled: boolean;
   weight: number;
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   notes?: string;
 }
 
@@ -182,7 +182,7 @@ export type ConstraintEvaluator = (
   booking: GuestBooking,
   allBookings: GuestBooking[],
   allRooms: Room[],
-  parameters: Record<string, any>
+  parameters: Record<string, unknown>
 ) => ConstraintMatch | null;
 
 export interface ConstraintDefinition {

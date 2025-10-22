@@ -11,6 +11,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 ### 1. Core Modules
 
 #### Sentiment Analysis (`lib/sentiment/`)
+
 - **Traditional**: Keyword-based analysis with 50+ sentiment words
 - **AI**: Optional LLM integration via OpenAI
 - **Hybrid**: Smart escalation (traditional first, AI if needed)
@@ -19,6 +20,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 - **Accuracy**: 72% vs 87%
 
 #### Room Allocation (`lib/allocation/`)
+
 - **Rule-Based**: Constraint satisfaction algorithm
 - **Scoring System**: Weighted preferences (accessibility, view, floor, etc.)
 - **Batch Processing**: Optimize multiple allocations
@@ -26,6 +28,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 - **Performance**: 10ms per allocation, 87% satisfaction rate
 
 #### Dynamic Pricing (`lib/pricing/`)
+
 - **Multi-Factor Model**: 6 pricing dimensions
 - **Factors**: Season, day of week, occupancy, booking window, room type
 - **Revenue Impact**: +32% vs fixed pricing
@@ -33,6 +36,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 - **Cost**: $0 (pure algorithmic)
 
 #### Demand Forecasting (`lib/forecast/`)
+
 - **Statistical Methods**: Moving average, exponential smoothing, trend analysis
 - **Ensemble Approach**: Combine 3 methods for robustness
 - **Seasonality Detection**: Identify weekly patterns
@@ -42,10 +46,12 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 ### 2. User Interface
 
 #### Home Page (`app/page.tsx`)
+
 - Landing page with feature overview
 - Navigation to all demo pages
 
 #### Sentiment Analysis Demo (`app/sentiment/page.tsx`)
+
 - Text input for reviews
 - Example reviews to try
 - Real-time analysis results
@@ -53,6 +59,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 - Confidence and keyword display
 
 #### Room Allocation Demo (`app/allocation/page.tsx`)
+
 - Guest preference configuration
 - Room type selection
 - VIP status toggle
@@ -61,6 +68,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 - Visual room display with scoring
 
 #### Dynamic Pricing Demo (`app/pricing/page.tsx`)
+
 - Base price input
 - Date selection
 - Occupancy rate slider
@@ -69,6 +77,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 - Recommendation engine
 
 #### Demand Forecast Demo (`app/forecast/page.tsx`)
+
 - Historical data visualization
 - Forecast period selector
 - Trend detection
@@ -79,6 +88,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 ### 3. Documentation
 
 #### `.agent/` Folder Structure
+
 ```
 .agent/
 ├── README.md                    # Overview of .agent folder
@@ -95,6 +105,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 ```
 
 #### Main Documentation
+
 - `README.md`: Comprehensive project overview
 - `QUICKSTART.md`: Step-by-step getting started guide
 - `.env.example`: Environment variable template
@@ -102,6 +113,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 ### 4. API Routes
 
 #### Sentiment AI Endpoint (`app/api/sentiment/ai/route.ts`)
+
 - POST endpoint for AI-powered sentiment analysis
 - OpenAI integration with GPT-3.5-turbo
 - Error handling and fallbacks
@@ -142,19 +154,20 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 
 ## Performance Benchmarks
 
-| Feature | Method | Speed | Accuracy | Cost/Op |
-|---------|--------|-------|----------|---------|
-| Sentiment | Traditional | 5ms | 72% | $0 |
-| Sentiment | Hybrid | 180ms* | 84% | $0.00003 |
-| Allocation | Rule-based | 10ms | 87% | $0 |
-| Pricing | Algorithmic | 5ms | +32% revenue | $0 |
-| Forecast | Statistical | 20ms | 81% | $0 |
+| Feature    | Method      | Speed   | Accuracy     | Cost/Op  |
+| ---------- | ----------- | ------- | ------------ | -------- |
+| Sentiment  | Traditional | 5ms     | 72%          | $0       |
+| Sentiment  | Hybrid      | 180ms\* | 84%          | $0.00003 |
+| Allocation | Rule-based  | 10ms    | 87%          | $0       |
+| Pricing    | Algorithmic | 5ms     | +32% revenue | $0       |
+| Forecast   | Statistical | 20ms    | 81%          | $0       |
 
-*Average including 30% AI escalations
+\*Average including 30% AI escalations
 
 ## Cost Analysis
 
 ### 100-Room Hotel (Monthly)
+
 - 500 reviews analyzed
 - 1,500 room allocations
 - 3,000 price calculations
@@ -169,6 +182,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 ## Key Files
 
 ### Core Logic
+
 - `lib/sentiment/traditional.ts` - Keyword-based sentiment analysis
 - `lib/sentiment/hybrid.ts` - Smart escalation logic
 - `lib/allocation/rule-based.ts` - Room allocation algorithm
@@ -176,6 +190,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 - `lib/forecast/statistical.ts` - Time-series forecasting
 
 ### UI Components
+
 - `app/page.tsx` - Landing page
 - `app/sentiment/page.tsx` - Sentiment analysis demo
 - `app/allocation/page.tsx` - Room allocation demo
@@ -183,6 +198,7 @@ A complete AI SDK for hospitality management that demonstrates **cost-effective,
 - `app/forecast/page.tsx` - Demand forecast demo
 
 ### Configuration
+
 - `package.json` - Dependencies and scripts
 - `tsconfig.json` - TypeScript configuration
 - `tailwind.config.ts` - Tailwind CSS setup
@@ -203,6 +219,7 @@ See `QUICKSTART.md` for detailed instructions.
 ## Future Enhancements
 
 ### Phase 2: Advanced Features
+
 - [ ] Browser-based AI (Transformers.js)
 - [ ] ARIMA forecasting
 - [ ] Multi-objective optimization
@@ -210,6 +227,7 @@ See `QUICKSTART.md` for detailed instructions.
 - [ ] Real-time analytics dashboard
 
 ### Phase 3: Production Ready
+
 - [ ] Result caching layer
 - [ ] Batch processing API
 - [ ] Performance monitoring
@@ -218,6 +236,7 @@ See `QUICKSTART.md` for detailed instructions.
 - [ ] Authentication and authorization
 
 ### Phase 4: Scale
+
 - [ ] Multi-property support
 - [ ] Advanced ML models
 - [ ] Real-time recommendations
@@ -272,6 +291,7 @@ See `QUICKSTART.md` for detailed instructions.
 ### When to Upgrade
 
 Consider ML/advanced AI when:
+
 - Large hotel chain (> 500 rooms)
 - Complex pricing optimization needed
 - Real-time competitive pricing required
@@ -281,6 +301,7 @@ Consider ML/advanced AI when:
 ## Success Metrics
 
 ### Technical
+
 - ✓ All features working without API keys
 - ✓ Sub-20ms response for traditional methods
 - ✓ 70% cost reduction with hybrid approach
@@ -288,12 +309,14 @@ Consider ML/advanced AI when:
 - ✓ Responsive UI for all demos
 
 ### Business Value
+
 - ✓ +32% revenue potential (dynamic pricing)
 - ✓ 87% guest satisfaction (room allocation)
 - ✓ 84% sentiment accuracy (review analysis)
 - ✓ 81% forecast accuracy (demand prediction)
 
 ### Documentation
+
 - ✓ Comprehensive README
 - ✓ Quick start guide
 - ✓ Architecture documentation

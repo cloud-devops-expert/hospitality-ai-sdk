@@ -15,10 +15,10 @@ export default function SentimentPage() {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<AlgorithmType>('traditional');
 
   const examples = [
-    "The room was absolutely amazing! Clean, comfortable, and the staff were incredibly helpful. Would definitely recommend!",
-    "Terrible experience. The room was dirty, noisy, and overpriced. Very disappointing stay.",
-    "The location was convenient and check-in was smooth. Room was okay, nothing special.",
-    "I had mixed feelings about my stay. The view was beautiful but the bed was uncomfortable and WiFi kept dropping."
+    'The room was absolutely amazing! Clean, comfortable, and the staff were incredibly helpful. Would definitely recommend!',
+    'Terrible experience. The room was dirty, noisy, and overpriced. Very disappointing stay.',
+    'The location was convenient and check-in was smooth. Room was okay, nothing special.',
+    'I had mixed feelings about my stay. The view was beautiful but the bed was uncomfortable and WiFi kept dropping.',
   ];
 
   const handleAnalyze = async () => {
@@ -49,19 +49,37 @@ export default function SentimentPage() {
   const getAlgorithmInfo = (algo: AlgorithmType) => {
     switch (algo) {
       case 'traditional':
-        return { cost: '$0', latency: '~5ms', accuracy: '72%', description: 'Keyword-based analysis' };
+        return {
+          cost: '$0',
+          latency: '~5ms',
+          accuracy: '72%',
+          description: 'Keyword-based analysis',
+        };
       case 'browser-ml':
-        return { cost: '$0', latency: '~50ms', accuracy: '75%', description: 'Browser-based ML model' };
+        return {
+          cost: '$0',
+          latency: '~50ms',
+          accuracy: '75%',
+          description: 'Browser-based ML model',
+        };
       case 'hybrid':
-        return { cost: '$0-0.50/1K', latency: '~180ms avg', accuracy: '84%', description: 'Smart escalation' };
+        return {
+          cost: '$0-0.50/1K',
+          latency: '~180ms avg',
+          accuracy: '84%',
+          description: 'Smart escalation',
+        };
     }
   };
 
   const getSentimentColor = (sentiment: string) => {
     switch (sentiment) {
-      case 'positive': return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900';
-      case 'negative': return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900';
-      default: return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
+      case 'positive':
+        return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900';
+      case 'negative':
+        return 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900';
+      default:
+        return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-800';
     }
   };
 
@@ -71,11 +89,14 @@ export default function SentimentPage() {
         <Navigation title="Sentiment Analysis" />
 
         <p className="text-gray-600 dark:text-gray-400 mb-8">
-          Analyze guest reviews using different algorithms - compare traditional, ML, and hybrid approaches
+          Analyze guest reviews using different algorithms - compare traditional, ML, and hybrid
+          approaches
         </p>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Select Algorithm</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            Select Algorithm
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {(['traditional', 'browser-ml', 'hybrid'] as const).map((algo) => {
               const info = getAlgorithmInfo(algo);
@@ -93,9 +114,15 @@ export default function SentimentPage() {
                     {algo.replace('-', ' ')}
                   </div>
                   <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
-                    <div><strong>Cost:</strong> {info.cost}</div>
-                    <div><strong>Latency:</strong> {info.latency}</div>
-                    <div><strong>Accuracy:</strong> {info.accuracy}</div>
+                    <div>
+                      <strong>Cost:</strong> {info.cost}
+                    </div>
+                    <div>
+                      <strong>Latency:</strong> {info.latency}
+                    </div>
+                    <div>
+                      <strong>Accuracy:</strong> {info.accuracy}
+                    </div>
                     <div className="text-gray-500 dark:text-gray-500 mt-2">{info.description}</div>
                   </div>
                 </button>
@@ -143,12 +170,16 @@ export default function SentimentPage() {
 
         {result && (
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Analysis Result</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+              Analysis Result
+            </h2>
 
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Sentiment</p>
-                <p className={`text-2xl font-bold px-3 py-1 rounded inline-block ${getSentimentColor(result.sentiment)}`}>
+                <p
+                  className={`text-2xl font-bold px-3 py-1 rounded inline-block ${getSentimentColor(result.sentiment)}`}
+                >
                   {result.sentiment.toUpperCase()}
                 </p>
               </div>
@@ -178,10 +209,16 @@ export default function SentimentPage() {
 
             {'usedAI' in result && (
               <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Method Used</p>
-                <span className={`px-3 py-1 rounded text-sm font-medium ${
-                  result.usedAI ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                }`}>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Method Used
+                </p>
+                <span
+                  className={`px-3 py-1 rounded text-sm font-medium ${
+                    result.usedAI
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
+                      : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                  }`}
+                >
                   {result.usedAI ? 'AI-Powered' : 'Traditional (Cost-Effective)'}
                 </span>
               </div>
@@ -189,10 +226,15 @@ export default function SentimentPage() {
 
             {result.keywords && result.keywords.length > 0 && (
               <div>
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Keywords Detected</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Keywords Detected
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {result.keywords.map((keyword, idx) => (
-                    <span key={idx} className="px-3 py-1 bg-blue-100 text-blue-700 dark:bg-brand-900 dark:text-brand-300 rounded-full text-sm">
+                    <span
+                      key={idx}
+                      className="px-3 py-1 bg-blue-100 text-blue-700 dark:bg-brand-900 dark:text-brand-300 rounded-full text-sm"
+                    >
                       {keyword}
                     </span>
                   ))}
@@ -203,7 +245,11 @@ export default function SentimentPage() {
             {'traditionalResult' in result && result.traditionalResult && (
               <div className="mt-4 pt-4 border-t border-gray-300 dark:border-gray-600">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Traditional analysis would have given: <strong className="text-gray-900 dark:text-gray-100">{result.traditionalResult.sentiment}</strong> (confidence: {(result.traditionalResult.confidence * 100).toFixed(0)}%)
+                  Traditional analysis would have given:{' '}
+                  <strong className="text-gray-900 dark:text-gray-100">
+                    {result.traditionalResult.sentiment}
+                  </strong>{' '}
+                  (confidence: {(result.traditionalResult.confidence * 100).toFixed(0)}%)
                 </p>
               </div>
             )}
@@ -211,19 +257,27 @@ export default function SentimentPage() {
         )}
 
         <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">How It Works</h3>
+          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-gray-100">
+            How It Works
+          </h3>
           <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
             <li className="flex items-start">
               <span className="text-brand-600 dark:text-brand-400 mr-2">1.</span>
-              <span><strong>Traditional First:</strong> Quick keyword-based analysis (no API costs)</span>
+              <span>
+                <strong>Traditional First:</strong> Quick keyword-based analysis (no API costs)
+              </span>
             </li>
             <li className="flex items-start">
               <span className="text-brand-600 dark:text-brand-400 mr-2">2.</span>
-              <span><strong>Smart Escalation:</strong> Only use AI for complex/ambiguous cases</span>
+              <span>
+                <strong>Smart Escalation:</strong> Only use AI for complex/ambiguous cases
+              </span>
             </li>
             <li className="flex items-start">
               <span className="text-brand-600 dark:text-brand-400 mr-2">3.</span>
-              <span><strong>Cost Effective:</strong> ~70% of reviews handled by traditional method</span>
+              <span>
+                <strong>Cost Effective:</strong> ~70% of reviews handled by traditional method
+              </span>
             </li>
           </ul>
         </div>

@@ -7,6 +7,7 @@
 ## TL;DR Recommendation
 
 **For Hospitality AI SDK**:
+
 - ✅ **Phase 1**: Implement traditional JavaScript algorithm (zero cost, ships now)
 - ✅ **Phase 2**: Add optional Timefold REST microservice (complex cases, opt-in)
 - ❌ **Avoid**: JavaScript constraint solvers (insufficient for scheduling)
@@ -15,20 +16,20 @@
 
 ## Option Comparison Matrix
 
-| Criteria | Traditional JS | Timefold Java | Timefold Python | JS Constraint Libs | OR-Tools Python |
-|----------|---------------|---------------|-----------------|-------------------|----------------|
-| **Cost** | $0 | $5-20/mo | $5-20/mo + slower | $0 | $5-20/mo |
-| **Performance** | <20ms | Excellent | 50% slower | Varies | Excellent |
-| **Setup Complexity** | Low | Medium | Medium | Low | Medium |
-| **Satisfaction Rate** | 85% | 95%+ | 95%+ | 60-70% | 95%+ |
-| **Constraint Types** | Simple | Hard/Soft, weighted | Hard/Soft, weighted | Linear only | Mixed |
-| **Scheduling Fit** | Good | Excellent | Excellent | Poor | Excellent |
-| **Maintenance** | Easy | Medium | Medium | Easy | Medium |
-| **Integration** | Native | REST API | REST API | Native | REST API |
-| **Dependencies** | None | Docker/K8s | Docker/K8s | npm packages | Docker/K8s |
-| **Learning Curve** | Low | Medium | Medium | Low | High |
-| **Production Ready** | Yes | Yes | Yes | Limited | Yes |
-| **Recommendation** | ✅ Phase 1 | ✅ Phase 2 | ⚠️ Use Java instead | ❌ Avoid | ⚠️ Alternative to Timefold |
+| Criteria              | Traditional JS | Timefold Java       | Timefold Python     | JS Constraint Libs | OR-Tools Python            |
+| --------------------- | -------------- | ------------------- | ------------------- | ------------------ | -------------------------- |
+| **Cost**              | $0             | $5-20/mo            | $5-20/mo + slower   | $0                 | $5-20/mo                   |
+| **Performance**       | <20ms          | Excellent           | 50% slower          | Varies             | Excellent                  |
+| **Setup Complexity**  | Low            | Medium              | Medium              | Low                | Medium                     |
+| **Satisfaction Rate** | 85%            | 95%+                | 95%+                | 60-70%             | 95%+                       |
+| **Constraint Types**  | Simple         | Hard/Soft, weighted | Hard/Soft, weighted | Linear only        | Mixed                      |
+| **Scheduling Fit**    | Good           | Excellent           | Excellent           | Poor               | Excellent                  |
+| **Maintenance**       | Easy           | Medium              | Medium              | Easy               | Medium                     |
+| **Integration**       | Native         | REST API            | REST API            | Native             | REST API                   |
+| **Dependencies**      | None           | Docker/K8s          | Docker/K8s          | npm packages       | Docker/K8s                 |
+| **Learning Curve**    | Low            | Medium              | Medium              | Low                | High                       |
+| **Production Ready**  | Yes            | Yes                 | Yes                 | Limited            | Yes                        |
+| **Recommendation**    | ✅ Phase 1     | ✅ Phase 2          | ⚠️ Use Java instead | ❌ Avoid           | ⚠️ Alternative to Timefold |
 
 ---
 
@@ -39,6 +40,7 @@
 **What**: Custom TypeScript allocation logic with rule-based constraints and preference scoring
 
 **Pros**:
+
 - ✅ Zero infrastructure cost
 - ✅ No external dependencies
 - ✅ Fast (<20ms typical)
@@ -48,18 +50,21 @@
 - ✅ Aligns with SDK philosophy (cost-first)
 
 **Cons**:
+
 - ❌ Less optimal solutions (85% vs 95%)
 - ❌ Manual constraint balancing
 - ❌ Requires custom logic for each use case
 - ❌ No advanced metaheuristics
 
 **Best For**:
+
 - MVP / Phase 1
 - 80-85% of typical allocation scenarios
 - Cost-sensitive deployments
 - Simple constraint sets (<10 constraints)
 
 **Example Use Cases**:
+
 - Standard room allocation (type, dates, basic preferences)
 - Restaurant table assignment (capacity, time)
 - Simple staff scheduling (coverage only)
@@ -75,6 +80,7 @@
 **What**: Industrial-strength constraint solver with REST API microservice
 
 **Pros**:
+
 - ✅ Optimal solutions (95%+ satisfaction)
 - ✅ Handles complex constraints (30+ constraints)
 - ✅ Hard/soft constraint separation
@@ -86,6 +92,7 @@
 - ✅ GraalVM native image support (fast startup)
 
 **Cons**:
+
 - ❌ Requires Java 17+ and microservice deployment
 - ❌ Infrastructure cost ($5-20/month typical)
 - ❌ Network latency for REST calls
@@ -93,12 +100,14 @@
 - ❌ Learning curve for domain modeling
 
 **Best For**:
+
 - Complex allocation scenarios (15+ constraints)
 - High satisfaction requirements (95%+)
 - Long-running optimizations (multi-minute solves)
 - Multiple use cases (rooms, staff, routes, etc.)
 
 **Example Use Cases**:
+
 - Room allocation with 10+ preferences and constraints
 - Staff scheduling with shift rotation, skills, labor laws
 - Housekeeping route optimization
@@ -117,21 +126,25 @@
 **What**: Python wrapper around Timefold Solver (requires JDK)
 
 **Pros**:
+
 - ✅ Same Timefold capabilities as Java
 - ✅ Python syntax (familiar to data scientists)
 - ✅ Good for prototyping
 
 **Cons**:
+
 - ❌ **50-58% slower than Java** (significant performance penalty)
 - ❌ Still requires JDK 17+ (not pure Python)
 - ❌ Less mature than Java API
 
 **Best For**:
+
 - Python-heavy teams
 - Prototyping before Java implementation
 - Non-performance-critical scenarios
 
 **NOT Recommended For**:
+
 - Production hospitality systems (use Java Timefold instead)
 - High-volume solving
 - Real-time allocation
@@ -151,12 +164,14 @@
 **What**: JavaScript implementations of Cassowary algorithm (simplex method for linear constraints)
 
 **Pros**:
+
 - ✅ Pure JavaScript (no external services)
 - ✅ Fast for linear constraints
 - ✅ Good for UI layout problems
 - ✅ Zero infrastructure cost
 
 **Cons**:
+
 - ❌ **Linear constraints only** (no complex scheduling)
 - ❌ No metaheuristics (tabu search, simulated annealing)
 - ❌ No hard/soft constraint separation
@@ -164,11 +179,13 @@
 - ❌ No room allocation capabilities
 
 **Best For**:
+
 - UI layout systems (AutoLayout, Flexbox-like)
 - Geometric constraints (2D positioning)
 - Simple linear optimization
 
 **NOT For**:
+
 - Room allocation
 - Staff scheduling
 - Route optimization
@@ -189,12 +206,14 @@
 **What**: Evolutionary algorithms for approximate optimization
 
 **Pros**:
+
 - ✅ Pure JavaScript
 - ✅ Handles non-linear problems
 - ✅ Customizable fitness functions
 - ✅ Can handle scheduling problems (in theory)
 
 **Cons**:
+
 - ❌ **Unpredictable results** (stochastic algorithm)
 - ❌ No guarantee of optimality
 - ❌ Slow convergence for complex problems
@@ -202,11 +221,13 @@
 - ❌ Not production-proven for hospitality
 
 **Best For**:
+
 - Research and experimentation
 - Approximate solutions when exact solver unavailable
 - Problems with unusual constraint types
 
 **NOT Recommended For**:
+
 - Production hospitality systems (use Timefold instead)
 - Customer-facing allocation (inconsistent results)
 
@@ -223,6 +244,7 @@
 **What**: Google's optimization suite (C++, Python, Java, .NET)
 
 **Pros**:
+
 - ✅ Industrial-strength solver
 - ✅ Free and open-source (Apache 2.0)
 - ✅ Excellent for VRP (vehicle routing), scheduling
@@ -230,6 +252,7 @@
 - ✅ Strong documentation
 
 **Cons**:
+
 - ❌ **No JavaScript/TypeScript bindings**
 - ❌ Requires microservice (Python/Java)
 - ❌ Steeper learning curve than Timefold
@@ -237,6 +260,7 @@
 - ❌ No quickstart for hospitality
 
 **Best For**:
+
 - Alternative to Timefold if preferred
 - Teams already using OR-Tools
 - Vehicle routing (housekeeping routes)
@@ -278,14 +302,14 @@ START: Do I need constraint solving?
 
 ### Room Allocation
 
-| Approach | Fit | Reason |
-|----------|-----|--------|
-| Traditional JS | ✅ Good | Handles 85% of scenarios (type, dates, basic prefs) |
-| Timefold Java | ✅ Excellent | Complex preferences, accessibility, consecutive nights |
-| Timefold Python | ⚠️ OK | Slower than Java, not worth tradeoff |
-| JS Constraint Libs | ❌ Poor | Not designed for scheduling |
-| Genetic Algorithms | ⚠️ Fallback | Inconsistent results |
-| OR-Tools | ✅ Good | Alternative to Timefold |
+| Approach           | Fit          | Reason                                                 |
+| ------------------ | ------------ | ------------------------------------------------------ |
+| Traditional JS     | ✅ Good      | Handles 85% of scenarios (type, dates, basic prefs)    |
+| Timefold Java      | ✅ Excellent | Complex preferences, accessibility, consecutive nights |
+| Timefold Python    | ⚠️ OK        | Slower than Java, not worth tradeoff                   |
+| JS Constraint Libs | ❌ Poor      | Not designed for scheduling                            |
+| Genetic Algorithms | ⚠️ Fallback  | Inconsistent results                                   |
+| OR-Tools           | ✅ Good      | Alternative to Timefold                                |
 
 **Recommendation**: Traditional JS (Phase 1) → Timefold Java (Phase 2)
 
@@ -293,14 +317,14 @@ START: Do I need constraint solving?
 
 ### Staff Scheduling
 
-| Approach | Fit | Reason |
-|----------|-----|--------|
-| Traditional JS | ⚠️ Limited | Basic coverage works, shift rotation is hard |
-| Timefold Java | ✅ Excellent | Dedicated Employee Rostering example |
-| Timefold Python | ⚠️ OK | Slower than Java |
-| JS Constraint Libs | ❌ Poor | Not designed for rostering |
-| Genetic Algorithms | ⚠️ Fallback | Unpredictable |
-| OR-Tools | ✅ Good | Strong scheduling capabilities |
+| Approach           | Fit          | Reason                                       |
+| ------------------ | ------------ | -------------------------------------------- |
+| Traditional JS     | ⚠️ Limited   | Basic coverage works, shift rotation is hard |
+| Timefold Java      | ✅ Excellent | Dedicated Employee Rostering example         |
+| Timefold Python    | ⚠️ OK        | Slower than Java                             |
+| JS Constraint Libs | ❌ Poor      | Not designed for rostering                   |
+| Genetic Algorithms | ⚠️ Fallback  | Unpredictable                                |
+| OR-Tools           | ✅ Good      | Strong scheduling capabilities               |
 
 **Recommendation**: Timefold Java (has employee scheduling quickstart)
 
@@ -308,14 +332,14 @@ START: Do I need constraint solving?
 
 ### Housekeeping Route Optimization
 
-| Approach | Fit | Reason |
-|----------|-----|--------|
-| Traditional JS | ⚠️ Limited | Simple greedy algorithm works for small hotels |
-| Timefold Java | ✅ Excellent | Vehicle Routing example (VRP) |
-| Timefold Python | ⚠️ OK | Slower |
-| JS Constraint Libs | ❌ Poor | No routing capabilities |
-| Genetic Algorithms | ⚠️ Fallback | TSP possible but slow |
-| OR-Tools | ✅ Excellent | VRP is OR-Tools specialty |
+| Approach           | Fit          | Reason                                         |
+| ------------------ | ------------ | ---------------------------------------------- |
+| Traditional JS     | ⚠️ Limited   | Simple greedy algorithm works for small hotels |
+| Timefold Java      | ✅ Excellent | Vehicle Routing example (VRP)                  |
+| Timefold Python    | ⚠️ OK        | Slower                                         |
+| JS Constraint Libs | ❌ Poor      | No routing capabilities                        |
+| Genetic Algorithms | ⚠️ Fallback  | TSP possible but slow                          |
+| OR-Tools           | ✅ Excellent | VRP is OR-Tools specialty                      |
 
 **Recommendation**: Timefold Java OR OR-Tools (both excellent for VRP)
 
@@ -323,14 +347,14 @@ START: Do I need constraint solving?
 
 ### Conference Room Booking
 
-| Approach | Fit | Reason |
-|----------|-----|--------|
-| Traditional JS | ✅ Good | Simpler than full room allocation |
-| Timefold Java | ✅ Excellent | Dedicated Conference Scheduling & Meeting Scheduling examples |
-| Timefold Python | ⚠️ OK | Slower |
-| JS Constraint Libs | ❌ Poor | No scheduling support |
-| Genetic Algorithms | ⚠️ Fallback | Unpredictable |
-| OR-Tools | ✅ Good | Can handle it |
+| Approach           | Fit          | Reason                                                        |
+| ------------------ | ------------ | ------------------------------------------------------------- |
+| Traditional JS     | ✅ Good      | Simpler than full room allocation                             |
+| Timefold Java      | ✅ Excellent | Dedicated Conference Scheduling & Meeting Scheduling examples |
+| Timefold Python    | ⚠️ OK        | Slower                                                        |
+| JS Constraint Libs | ❌ Poor      | No scheduling support                                         |
+| Genetic Algorithms | ⚠️ Fallback  | Unpredictable                                                 |
+| OR-Tools           | ✅ Good      | Can handle it                                                 |
 
 **Recommendation**: Traditional JS (Phase 1) → Timefold Java (Phase 2)
 
@@ -340,54 +364,54 @@ START: Do I need constraint solving?
 
 ### Startup Time
 
-| Approach | Startup | Note |
-|----------|---------|------|
-| Traditional JS | 0ms | Already loaded |
-| Timefold Java (JVM) | 1200ms | Cold start |
-| Timefold Java (GraalVM Native) | 70ms | 20x faster |
-| Timefold Python | ~2000ms | JVM + Python overhead |
-| JS Genetic | 0ms | Already loaded |
-| OR-Tools | Varies | Depends on language |
+| Approach                       | Startup | Note                  |
+| ------------------------------ | ------- | --------------------- |
+| Traditional JS                 | 0ms     | Already loaded        |
+| Timefold Java (JVM)            | 1200ms  | Cold start            |
+| Timefold Java (GraalVM Native) | 70ms    | 20x faster            |
+| Timefold Python                | ~2000ms | JVM + Python overhead |
+| JS Genetic                     | 0ms     | Already loaded        |
+| OR-Tools                       | Varies  | Depends on language   |
 
 ---
 
 ### Solve Time (Room Allocation, 100 rooms, 50 bookings)
 
-| Approach | Time | Optimality |
-|----------|------|------------|
-| Traditional JS | <20ms | ~85% satisfaction |
-| Timefold Java | 1-5s | ~95% satisfaction |
+| Approach        | Time  | Optimality                 |
+| --------------- | ----- | -------------------------- |
+| Traditional JS  | <20ms | ~85% satisfaction          |
+| Timefold Java   | 1-5s  | ~95% satisfaction          |
 | Timefold Python | 2-10s | ~95% satisfaction (slower) |
-| JS Genetic | 5-30s | ~70-80% (unpredictable) |
-| OR-Tools | 1-5s | ~95% satisfaction |
+| JS Genetic      | 5-30s | ~70-80% (unpredictable)    |
+| OR-Tools        | 1-5s  | ~95% satisfaction          |
 
 ---
 
 ### Cost per 1000 Allocations
 
-| Approach | Cost | Breakdown |
-|----------|------|-----------|
-| Traditional JS | $0 | Runs in Next.js (no extra cost) |
-| Timefold Java (VPS) | $0.17 | $5/mo ÷ 30,000 allocations/mo |
-| Timefold Java (Serverless) | $0.01-0.10 | Pay-per-request |
-| Timefold Python | Same | Infrastructure cost only |
-| JS Genetic | $0 | Runs in Next.js |
-| OR-Tools | $0.17 | Same as Timefold |
+| Approach                   | Cost       | Breakdown                       |
+| -------------------------- | ---------- | ------------------------------- |
+| Traditional JS             | $0         | Runs in Next.js (no extra cost) |
+| Timefold Java (VPS)        | $0.17      | $5/mo ÷ 30,000 allocations/mo   |
+| Timefold Java (Serverless) | $0.01-0.10 | Pay-per-request                 |
+| Timefold Python            | Same       | Infrastructure cost only        |
+| JS Genetic                 | $0         | Runs in Next.js                 |
+| OR-Tools                   | $0.17      | Same as Timefold                |
 
 ---
 
 ## Licensing Summary
 
-| Approach | License | Commercial OK? |
-|----------|---------|----------------|
-| Traditional JS | N/A (your code) | ✅ Yes |
-| Timefold Community | Apache 2.0 | ✅ Yes |
-| Timefold Enterprise | Proprietary | ✅ Yes (paid) |
-| Timefold Python | Apache 2.0 | ✅ Yes |
-| Kiwi.js | MIT / similar | ✅ Yes (verify) |
-| Cassowary.js | Apache/LGPL | ✅ Yes (Apache) |
-| genetic-js | MIT (likely) | ✅ Yes (verify) |
-| OR-Tools | Apache 2.0 | ✅ Yes |
+| Approach            | License         | Commercial OK?  |
+| ------------------- | --------------- | --------------- |
+| Traditional JS      | N/A (your code) | ✅ Yes          |
+| Timefold Community  | Apache 2.0      | ✅ Yes          |
+| Timefold Enterprise | Proprietary     | ✅ Yes (paid)   |
+| Timefold Python     | Apache 2.0      | ✅ Yes          |
+| Kiwi.js             | MIT / similar   | ✅ Yes (verify) |
+| Cassowary.js        | Apache/LGPL     | ✅ Yes (Apache) |
+| genetic-js          | MIT (likely)    | ✅ Yes (verify) |
+| OR-Tools            | Apache 2.0      | ✅ Yes          |
 
 **Note**: Always verify current license in package.json / LICENSE file
 
@@ -396,6 +420,7 @@ START: Do I need constraint solving?
 ## When to Use Each Approach
 
 ### Use Traditional JavaScript When:
+
 - ✅ Starting MVP / Phase 1
 - ✅ Budget is $0
 - ✅ <10 simple constraints
@@ -404,6 +429,7 @@ START: Do I need constraint solving?
 - ✅ No infrastructure available
 
 ### Use Timefold Java When:
+
 - ✅ Complex constraints (15+)
 - ✅ High satisfaction required (95%+)
 - ✅ Multiple use cases (rooms, staff, routes)
@@ -412,23 +438,27 @@ START: Do I need constraint solving?
 - ✅ Long-term production system
 
 ### Use Timefold Python When:
+
 - ⚠️ Python-only team (can't use Java)
 - ⚠️ Prototyping before Java implementation
 - ⚠️ Performance not critical
 - ❌ NOT for production (use Java instead)
 
 ### Use JavaScript Constraint Solvers When:
+
 - ⚠️ UI layout problems only
 - ⚠️ Linear constraints only
 - ❌ NOT for scheduling
 
 ### Use Genetic Algorithms When:
+
 - ⚠️ Timefold integration impossible
 - ⚠️ Approximate solution acceptable
 - ⚠️ Research/experimentation
 - ❌ NOT for customer-facing systems
 
 ### Use OR-Tools When:
+
 - ⚠️ Alternative to Timefold preferred
 - ⚠️ Vehicle routing is primary use case
 - ⚠️ Team experienced with OR-Tools
@@ -462,6 +492,7 @@ async function allocateRooms(bookings: Booking[], rooms: Room[]) {
 ```
 
 **Benefits**:
+
 - ✅ 85% handled at $0 cost (traditional)
 - ✅ 15% complex cases get 95%+ satisfaction (Timefold)
 - ✅ Blended cost: ~$1-3/month for typical hotel

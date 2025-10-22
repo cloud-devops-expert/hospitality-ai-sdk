@@ -18,6 +18,7 @@ This PRD outlines the implementation of a marketing website and blog platform fo
 4. **Convert** developers and small hotels to adopt the open-source SDK
 
 **Success Metrics (Year 1):**
+
 - 50,000+ marketing site visits
 - 1,000+ GitHub stars
 - 10,000+ npm downloads/month
@@ -43,6 +44,7 @@ This PRD outlines the implementation of a marketing website and blog platform fo
 ## Problem Statement
 
 ### Current State
+
 - **No dedicated marketing presence** - Demos embedded in main app
 - **No content marketing** - Cannot educate market about hybrid approach
 - **No SEO strategy** - Not discoverable for "open source hotel AI"
@@ -50,19 +52,23 @@ This PRD outlines the implementation of a marketing website and blog platform fo
 - **Developer-only focus** - Missing business decision-maker messaging
 
 ### Market Opportunity (from Competitive Analysis)
+
 - **80% of hotels** priced out of enterprise solutions ($10k-50k/year)
 - **$8B market** by 2033 (60% CAGR from $90M in 2023)
 - **78% personalization gap** (only 23% receive it, 61% willing to pay more)
 - **No open-source alternative** in hospitality AI space
 
 ### Competitive Gap
+
 All competitors (IDeaS, Duetto, Lighthouse, TrustYou, Revinate) have:
+
 - ✅ Polished marketing sites with clear value props
 - ✅ Active blogs with SEO-optimized content
 - ✅ Case studies proving ROI
 - ✅ Lead capture and nurture funnels
 
 We have:
+
 - ❌ No marketing site (just demo pages)
 - ❌ No blog or content
 - ❌ No SEO presence
@@ -75,22 +81,26 @@ We have:
 ### Primary Goals
 
 **1. Market Education (Q1 2026)**
+
 - Educate 10,000+ independent hoteliers about hybrid AI approach
 - Publish 20+ technical blog posts demonstrating cost savings
 - Achieve #1 Google ranking for "open source hotel AI SDK"
 
 **2. Community Building (Q1-Q2 2026)**
+
 - Grow GitHub stars from 0 → 1,000+
 - Build email list to 2,000+ developers + hoteliers
 - Create active discussion community (Discord/Forum)
 
 **3. Adoption & Conversion (Q2-Q4 2026)**
+
 - 100+ production hotel deployments
 - 10,000+ npm downloads/month
 - 5+ case studies with measurable ROI
 - 3+ enterprise support contracts ($2k-10k/year)
 
 ### Secondary Goals
+
 - Establish thought leadership in cost-effective hospitality AI
 - Create SEO authority for hospitality tech keywords
 - Build integration partner ecosystem
@@ -103,6 +113,7 @@ We have:
 ### Primary Personas
 
 #### 1. **Independent Hotelier (Decision Maker)**
+
 - **Profile:** Owner/manager of 1-50 room property
 - **Pain:** Can't afford $10k+/year enterprise AI tools
 - **Goal:** Increase RevPAR 10-15%, reduce costs 15-20%
@@ -114,6 +125,7 @@ We have:
   - No-code integration guides
 
 #### 2. **Hotel Tech Developer (Technical Influencer)**
+
 - **Profile:** Developer building PMS, channel managers, hotel apps
 - **Pain:** Build vs. buy decision for AI features
 - **Goal:** Add AI capabilities without massive investment
@@ -126,6 +138,7 @@ We have:
   - Performance benchmarks
 
 #### 3. **Hospitality Consultant (Influencer)**
+
 - **Profile:** Advises hotels on tech stack and operations
 - **Pain:** Finding cost-effective solutions for SMB clients
 - **Goal:** Recommend proven, affordable tools
@@ -137,6 +150,7 @@ We have:
   - Implementation playbooks
 
 #### 4. **Budget Hotel Chain (50-500 rooms)**
+
 - **Profile:** Regional chain needing customization
 - **Pain:** Enterprise tools too expensive, inflexible
 - **Goal:** White-label solution, self-hosted
@@ -153,15 +167,16 @@ We have:
 
 ### Technology Stack Decision Matrix
 
-| Option | Pros | Cons | Recommendation |
-|--------|------|------|----------------|
-| **PayloadCMS + PostgreSQL** | • Full-featured CMS<br>• TypeScript native<br>• Self-hosted option<br>• Aligns with project DB | • Complex setup<br>• Learning curve<br>• Overkill for MVP | ⭐⭐⭐ Phase 2 |
-| **MDX + Static Generation** | • Simple, fast<br>• Version controlled<br>• No database needed<br>• Perfect for docs | • No admin UI<br>• Manual content workflow<br>• Limited for marketing | ⭐⭐⭐⭐⭐ MVP |
-| **Contentful / Sanity (Cloud)** | • Managed hosting<br>• Great DX<br>• Easy setup | • Vendor lock-in<br>• Recurring costs<br>• Against local-first principle | ⭐ Not Recommended |
+| Option                          | Pros                                                                                           | Cons                                                                     | Recommendation     |
+| ------------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------ |
+| **PayloadCMS + PostgreSQL**     | • Full-featured CMS<br>• TypeScript native<br>• Self-hosted option<br>• Aligns with project DB | • Complex setup<br>• Learning curve<br>• Overkill for MVP                | ⭐⭐⭐ Phase 2     |
+| **MDX + Static Generation**     | • Simple, fast<br>• Version controlled<br>• No database needed<br>• Perfect for docs           | • No admin UI<br>• Manual content workflow<br>• Limited for marketing    | ⭐⭐⭐⭐⭐ MVP     |
+| **Contentful / Sanity (Cloud)** | • Managed hosting<br>• Great DX<br>• Easy setup                                                | • Vendor lock-in<br>• Recurring costs<br>• Against local-first principle | ⭐ Not Recommended |
 
 ### Recommended Architecture (Phased Approach)
 
 #### **Phase 1: MVP (Week 1-2)** - MDX + Next.js Static
+
 ```
 /marketing            # Marketing site pages
   /landing.tsx       # Home page
@@ -180,6 +195,7 @@ lib/mdx.ts         # MDX processing utilities
 ```
 
 **Benefits:**
+
 - ✅ Ship in 1-2 weeks
 - ✅ No database setup
 - ✅ Version controlled content
@@ -187,10 +203,12 @@ lib/mdx.ts         # MDX processing utilities
 - ✅ Low maintenance
 
 **Trade-offs:**
+
 - ❌ No admin UI (content via Git commits)
 - ❌ Technical barrier for non-devs
 
 #### **Phase 2: CMS Integration (Month 2-3)** - PayloadCMS + PostgreSQL
+
 ```
 /payload            # PayloadCMS admin
   collections/
@@ -209,12 +227,14 @@ Database: PostgreSQL
 ```
 
 **Benefits:**
+
 - ✅ Admin UI for content team
 - ✅ Media management
 - ✅ Role-based access
 - ✅ Workflow (drafts, publish)
 
 **Migration Path:**
+
 1. Install PayloadCMS alongside existing MDX
 2. Migrate MDX posts to Payload collections
 3. Keep both systems during transition
@@ -229,6 +249,7 @@ Database: PostgreSQL
 #### 1.1 Marketing Landing Page
 
 **Must Have:**
+
 - [ ] Hero section with clear value proposition
   - Headline: "Enterprise AI for Independent Hotels at $0 Cost"
   - Subheadline: Hybrid approach explanation
@@ -241,11 +262,13 @@ Database: PostgreSQL
 - [ ] Call-to-action (GitHub, npm, Discord)
 
 **Nice to Have:**
+
 - [ ] Animated demo video or GIF
 - [ ] Interactive ROI calculator
 - [ ] Live demo environment
 
 **Acceptance Criteria:**
+
 - Page loads < 2 seconds
 - Mobile responsive
 - Accessibility (WCAG AA)
@@ -254,6 +277,7 @@ Database: PostgreSQL
 #### 1.2 Features Showcase Page
 
 **Must Have:**
+
 - [ ] Feature matrix (10 ML use cases)
 - [ ] For each feature:
   - Brief description
@@ -265,6 +289,7 @@ Database: PostgreSQL
 - [ ] Deployment options (self-hosted, cloud, hybrid)
 
 **Acceptance Criteria:**
+
 - Each feature links to working demo
 - Code examples are copy-pasteable
 - Performance metrics visible
@@ -272,6 +297,7 @@ Database: PostgreSQL
 #### 1.3 Pricing & Comparison Page
 
 **Must Have:**
+
 - [ ] Pricing tiers:
   - **Free (Core SDK):** MIT license, all traditional algorithms
   - **Premium Support:** $99-499/month
@@ -285,6 +311,7 @@ Database: PostgreSQL
 - [ ] FAQ section
 
 **Acceptance Criteria:**
+
 - Transparent pricing (no "contact us")
 - Honest competitor comparison
 - Calculator shows real savings
@@ -292,6 +319,7 @@ Database: PostgreSQL
 #### 1.4 Documentation Portal
 
 **Must Have:**
+
 - [ ] Getting started guide
 - [ ] Installation instructions
 - [ ] API reference (auto-generated from code)
@@ -301,11 +329,13 @@ Database: PostgreSQL
 - [ ] Troubleshooting & FAQ
 
 **Nice to Have:**
+
 - [ ] Interactive code playground
 - [ ] Video tutorials
 - [ ] Community-contributed guides
 
 **Acceptance Criteria:**
+
 - Searchable documentation
 - Code examples tested and working
 - Links to demo pages
@@ -313,6 +343,7 @@ Database: PostgreSQL
 #### 1.5 Blog Platform (MDX-based)
 
 **Must Have:**
+
 - [ ] Blog post listing page (chronological + categorized)
 - [ ] Individual post pages with:
   - Author info
@@ -326,6 +357,7 @@ Database: PostgreSQL
 - [ ] SEO optimization (meta, Open Graph, Twitter cards)
 
 **Launch Content (First 5 Posts):**
+
 1. **"Why We Built an Open-Source Hospitality AI SDK"** (Philosophy)
 2. **"The $10k Problem: Why Hotels Can't Afford AI"** (Market Problem)
 3. **"Hybrid AI: 70% Traditional, 30% Machine Learning"** (Technical Deep Dive)
@@ -333,6 +365,7 @@ Database: PostgreSQL
 5. **"Open Source vs. Enterprise: TCO Analysis Over 5 Years"** (ROI Comparison)
 
 **Acceptance Criteria:**
+
 - Posts render properly (formatting, images, code)
 - Fast page loads (static generation)
 - SEO-friendly URLs (/blog/hybrid-ai-approach)
@@ -341,6 +374,7 @@ Database: PostgreSQL
 #### 1.6 Case Studies Section
 
 **Must Have:**
+
 - [ ] Case study template:
   - Hotel profile (size, location, type)
   - Challenge faced
@@ -354,11 +388,13 @@ Database: PostgreSQL
   - Results (RevPAR increase, cost reduction)
 
 **Initial Cases (Target 3 for Launch):**
+
 1. Independent 12-room boutique hotel (revenue optimization)
 2. 45-room eco-hotel (energy optimization)
 3. Regional 5-property chain (operations automation)
 
 **Acceptance Criteria:**
+
 - Real metrics (not fabricated)
 - Permission from hotels
 - Before/after data visualization
@@ -472,6 +508,7 @@ Collection: Media
 ```
 
 **Access Control:**
+
 ```typescript
 // Roles
 - Admin: Full access
@@ -496,6 +533,7 @@ Pages:
 #### 2.2 Admin UI Features
 
 **Must Have:**
+
 - [ ] Dashboard overview:
   - Total posts (published, draft, archived)
   - Recent activity
@@ -515,6 +553,7 @@ Pages:
   - Activity log
 
 **Nice to Have:**
+
 - [ ] Workflow (submit for review → approve → publish)
 - [ ] Version history
 - [ ] Content analytics (views, time on page)
@@ -523,6 +562,7 @@ Pages:
 #### 2.3 Content API
 
 **Endpoints:**
+
 ```typescript
 // Public API (read-only)
 GET /api/posts
@@ -561,81 +601,55 @@ DELETE /api/posts/:id
 #### Month 1: Foundation & Education
 
 **Week 1:**
+
 1. **Blog:** "Why We Built an Open-Source Hospitality AI SDK" (Philosophy)
 2. **Documentation:** Complete getting started guide
 
-**Week 2:**
-3. **Blog:** "The $10k Problem: Why 80% of Hotels Can't Afford AI" (Market)
-4. **Case Study:** Boutique hotel revenue optimization (if available)
+**Week 2:** 3. **Blog:** "The $10k Problem: Why 80% of Hotels Can't Afford AI" (Market) 4. **Case Study:** Boutique hotel revenue optimization (if available)
 
-**Week 3:**
-5. **Blog:** "Hybrid AI: The Best of Traditional Algorithms & Machine Learning" (Technical)
-6. **Documentation:** Revenue management integration tutorial
+**Week 3:** 5. **Blog:** "Hybrid AI: The Best of Traditional Algorithms & Machine Learning" (Technical) 6. **Documentation:** Revenue management integration tutorial
 
-**Week 4:**
-7. **Blog:** "Privacy-First AI: Why Local Processing Matters for Hotels" (Privacy)
-8. **Video:** 5-minute SDK overview demo
+**Week 4:** 7. **Blog:** "Privacy-First AI: Why Local Processing Matters for Hotels" (Privacy) 8. **Video:** 5-minute SDK overview demo
 
 #### Month 2: Technical Deep Dives
 
-**Week 5:**
-9. **Blog:** "Building Dynamic Pricing: Traditional vs. AI Approach" (Technical)
-10. **Documentation:** No-show prediction implementation guide
+**Week 5:** 9. **Blog:** "Building Dynamic Pricing: Traditional vs. AI Approach" (Technical) 10. **Documentation:** No-show prediction implementation guide
 
-**Week 6:**
-11. **Blog:** "Sentiment Analysis Without Sending Data to the Cloud" (Privacy + Tech)
-12. **Case Study:** Eco-hotel energy optimization
+**Week 6:** 11. **Blog:** "Sentiment Analysis Without Sending Data to the Cloud" (Privacy + Tech) 12. **Case Study:** Eco-hotel energy optimization
 
-**Week 7:**
-13. **Blog:** "The Economics of Self-Hosted vs. SaaS Hospitality AI" (Cost Analysis)
-14. **Documentation:** Self-hosting deployment guide
+**Week 7:** 13. **Blog:** "The Economics of Self-Hosted vs. SaaS Hospitality AI" (Cost Analysis) 14. **Documentation:** Self-hosting deployment guide
 
-**Week 8:**
-15. **Blog:** "Open Source TCO: 5-Year Cost Comparison" (ROI)
-16. **Video:** Integration with Mews PMS walkthrough
+**Week 8:** 15. **Blog:** "Open Source TCO: 5-Year Cost Comparison" (ROI) 16. **Video:** Integration with Mews PMS walkthrough
 
 #### Month 3: Community & Social Proof
 
-**Week 9:**
-17. **Blog:** "How to Contribute to Hospitality AI SDK" (Community)
-18. **Case Study:** Regional chain operations automation
+**Week 9:** 17. **Blog:** "How to Contribute to Hospitality AI SDK" (Community) 18. **Case Study:** Regional chain operations automation
 
-**Week 10:**
-19. **Blog:** "Building a PMS Integration: Developer Tutorial" (Developer-focused)
-20. **Documentation:** Plugin development guide
+**Week 10:** 19. **Blog:** "Building a PMS Integration: Developer Tutorial" (Developer-focused) 20. **Documentation:** Plugin development guide
 
-**Week 11:**
-21. **Blog:** "From Spreadsheets to AI: Migration Guide for Small Hotels" (Practical)
-22. **Video:** ROI calculator walkthrough
+**Week 11:** 21. **Blog:** "From Spreadsheets to AI: Migration Guide for Small Hotels" (Practical) 22. **Video:** ROI calculator walkthrough
 
-**Week 12:**
-23. **Blog:** "Q1 2026 Community Update: Stats, Roadmap, Thank You" (Community)
-24. **Launch:** Discord community server
+**Week 12:** 23. **Blog:** "Q1 2026 Community Update: Stats, Roadmap, Thank You" (Community) 24. **Launch:** Discord community server
 
 ### SEO Strategy
 
 #### Target Keywords (Priority Order)
 
 **Primary (High Intent, Medium Competition):**
+
 1. "open source hotel AI" (10-100 searches/month)
 2. "affordable hotel revenue management" (100-1k searches/month)
 3. "hotel AI SDK" (10-100 searches/month)
 4. "self-hosted hotel CMS" (10-100 searches/month)
 
-**Secondary (High Volume, High Competition):**
-5. "hotel revenue management software" (1k-10k searches/month)
-6. "hotel AI software" (100-1k searches/month)
-7. "hospitality technology" (1k-10k searches/month)
+**Secondary (High Volume, High Competition):** 5. "hotel revenue management software" (1k-10k searches/month) 6. "hotel AI software" (100-1k searches/month) 7. "hospitality technology" (1k-10k searches/month)
 
-**Long-tail (Low Competition, Specific Intent):**
-8. "how to build hotel dynamic pricing" (10-100)
-9. "hotel no-show prediction algorithm" (10-100)
-10. "privacy-first hotel AI" (10-100)
-11. "MIT license hospitality software" (0-10)
+**Long-tail (Low Competition, Specific Intent):** 8. "how to build hotel dynamic pricing" (10-100) 9. "hotel no-show prediction algorithm" (10-100) 10. "privacy-first hotel AI" (10-100) 11. "MIT license hospitality software" (0-10)
 
 #### On-Page SEO Checklist
 
 **Every Page:**
+
 - [ ] Title tag (50-60 chars, keyword-optimized)
 - [ ] Meta description (150-160 chars, compelling CTA)
 - [ ] H1 tag (unique, keyword-rich)
@@ -650,6 +664,7 @@ DELETE /api/posts/:id
 - [ ] Page speed < 2s
 
 **Blog Posts:**
+
 - [ ] Focus keyword in first 100 words
 - [ ] Keyword density 1-2%
 - [ ] LSI keywords (related terms)
@@ -660,6 +675,7 @@ DELETE /api/posts/:id
 #### Off-Page SEO Strategy
 
 **Backlink Building:**
+
 1. **Guest posting** on hospitality tech blogs (HotelTechReport, etc.)
 2. **Open-source directories** (Awesome Lists, AlternativeTo)
 3. **Developer communities** (Dev.to, Hashnode, Medium)
@@ -669,6 +685,7 @@ DELETE /api/posts/:id
 7. **Reddit** (r/hotelmanagement, r/opensource, r/webdev)
 
 **Content Syndication:**
+
 - Cross-post blog to Medium, Dev.to, Hashnode
 - Share snippets on LinkedIn
 - Create Twitter threads for long-form posts
@@ -683,6 +700,7 @@ DELETE /api/posts/:id
 #### Week 1: Foundation
 
 **Day 1-2: Project Setup**
+
 - [ ] Create `/marketing` directory structure
 - [ ] Set up MDX processing utilities
 - [ ] Configure Next.js routing for marketing pages
@@ -690,6 +708,7 @@ DELETE /api/posts/:id
 - [ ] Create base layout components
 
 **Day 3-4: Marketing Pages**
+
 - [ ] Build landing page
 - [ ] Build features page
 - [ ] Build pricing page
@@ -697,6 +716,7 @@ DELETE /api/posts/:id
 - [ ] Implement responsive navigation
 
 **Day 5: Content Creation**
+
 - [ ] Write homepage copy
 - [ ] Create pricing comparison table
 - [ ] Draft first 2 blog posts
@@ -705,6 +725,7 @@ DELETE /api/posts/:id
 #### Week 2: Blog & Launch Prep
 
 **Day 6-7: Blog Platform**
+
 - [ ] Create blog listing page
 - [ ] Create blog post template
 - [ ] Implement MDX rendering
@@ -712,6 +733,7 @@ DELETE /api/posts/:id
 - [ ] Set up RSS feed generation
 
 **Day 8-9: SEO & Analytics**
+
 - [ ] Add meta tags to all pages
 - [ ] Implement schema.org markup
 - [ ] Set up sitemap generation
@@ -719,6 +741,7 @@ DELETE /api/posts/:id
 - [ ] Test mobile responsiveness
 
 **Day 10: Launch Prep**
+
 - [ ] Write remaining 3 blog posts
 - [ ] Final QA testing
 - [ ] Deploy to production
@@ -730,6 +753,7 @@ DELETE /api/posts/:id
 #### Month 2: PayloadCMS Setup
 
 **Week 1-2: Database & Backend**
+
 - [ ] Set up PostgreSQL database
 - [ ] Create Payload collections (Posts, Pages, Authors)
 - [ ] Configure authentication
@@ -737,6 +761,7 @@ DELETE /api/posts/:id
 - [ ] Implement access control
 
 **Week 3-4: Admin UI & Migration**
+
 - [ ] Customize Payload admin panel
 - [ ] Create content migration scripts (MDX → Payload)
 - [ ] Test editorial workflow
@@ -746,12 +771,14 @@ DELETE /api/posts/:id
 #### Month 3: Advanced Features
 
 **Week 1-2: CMS Enhancement**
+
 - [ ] Add workflow (draft → review → publish)
 - [ ] Implement content scheduling
 - [ ] Create reusable content blocks
 - [ ] Build content versioning
 
 **Week 3-4: Integration & Optimization**
+
 - [ ] Integrate with analytics
 - [ ] Add search functionality
 - [ ] Implement caching strategy
@@ -761,6 +788,7 @@ DELETE /api/posts/:id
 ### Phase 3: Community & Growth (Months 4-6)
 
 #### Month 4: Community Building
+
 - [ ] Launch Discord server
 - [ ] Create discussion forum
 - [ ] Host first webinar
@@ -768,6 +796,7 @@ DELETE /api/posts/:id
 - [ ] Guest post on 5 hospitality blogs
 
 #### Month 5: Content Acceleration
+
 - [ ] Increase blog cadence to 2x/week
 - [ ] Produce 4 video tutorials
 - [ ] Publish 2 case studies
@@ -775,6 +804,7 @@ DELETE /api/posts/:id
 - [ ] Create infographics for social
 
 #### Month 6: Optimization & Scale
+
 - [ ] A/B test landing page variations
 - [ ] Implement lead scoring
 - [ ] Create email nurture sequences
@@ -790,18 +820,21 @@ DELETE /api/posts/:id
 #### Traffic Metrics
 
 **Target: Month 3**
+
 - Unique visitors: 5,000/month
 - Page views: 20,000/month
 - Avg. session duration: 3+ minutes
 - Bounce rate: <60%
 
 **Target: Month 6**
+
 - Unique visitors: 20,000/month
 - Page views: 80,000/month
 - Avg. session duration: 4+ minutes
 - Bounce rate: <50%
 
 **Target: Year 1**
+
 - Unique visitors: 50,000/month
 - Page views: 200,000/month
 - Organic traffic: 70%+
@@ -810,12 +843,14 @@ DELETE /api/posts/:id
 #### SEO Metrics
 
 **Target: Month 3**
+
 - Indexed pages: 30+
 - Backlinks: 20+
 - Domain Authority: 15+
 - Ranking keywords: 50+
 
 **Target: Month 6**
+
 - Indexed pages: 100+
 - Backlinks: 100+
 - Domain Authority: 25+
@@ -823,6 +858,7 @@ DELETE /api/posts/:id
 - Top 3 rankings: 5+ keywords
 
 **Target: Year 1**
+
 - Domain Authority: 35+
 - Backlinks: 500+
 - Top 3 rankings: 20+ keywords
@@ -831,18 +867,21 @@ DELETE /api/posts/:id
 #### Engagement Metrics
 
 **Target: Month 3**
+
 - Email subscribers: 500+
 - Blog post avg. read time: 3+ minutes
 - Social shares/post: 20+
 - Comments/post: 3+
 
 **Target: Month 6**
+
 - Email subscribers: 2,000+
 - Newsletter open rate: 25%+
 - Blog post avg. read time: 4+ minutes
 - Social shares/post: 50+
 
 **Target: Year 1**
+
 - Email subscribers: 10,000+
 - Newsletter open rate: 30%+
 - Blog subscribers: 5,000+
@@ -851,18 +890,21 @@ DELETE /api/posts/:id
 #### Conversion Metrics
 
 **Target: Month 3**
+
 - GitHub stars: 100+
 - npm downloads: 1,000/month
 - Demo page visits: 2,000/month
 - Documentation page views: 5,000/month
 
 **Target: Month 6**
+
 - GitHub stars: 500+
 - npm downloads: 5,000/month
 - Production deployments: 20+
 - Premium support inquiries: 5+
 
 **Target: Year 1**
+
 - GitHub stars: 1,000+
 - npm downloads: 10,000/month
 - Production deployments: 100+
@@ -872,18 +914,21 @@ DELETE /api/posts/:id
 #### Content Metrics
 
 **Target: Month 3**
+
 - Blog posts published: 10+
 - Total words: 20,000+
 - Avg. post length: 2,000 words
 - Case studies: 1+
 
 **Target: Month 6**
+
 - Blog posts published: 30+
 - Total words: 60,000+
 - Video tutorials: 5+
 - Case studies: 3+
 
 **Target: Year 1**
+
 - Blog posts published: 80+
 - Total words: 160,000+
 - Video tutorials: 20+
@@ -893,12 +938,14 @@ DELETE /api/posts/:id
 ### Analytics Setup
 
 **Tools:**
+
 - **Plausible Analytics** (privacy-friendly, GDPR-compliant)
 - **Google Search Console** (SEO monitoring)
 - **GitHub Insights** (repo activity)
 - **npm Stats** (package downloads)
 
 **Dashboards:**
+
 1. **Marketing Dashboard:**
    - Traffic sources
    - Top pages
@@ -924,18 +971,22 @@ DELETE /api/posts/:id
 ### Technical Risks
 
 #### Risk 1: PayloadCMS Complexity
+
 **Probability:** High
 **Impact:** Medium
 **Mitigation:**
+
 - Start with MDX (simpler, working solution)
 - Migrate to PayloadCMS only after MVP validated
 - Keep both systems during transition
 - Document migration path thoroughly
 
 #### Risk 2: Performance Issues (Large CMS)
+
 **Probability:** Medium
 **Impact:** High
 **Mitigation:**
+
 - Implement static generation (ISR)
 - Use CDN for assets
 - Aggressive caching strategy
@@ -943,9 +994,11 @@ DELETE /api/posts/:id
 - Set performance budgets
 
 #### Risk 3: PostgreSQL Schema Complexity
+
 **Probability:** Low
 **Impact:** Medium
 **Mitigation:**
+
 - Follow global CLAUDE.md patterns (uuid v7, valid_period)
 - Use migrations for all schema changes
 - Regular backups
@@ -954,9 +1007,11 @@ DELETE /api/posts/:id
 ### Content Risks
 
 #### Risk 4: Insufficient Content Volume
+
 **Probability:** Medium
 **Impact:** High
 **Mitigation:**
+
 - Pre-write first 10 blog posts before launch
 - Create editorial calendar for 6 months
 - Use AI writing assistants for drafts
@@ -964,9 +1019,11 @@ DELETE /api/posts/:id
 - Guest contributor program
 
 #### Risk 5: SEO Takes Too Long
+
 **Probability:** High
 **Impact:** Medium
 **Mitigation:**
+
 - Focus on long-tail keywords initially
 - Build backlinks proactively
 - Leverage existing communities (GitHub, Dev.to)
@@ -976,18 +1033,22 @@ DELETE /api/posts/:id
 ### Market Risks
 
 #### Risk 6: Competitors Launch Similar Products
+
 **Probability:** Medium
 **Impact:** Medium
 **Mitigation:**
+
 - Speed to market (MVP in 2 weeks)
 - Open-source moat (community network effects)
 - First-mover advantage in messaging
 - Patent-free, MIT license (can't be copied legally)
 
 #### Risk 7: Enterprise Players Launch "Lite" Versions
+
 **Probability:** High
 **Impact:** High
 **Mitigation:**
+
 - Double down on open-source value prop
 - Emphasize privacy & no lock-in
 - Build strong community early
@@ -997,9 +1058,11 @@ DELETE /api/posts/:id
 ### Resource Risks
 
 #### Risk 8: No Case Studies (Social Proof)
+
 **Probability:** High
 **Impact:** High
 **Mitigation:**
+
 - Pilot program with 10 hotels (free support)
 - Offer incentives for testimonials
 - Create synthetic examples if needed
@@ -1007,9 +1070,11 @@ DELETE /api/posts/:id
 - Focus on open-source social proof (GitHub)
 
 #### Risk 9: Content Quality Inconsistency
+
 **Probability:** Medium
 **Impact:** Medium
 **Mitigation:**
+
 - Create style guide and templates
 - Editorial review process
 - AI writing tools for consistency
@@ -1169,17 +1234,17 @@ CREATE INDEX idx_posts_search ON posts USING GIN(
 
 #### B.1 Blog Post Template (MDX)
 
-```mdx
+````mdx
 ---
-title: "Your Compelling Title Here"
-date: "2026-01-15"
-author: "Your Name"
-category: "Technical Deep Dive" # or "Case Study", "Philosophy", "Tutorial"
-tags: ["revenue management", "machine learning", "cost optimization"]
-excerpt: "A compelling 2-3 sentence summary that makes people want to read more. Should include the primary keyword naturally."
-seo_title: "SEO-Optimized Title (50-60 chars) | Hospitality AI SDK"
-seo_description: "150-160 character meta description with call-to-action and primary keyword."
-featured_image: "/blog/images/your-post-slug.jpg"
+title: 'Your Compelling Title Here'
+date: '2026-01-15'
+author: 'Your Name'
+category: 'Technical Deep Dive' # or "Case Study", "Philosophy", "Tutorial"
+tags: ['revenue management', 'machine learning', 'cost optimization']
+excerpt: 'A compelling 2-3 sentence summary that makes people want to read more. Should include the primary keyword naturally.'
+seo_title: 'SEO-Optimized Title (50-60 chars) | Hospitality AI SDK'
+seo_description: '150-160 character meta description with call-to-action and primary keyword.'
+featured_image: '/blog/images/your-post-slug.jpg'
 ---
 
 ## Introduction
@@ -1199,10 +1264,12 @@ import { predictNoShowRuleBased } from '@hospitality-ai-sdk/no-show';
 const result = await predictNoShowRuleBased(booking);
 console.log(result.riskLevel); // 'high' | 'medium' | 'low'
 ```
+````
 
 ### Subsection 2
 
 Include visuals where helpful:
+
 - Screenshots of demos
 - Comparison charts
 - Architecture diagrams
@@ -1211,6 +1278,7 @@ Include visuals where helpful:
 ## Key Takeaways
 
 Summarize in 3-5 bullet points:
+
 - Main point 1
 - Main point 2
 - Main point 3
@@ -1218,6 +1286,7 @@ Summarize in 3-5 bullet points:
 ## Call to Action
 
 Clear next step for the reader:
+
 - Try the demo: [link]
 - Read the docs: [link]
 - Join the community: [link]
@@ -1225,9 +1294,11 @@ Clear next step for the reader:
 ---
 
 **Related Reading:**
+
 - [Another relevant post](link)
 - [Documentation page](link)
-```
+
+````
 
 #### B.2 Case Study Template
 
@@ -1277,7 +1348,7 @@ Detailed metrics with before/after...
 ## Lessons Learned
 
 What worked well and what they'd do differently...
-```
+````
 
 ### Appendix C: SEO Checklist
 
@@ -1285,6 +1356,7 @@ What worked well and what they'd do differently...
 # SEO Checklist for Every Page
 
 ## Technical SEO
+
 - [ ] Title tag (50-60 chars, keyword at start)
 - [ ] Meta description (150-160 chars, includes CTA)
 - [ ] H1 tag (unique, includes primary keyword)
@@ -1298,6 +1370,7 @@ What worked well and what they'd do differently...
 - [ ] Core Web Vitals passing (LCP, FID, CLS)
 
 ## On-Page SEO
+
 - [ ] Primary keyword in first 100 words
 - [ ] Keyword in at least one H2
 - [ ] Keyword density 1-2% (natural)
@@ -1310,6 +1383,7 @@ What worked well and what they'd do differently...
 - [ ] Clear call-to-action
 
 ## Schema Markup
+
 - [ ] Organization schema (homepage)
 - [ ] Article schema (blog posts)
 - [ ] Product schema (feature pages)
@@ -1317,6 +1391,7 @@ What worked well and what they'd do differently...
 - [ ] BreadcrumbList schema
 
 ## Social Media
+
 - [ ] Open Graph title (og:title)
 - [ ] Open Graph description (og:description)
 - [ ] Open Graph image (og:image) - 1200x630px
@@ -1326,6 +1401,7 @@ What worked well and what they'd do differently...
 - [ ] Twitter image
 
 ## Analytics & Tracking
+
 - [ ] Analytics tracking code installed
 - [ ] Goal/conversion tracking set up
 - [ ] UTM parameters for campaigns
@@ -1337,15 +1413,18 @@ What worked well and what they'd do differently...
 ## Decision Log
 
 ### Decision 1: MDX vs. PayloadCMS for MVP
+
 **Date:** 2025-10-21
 **Decision:** Start with MDX, migrate to PayloadCMS in Phase 2
 **Rationale:**
+
 - Faster MVP (ship in 2 weeks vs. 4-6 weeks)
 - Lower risk (proven Next.js pattern)
 - Version-controlled content (Git)
 - Can always migrate later
 
 **Trade-offs Accepted:**
+
 - No admin UI initially
 - Content requires Git knowledge
 - Manual workflow
@@ -1353,28 +1432,34 @@ What worked well and what they'd do differently...
 **Revisit:** After 3 months or 20 blog posts
 
 ### Decision 2: PostgreSQL vs. MongoDB for PayloadCMS
+
 **Date:** 2025-10-21
 **Decision:** PostgreSQL
 **Rationale:**
+
 - Aligns with user's global CLAUDE.md patterns
 - Better for structured content (blog posts, case studies)
 - ACID compliance for data integrity
 - UUID v7 and valid_period support
 
 **Trade-offs Accepted:**
+
 - More complex schema setup
 - Requires migration expertise
 
 ### Decision 3: Self-Hosted Analytics vs. Google Analytics
+
 **Date:** 2025-10-21
 **Decision:** Plausible Analytics (self-hosted option)
 **Rationale:**
+
 - Privacy-first (GDPR-compliant)
 - No cookies, no user tracking
 - Aligns with project philosophy
 - Lighter weight than GA
 
 **Trade-offs Accepted:**
+
 - Less detailed user data
 - No remarketing capabilities
 
@@ -1385,12 +1470,14 @@ What worked well and what they'd do differently...
 **Document Status:** Draft for Review
 
 **Approvers:**
+
 - [ ] Product Owner (Strategy & Goals)
 - [ ] Engineering Lead (Technical Architecture)
 - [ ] Content Lead (Editorial Strategy)
 - [ ] Marketing Lead (Go-to-Market Plan)
 
 **Next Steps After Approval:**
+
 1. Break down into implementation tickets
 2. Assign to development team
 3. Set up project tracking
@@ -1399,11 +1486,13 @@ What worked well and what they'd do differently...
 ---
 
 **Document History:**
+
 - v1.0 (2025-10-21): Initial draft
 - v0.9 (2025-10-20): Competitive analysis completed
 - v0.5 (2025-10-15): Concept phase
 
 **Related Documents:**
+
 - `.agent/docs/competitor-analysis.md`
 - `.agent/docs/architecture.md`
 - `.agent/docs/use-cases.md`

@@ -5,6 +5,7 @@ This guide walks you through completing the PayloadCMS integration with the exis
 ## Current Status ✅
 
 **Already Configured:**
+
 - ✅ PayloadCMS collections (8 total: Posts, Pages, Authors, Categories, Tags, CaseStudies, Media, Users)
 - ✅ App routes structure: `app/(payload)/admin`, `app/(payload)/api`
 - ✅ Root-level `payload.config.ts` with PostgreSQL adapter
@@ -13,6 +14,7 @@ This guide walks you through completing the PayloadCMS integration with the exis
 - ✅ GitIgnore updated for PayloadCMS files
 
 **Pending:**
+
 - ⏳ npm package installation (blocked by npm cache permissions)
 - ⏳ PostgreSQL database setup
 - ⏳ First admin user creation
@@ -56,6 +58,7 @@ npm install \
 ```
 
 **Package Versions:**
+
 - `payload@3.60.0` - Stable release (not beta)
 - Requires Next.js 15+ ✅ (you have 15.0.0)
 - PostgreSQL database adapter
@@ -95,6 +98,7 @@ docker ps | grep postgres
 ### Option C: Managed PostgreSQL
 
 Use a managed service like:
+
 - **Supabase** (free tier: 500MB)
 - **Railway** (free tier: 1GB)
 - **Neon** (free tier: 3GB)
@@ -160,6 +164,7 @@ npm run dev
 ```
 
 **PayloadCMS will automatically:**
+
 - Connect to PostgreSQL
 - Run database migrations
 - Create all tables (posts, pages, authors, etc.)
@@ -366,6 +371,7 @@ npm run dev
 ### 1. Create Initial Content
 
 **In the admin panel:**
+
 - Create 2-3 author profiles
 - Add 3-5 categories (Technical, Philosophy, Tutorial, Case Study, News)
 - Add 10-15 tags
@@ -408,6 +414,7 @@ export default async function BlogPage() {
 ### 3. Set Up SEO
 
 The SEO plugin is already configured. Each post/page will auto-generate:
+
 - Meta title
 - Meta description
 - Open Graph tags
@@ -416,11 +423,13 @@ The SEO plugin is already configured. Each post/page will auto-generate:
 ### 4. Deploy to Production
 
 **Recommended platforms:**
+
 - **Vercel** (frontend + Next.js)
 - **Railway** (PostgreSQL database)
 - **Supabase** (PostgreSQL alternative)
 
 **Environment variables to set in production:**
+
 ```env
 DATABASE_URL=<production-database-url>
 PAYLOAD_SECRET=<production-secret>
@@ -505,6 +514,7 @@ After completing setup, verify:
 - **PostgreSQL Docs:** https://www.postgresql.org/docs/
 
 **Project Documentation:**
+
 - `IMPLEMENTATION-SUMMARY.md` - What was built
 - `INSTALLATION-PAYLOADCMS.md` - Original installation guide
 - `.agent/docs/prd-marketing-platform.md` - Product requirements

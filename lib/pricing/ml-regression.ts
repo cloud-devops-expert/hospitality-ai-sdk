@@ -22,8 +22,8 @@ export function calculatePriceLinearRegression(input: PricingInput): PricingResu
     daysUntilStay: -0.15,
     isWeekend: 0.15,
     isSummer: 0.25,
-    isWinter: -0.10,
-    roomType: 0.20,
+    isWinter: -0.1,
+    roomType: 0.2,
   };
 
   // Linear model prediction
@@ -42,7 +42,11 @@ export function calculatePriceLinearRegression(input: PricingInput): PricingResu
     originalPrice: basePrice,
     finalPrice,
     adjustments: [
-      { factor: 'Base model prediction', amount: finalPrice - basePrice, percentage: (multiplier - 1) * 100 },
+      {
+        factor: 'Base model prediction',
+        amount: finalPrice - basePrice,
+        percentage: (multiplier - 1) * 100,
+      },
     ],
     method: 'linear-regression',
   };
@@ -73,14 +77,18 @@ export function calculatePriceNeuralNet(input: PricingInput): PricingResult {
   const output = neuralLayer(hidden2, [[0.8, 0.5, -0.3]]);
 
   // Convert output to price multiplier (0.5 to 2.0 range)
-  const multiplier = 0.5 + (1 + output[0]) / 2 * 1.5;
+  const multiplier = 0.5 + ((1 + output[0]) / 2) * 1.5;
   const finalPrice = Math.round(basePrice * multiplier);
 
   return {
     originalPrice: basePrice,
     finalPrice,
     adjustments: [
-      { factor: 'Neural network prediction', amount: finalPrice - basePrice, percentage: (multiplier - 1) * 100 },
+      {
+        factor: 'Neural network prediction',
+        amount: finalPrice - basePrice,
+        percentage: (multiplier - 1) * 100,
+      },
     ],
     method: 'neural-network',
   };
@@ -105,10 +113,10 @@ function extractPricingFeatures(input: PricingInput): PricingFeatures {
   return {
     occupancy: occupancyRate / 100,
     daysUntilStay: Math.min(daysUntilStay / 365, 1), // Normalize to 0-1
-    isWeekend: (dayOfWeek === 0 || dayOfWeek === 6) ? 1 : 0,
-    isSummer: (month >= 5 && month <= 8) ? 1 : 0,
-    isWinter: (month === 11 || month === 0 || month === 1) ? 1 : 0,
-    roomType: { 'single': 0.0, 'double': 0.5, 'suite': 1.0, 'deluxe': 0.85 }[roomTypeStr] || 0.5,
+    isWeekend: dayOfWeek === 0 || dayOfWeek === 6 ? 1 : 0,
+    isSummer: month >= 5 && month <= 8 ? 1 : 0,
+    isWinter: month === 11 || month === 0 || month === 1 ? 1 : 0,
+    roomType: { single: 0.0, double: 0.5, suite: 1.0, deluxe: 0.85 }[roomTypeStr] || 0.5,
     dayOfWeek: dayOfWeek / 7,
   };
 }
@@ -120,7 +128,7 @@ function relu(x: number): number {
 
 // Simulated neural network layer
 function neuralLayer(inputs: number[], weights: number[][]): number[] {
-  return weights.map(neuronWeights => {
+  return weights.map((neuronWeights) => {
     const sum = neuronWeights.reduce((acc, w, i) => acc + w * (inputs[i] || 0), 0);
     return relu(sum);
   });

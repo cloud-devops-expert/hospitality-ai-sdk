@@ -1,7 +1,9 @@
 # Proposed ML Demos for Hospitality AI SDK
 
 ## Philosophy Alignment
+
 All proposals follow the core principles:
+
 - **Cost-Effectiveness**: Traditional method first, AI escalation only when needed
 - **Local-First**: Process data locally when possible
 - **Hybrid Approach**: Combine algorithms with selective ML
@@ -13,9 +15,11 @@ All proposals follow the core principles:
 ## Priority 1: High Impact, Low Complexity
 
 ### 1. Guest No-Show Prediction
+
 **Problem**: 5-15% of hotel reservations result in no-shows, causing revenue loss.
 
 **Approaches**:
+
 - **Traditional (Free)**: Rule-based scoring using historical patterns
   - Booking channel (direct vs OTA = reliability score)
   - Lead time (same-day bookings = higher risk)
@@ -42,6 +46,7 @@ All proposals follow the core principles:
 **Expected Savings**: $2K-10K/month for 100-room property through better overbooking
 
 **Demo Features**:
+
 - Input: Booking details, guest history, channel info
 - Output: No-show probability (0-100%), risk level, recommended actions
 - Actions: Send confirmation SMS, require deposit, overbook strategically
@@ -49,9 +54,11 @@ All proposals follow the core principles:
 ---
 
 ### 2. Review Response Generator
+
 **Problem**: Responding to every review is time-consuming but crucial for reputation.
 
 **Approaches**:
+
 - **Template-Based (Free)**: Keyword matching + templates
   - Detect sentiment and key topics (staff, cleanliness, location)
   - Select from curated response templates
@@ -73,6 +80,7 @@ All proposals follow the core principles:
 **Expected Savings**: 10-15 hours/week of staff time
 
 **Demo Features**:
+
 - Input: Guest review text, rating, guest tier
 - Output: Draft response, tone analysis, suggested edits
 - Customization: Property voice, signature, policy links
@@ -80,9 +88,11 @@ All proposals follow the core principles:
 ---
 
 ### 3. Housekeeping Route Optimization
+
 **Problem**: Inefficient cleaning routes waste time and delay room readiness.
 
 **Approaches**:
+
 - **Greedy Algorithm (Free)**: Nearest-neighbor heuristic
   - Start from closest dirty room
   - Minimize floor changes and walking distance
@@ -107,6 +117,7 @@ All proposals follow the core principles:
 **Expected Savings**: 30-45 minutes per housekeeper per day
 
 **Demo Features**:
+
 - Input: List of rooms to clean, current locations, priorities
 - Output: Optimized route, estimated completion time, visual map
 - Constraints: VIP priorities, checkout times, staff skills
@@ -116,9 +127,11 @@ All proposals follow the core principles:
 ## Priority 2: Medium Impact, Medium Complexity
 
 ### 4. Personalized Upsell Recommendations
+
 **Problem**: Missing revenue opportunities for room upgrades and add-ons.
 
 **Approaches**:
+
 - **Rule-Based (Free)**: Guest profile + occasion matching
   - Business traveler = workspace upgrade, late checkout
   - Families = connecting rooms, breakfast package
@@ -144,6 +157,7 @@ All proposals follow the core principles:
 **Expected Impact**: +$50-150 per booking in upsell revenue
 
 **Demo Features**:
+
 - Input: Guest profile, booking details, past purchases, occasion
 - Output: Top 3 recommendations, pricing, expected acceptance rate
 - Timing: Optimal moment to present offer (booking, pre-arrival, check-in)
@@ -151,9 +165,11 @@ All proposals follow the core principles:
 ---
 
 ### 5. Energy Management & Optimization
+
 **Problem**: HVAC and lighting account for 40-60% of hotel energy costs.
 
 **Approaches**:
+
 - **Schedule-Based (Free)**: Fixed temperature schedules
   - Occupied vs vacant room profiles
   - Time-of-day adjustments
@@ -178,6 +194,7 @@ All proposals follow the core principles:
 **Expected Savings**: $5K-20K/year for 100-room property
 
 **Demo Features**:
+
 - Input: Occupancy schedule, weather forecast, current temps, energy prices
 - Output: Temperature setpoints, predicted consumption, cost savings
 - Visualization: Energy usage heatmap, savings over time
@@ -185,9 +202,11 @@ All proposals follow the core principles:
 ---
 
 ### 6. Staff Scheduling Optimization
+
 **Problem**: Overstaffing wastes money, understaffing hurts service quality.
 
 **Approaches**:
+
 - **Fixed Ratios (Free)**: Industry standard staffing levels
   - 1 front desk per 50-75 rooms
   - 1 housekeeper per 12-16 rooms
@@ -212,6 +231,7 @@ All proposals follow the core principles:
 **Expected Savings**: $3K-8K/month in labor costs
 
 **Demo Features**:
+
 - Input: Occupancy forecast, staff availability, shift preferences, labor costs
 - Output: Optimal schedule, coverage gaps, cost comparison
 - Constraints: Min/max hours, required breaks, skill requirements
@@ -221,9 +241,11 @@ All proposals follow the core principles:
 ## Priority 3: High Impact, High Complexity
 
 ### 7. Dynamic Inventory Management (F&B)
+
 **Problem**: Food waste vs stockouts balance in restaurant/room service.
 
 **Approaches**:
+
 - **Moving Average (Free)**: Historical consumption patterns
   - 7-day/30-day moving averages by item
   - Day-of-week adjustments
@@ -246,9 +268,11 @@ All proposals follow the core principles:
 ---
 
 ### 8. Guest Complaint Classification & Routing
+
 **Problem**: Manual triage of complaints delays response and resolution.
 
 **Approaches**:
+
 - **Keyword-Based (Free)**: Rule-based categorization
   - Pattern matching for common issues
   - Priority assignment by keywords (urgent, broken, etc.)
@@ -270,9 +294,11 @@ All proposals follow the core principles:
 ---
 
 ### 9. Maintenance Prediction (Preventive)
+
 **Problem**: Reactive maintenance is 3-4x more expensive than preventive.
 
 **Approaches**:
+
 - **Schedule-Based (Free)**: Fixed maintenance intervals
   - Manufacturer recommendations
   - Age-based replacement schedules
@@ -299,9 +325,11 @@ All proposals follow the core principles:
 ---
 
 ### 10. Guest Check-in Time Prediction
+
 **Problem**: Uncertain arrival times make resource allocation difficult.
 
 **Approaches**:
+
 - **Stated Time (Free)**: Use guest's provided ETA
   - Simple baseline with ±2 hour buffer
   - Cost: $0, Latency: 0ms, Accuracy: 52%
@@ -324,25 +352,27 @@ All proposals follow the core principles:
 
 ## Implementation Priority Matrix
 
-| Use Case | Impact | Complexity | Dev Time | Priority |
-|----------|--------|------------|----------|----------|
-| No-Show Prediction | High | Low | 2 days | 1 |
-| Review Response | High | Low | 2 days | 1 |
-| Housekeeping Routes | Medium | Low | 3 days | 1 |
-| Upsell Recommendations | High | Medium | 4 days | 2 |
-| Energy Management | High | Medium | 5 days | 2 |
-| Staff Scheduling | High | Medium | 5 days | 2 |
-| F&B Inventory | Medium | High | 6 days | 3 |
-| Complaint Routing | Medium | Medium | 3 days | 3 |
-| Maintenance Prediction | High | High | 7 days | 3 |
-| Check-in Time | Low | Low | 2 days | 3 |
+| Use Case               | Impact | Complexity | Dev Time | Priority |
+| ---------------------- | ------ | ---------- | -------- | -------- |
+| No-Show Prediction     | High   | Low        | 2 days   | 1        |
+| Review Response        | High   | Low        | 2 days   | 1        |
+| Housekeeping Routes    | Medium | Low        | 3 days   | 1        |
+| Upsell Recommendations | High   | Medium     | 4 days   | 2        |
+| Energy Management      | High   | Medium     | 5 days   | 2        |
+| Staff Scheduling       | High   | Medium     | 5 days   | 2        |
+| F&B Inventory          | Medium | High       | 6 days   | 3        |
+| Complaint Routing      | Medium | Medium     | 3 days   | 3        |
+| Maintenance Prediction | High   | High       | 7 days   | 3        |
+| Check-in Time          | Low    | Low        | 2 days   | 3        |
 
 ---
 
 ## Cost Analysis by Property Size
 
 ### Small Property (25-50 rooms)
+
 **Priority Features**:
+
 1. Review Response Generator - saves 5 hrs/week
 2. No-Show Prediction - prevents $500-1K/month loss
 3. Housekeeping Routes - saves 30 min/day
@@ -352,7 +382,9 @@ All proposals follow the core principles:
 **ROI**: 50-200x
 
 ### Medium Property (50-150 rooms)
+
 **Priority Features**:
+
 1. All Priority 1 features
 2. Energy Management - saves $500-1.5K/month
 3. Upsell Recommendations - adds $2-5K/month revenue
@@ -363,7 +395,9 @@ All proposals follow the core principles:
 **ROI**: 30-150x
 
 ### Large Property (150+ rooms)
+
 **Priority Features**:
+
 1. Full suite of Priority 1-2 features
 2. Maintenance Prediction - saves $1-3K/month
 3. F&B Inventory - saves $2-5K/month
@@ -378,17 +412,20 @@ All proposals follow the core principles:
 ## Technical Architecture Considerations
 
 ### Data Requirements
+
 - **Minimal**: Booking data, guest history (2-3 months)
 - **Ideal**: 12-24 months of operational data
 - **Advanced**: IoT sensors, PMS integration, external APIs
 
 ### Integration Points
+
 - **PMS Systems**: Opera, Protel, Mews, Cloudbeds
 - **Channel Managers**: SiteMinder, D-Edge
 - **Energy Systems**: Inncom, VingCard, GRMS
 - **Review Platforms**: Google, TripAdvisor, Booking.com
 
 ### Privacy & Compliance
+
 - GDPR/CCPA compliant data handling
 - Anonymization for ML training
 - Local-first processing where possible
@@ -399,21 +436,25 @@ All proposals follow the core principles:
 ## Next Steps
 
 ### Phase 1 (Weeks 1-2)
+
 - [ ] Implement No-Show Prediction demo
 - [ ] Implement Review Response Generator demo
 - [ ] Create comparison benchmarks
 
 ### Phase 2 (Weeks 3-4)
+
 - [ ] Add Housekeeping Route Optimization
 - [ ] Add Upsell Recommendations
 - [ ] Build ROI calculator
 
 ### Phase 3 (Weeks 5-6)
+
 - [ ] Integrate Energy Management
 - [ ] Add Staff Scheduling
 - [ ] Create deployment guides
 
 ### Phase 4 (Ongoing)
+
 - [ ] Community feedback integration
 - [ ] Real property pilots
 - [ ] Performance optimization
@@ -424,6 +465,7 @@ All proposals follow the core principles:
 ## Success Metrics
 
 For each demo, track:
+
 1. **Accuracy**: Model prediction vs actual outcomes
 2. **Cost**: Monthly API costs per property size
 3. **Latency**: P50, P95, P99 response times

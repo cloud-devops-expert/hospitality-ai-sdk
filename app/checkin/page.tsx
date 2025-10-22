@@ -2,7 +2,12 @@
 
 import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
-import { CheckInBooking, CheckInPrediction, predictCheckInHistorical, CHECKIN_MODELS } from '@/lib/checkin/predictor';
+import {
+  CheckInBooking,
+  CheckInPrediction,
+  predictCheckInHistorical,
+  CHECKIN_MODELS,
+} from '@/lib/checkin/predictor';
 
 type AlgorithmType = 'stated' | 'historical' | 'ml';
 
@@ -45,7 +50,9 @@ export default function CheckInPage() {
         </p>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Select Algorithm</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            Select Algorithm
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {(['stated', 'historical', 'ml'] as const).map((algo) => {
               const info = getAlgorithmInfo(algo);
@@ -59,18 +66,26 @@ export default function CheckInPage() {
                     selectedAlgorithm === algo
                       ? 'border-brand-600 dark:border-brand-400 bg-brand-50 dark:bg-brand-900/20'
                       : isAvailable
-                      ? 'border-gray-300 dark:border-gray-600 hover:border-brand-400'
-                      : 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed'
+                        ? 'border-gray-300 dark:border-gray-600 hover:border-brand-400'
+                        : 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed'
                   }`}
                 >
                   <div className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                     {info.name}
-                    {!isAvailable && <span className="ml-2 text-xs text-gray-500">(Coming Soon)</span>}
+                    {!isAvailable && (
+                      <span className="ml-2 text-xs text-gray-500">(Coming Soon)</span>
+                    )}
                   </div>
                   <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
-                    <div><strong>Accuracy:</strong> {(info.accuracy * 100).toFixed(0)}%</div>
-                    <div><strong>Cost:</strong> ${info.cost}</div>
-                    <div><strong>Latency:</strong> ~{info.avgLatency}ms</div>
+                    <div>
+                      <strong>Accuracy:</strong> {(info.accuracy * 100).toFixed(0)}%
+                    </div>
+                    <div>
+                      <strong>Cost:</strong> ${info.cost}
+                    </div>
+                    <div>
+                      <strong>Latency:</strong> ~{info.avgLatency}ms
+                    </div>
                   </div>
                 </button>
               );
@@ -80,11 +95,15 @@ export default function CheckInPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Booking Details</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+              Booking Details
+            </h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Guest Type</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Guest Type
+                </label>
                 <select
                   value={guestType}
                   onChange={(e) => setGuestType(e.target.value as CheckInBooking['guestType'])}
@@ -97,10 +116,14 @@ export default function CheckInPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Booking Source</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Booking Source
+                </label>
                 <select
                   value={bookingSource}
-                  onChange={(e) => setBookingSource(e.target.value as CheckInBooking['bookingSource'])}
+                  onChange={(e) =>
+                    setBookingSource(e.target.value as CheckInBooking['bookingSource'])
+                  }
                   className="w-full p-2 border rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 >
                   <option value="direct">Direct Booking</option>
@@ -147,18 +170,24 @@ export default function CheckInPage() {
           <div className="space-y-6">
             {result && (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Prediction Results</h2>
+                <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+                  Prediction Results
+                </h2>
 
                 <div className="space-y-4">
                   <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded text-center">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Predicted Check-in Time</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      Predicted Check-in Time
+                    </p>
                     <p className="text-5xl font-bold text-brand-600 dark:text-brand-400">
                       {formatTime(result.predictedTime)}
                     </p>
                   </div>
 
                   <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Confidence Window</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      Confidence Window
+                    </p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 text-center">
                       ± {result.confidenceWindow} hours
                     </p>

@@ -3,11 +3,46 @@ import type { Room } from '../optimizer';
 
 describe('Housekeeping Route Optimization', () => {
   const sampleRooms: Room[] = [
-    { id: 'room-1', number: '101', floor: 1, status: 'dirty', priority: 'normal', estimatedCleanTime: 30 },
-    { id: 'room-2', number: '102', floor: 1, status: 'dirty', priority: 'priority', estimatedCleanTime: 35 },
-    { id: 'room-3', number: '201', floor: 2, status: 'dirty', priority: 'normal', estimatedCleanTime: 30 },
-    { id: 'room-4', number: '202', floor: 2, status: 'dirty', priority: 'normal', estimatedCleanTime: 30 },
-    { id: 'room-5', number: '105', floor: 1, status: 'dirty', priority: 'vip', estimatedCleanTime: 40 },
+    {
+      id: 'room-1',
+      number: '101',
+      floor: 1,
+      status: 'dirty',
+      priority: 'normal',
+      estimatedCleanTime: 30,
+    },
+    {
+      id: 'room-2',
+      number: '102',
+      floor: 1,
+      status: 'dirty',
+      priority: 'priority',
+      estimatedCleanTime: 35,
+    },
+    {
+      id: 'room-3',
+      number: '201',
+      floor: 2,
+      status: 'dirty',
+      priority: 'normal',
+      estimatedCleanTime: 30,
+    },
+    {
+      id: 'room-4',
+      number: '202',
+      floor: 2,
+      status: 'dirty',
+      priority: 'normal',
+      estimatedCleanTime: 30,
+    },
+    {
+      id: 'room-5',
+      number: '105',
+      floor: 1,
+      status: 'dirty',
+      priority: 'vip',
+      estimatedCleanTime: 40,
+    },
   ];
 
   describe('Greedy Algorithm', () => {
@@ -24,7 +59,7 @@ describe('Housekeeping Route Optimization', () => {
       const result = optimizeRouteGreedy(sampleRooms, 1);
 
       // VIP should be cleaned early
-      const vipIndex = result.rooms.findIndex(r => r.id === 'room-5');
+      const vipIndex = result.rooms.findIndex((r) => r.id === 'room-5');
 
       expect(vipIndex).toBeLessThan(3);
     });
@@ -94,7 +129,7 @@ describe('Housekeeping Route Optimization', () => {
     });
 
     it('should handle all clean rooms', () => {
-      const cleanRooms = sampleRooms.map(r => ({ ...r, status: 'clean' as const }));
+      const cleanRooms = sampleRooms.map((r) => ({ ...r, status: 'clean' as const }));
       const result = optimizeRouteGreedy(cleanRooms, 1);
 
       expect(result.rooms).toHaveLength(0);
@@ -102,9 +137,30 @@ describe('Housekeeping Route Optimization', () => {
 
     it('should handle rooms across multiple floors', () => {
       const multiFloor = [
-        { id: 'room-1', number: '101', floor: 1, status: 'dirty' as const, priority: 'normal' as const, estimatedCleanTime: 30 },
-        { id: 'room-2', number: '301', floor: 3, status: 'dirty' as const, priority: 'normal' as const, estimatedCleanTime: 30 },
-        { id: 'room-3', number: '501', floor: 5, status: 'dirty' as const, priority: 'normal' as const, estimatedCleanTime: 30 },
+        {
+          id: 'room-1',
+          number: '101',
+          floor: 1,
+          status: 'dirty' as const,
+          priority: 'normal' as const,
+          estimatedCleanTime: 30,
+        },
+        {
+          id: 'room-2',
+          number: '301',
+          floor: 3,
+          status: 'dirty' as const,
+          priority: 'normal' as const,
+          estimatedCleanTime: 30,
+        },
+        {
+          id: 'room-3',
+          number: '501',
+          floor: 5,
+          status: 'dirty' as const,
+          priority: 'normal' as const,
+          estimatedCleanTime: 30,
+        },
       ];
 
       const result = optimizeRouteGreedy(multiFloor, 1);
@@ -119,14 +175,14 @@ describe('Housekeeping Route Optimization', () => {
       const result = optimizeRouteGreedy(sampleRooms, 1);
 
       // VIP should be early in the route (first 3 positions)
-      const vipIndex = result.rooms.findIndex(r => r.priority === 'vip');
+      const vipIndex = result.rooms.findIndex((r) => r.priority === 'vip');
       expect(vipIndex).toBeLessThan(3);
 
       // Priority should be before normal rooms
-      const priorityIndex = result.rooms.findIndex(r => r.priority === 'priority');
+      const priorityIndex = result.rooms.findIndex((r) => r.priority === 'priority');
       const normalIndices = result.rooms
-        .map((r, i) => r.priority === 'normal' ? i : -1)
-        .filter(i => i >= 0);
+        .map((r, i) => (r.priority === 'normal' ? i : -1))
+        .filter((i) => i >= 0);
 
       expect(priorityIndex).toBeLessThan(Math.max(...normalIndices));
     });

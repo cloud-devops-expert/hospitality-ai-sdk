@@ -4,13 +4,7 @@
  * 5 HARD (must never be violated) + 9 SOFT (preferences to optimize)
  */
 
-import type {
-  GuestBooking,
-  Room,
-  ConstraintMatch,
-  HardSoftScore,
-  ConstraintDefinition,
-} from '../types/timefold';
+import type { ConstraintMatch, HardSoftScore, ConstraintDefinition } from '../types/timefold';
 import { View } from '../types/timefold';
 
 // Helper to create constraint match
@@ -59,10 +53,11 @@ export const noDoubleBookingEvaluator: ConstraintDefinition = {
   evaluator: (booking, allBookings) => {
     if (!booking.assignedRoom) return null;
 
-    const overlapping = allBookings.filter(other =>
-      other.id !== booking.id &&
-      other.assignedRoom?.id === booking.assignedRoom!.id &&
-      datesOverlap(booking.checkIn, booking.checkOut, other.checkIn, other.checkOut)
+    const overlapping = allBookings.filter(
+      (other) =>
+        other.id !== booking.id &&
+        other.assignedRoom?.id === booking.assignedRoom!.id &&
+        datesOverlap(booking.checkIn, booking.checkOut, other.checkIn, other.checkOut)
     );
 
     if (overlapping.length > 0) {
@@ -228,7 +223,10 @@ export const viewPreferenceEvaluator: ConstraintDefinition = {
   evaluator: (booking, _allBookings, _allRooms, parameters) => {
     if (!booking.assignedRoom) return null;
 
-    if (booking.guest.preferences.view && booking.assignedRoom.view === booking.guest.preferences.view) {
+    if (
+      booking.guest.preferences.view &&
+      booking.assignedRoom.view === booking.guest.preferences.view
+    ) {
       const weight = parameters.weight || 50;
       return createMatch(
         'VIEW_PREFERENCE',
@@ -289,7 +287,10 @@ export const quietLocationEvaluator: ConstraintDefinition = {
 
     const minDistance = parameters.minDistanceFromElevator || 3;
 
-    if (booking.guest.preferences.quiet && booking.assignedRoom.distanceFromElevator >= minDistance) {
+    if (
+      booking.guest.preferences.quiet &&
+      booking.assignedRoom.distanceFromElevator >= minDistance
+    ) {
       const weight = parameters.weight || 60;
       return createMatch(
         'QUIET_LOCATION',
@@ -375,12 +376,7 @@ export const lateCheckoutEvaluator: ConstraintDefinition = {
 // Helper Functions
 // ============================================================================
 
-function datesOverlap(
-  start1: Date,
-  end1: Date,
-  start2: Date,
-  end2: Date
-): boolean {
+function datesOverlap(start1: Date, end1: Date, start2: Date, end2: Date): boolean {
   return start1 < end2 && end1 > start2;
 }
 

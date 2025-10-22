@@ -1,27 +1,27 @@
-import { buildConfig } from 'payload'
-import { postgresAdapter } from '@payloadcms/db-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { seoPlugin } from '@payloadcms/plugin-seo'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import { buildConfig } from 'payload';
+import { postgresAdapter } from '@payloadcms/db-postgres';
+import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import { seoPlugin } from '@payloadcms/plugin-seo';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Import collections
-import { Posts } from './src/payload/collections/Posts'
-import { Pages } from './src/payload/collections/Pages'
-import { Authors } from './src/payload/collections/Authors'
-import { Categories } from './src/payload/collections/Categories'
-import { Tags } from './src/payload/collections/Tags'
-import { CaseStudies } from './src/payload/collections/CaseStudies'
-import { Media } from './src/payload/collections/Media'
-import { Users } from './src/payload/collections/Users'
+import { Posts } from './src/payload/collections/Posts';
+import { Pages } from './src/payload/collections/Pages';
+import { Authors } from './src/payload/collections/Authors';
+import { Categories } from './src/payload/collections/Categories';
+import { Tags } from './src/payload/collections/Tags';
+import { CaseStudies } from './src/payload/collections/CaseStudies';
+import { Media } from './src/payload/collections/Media';
+import { Users } from './src/payload/collections/Users';
 
 // Timefold Constraint Management
-import { Tenants } from './src/payload/collections/Tenants'
-import { ConstraintTemplates } from './src/payload/collections/ConstraintTemplates'
-import { TenantConstraintConfigs } from './src/payload/collections/TenantConstraintConfigs'
+import { Tenants } from './src/payload/collections/Tenants';
+import { ConstraintTemplates } from './src/payload/collections/ConstraintTemplates';
+import { TenantConstraintConfigs } from './src/payload/collections/TenantConstraintConfigs';
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
@@ -85,11 +85,7 @@ export default buildConfig({
     schemaOutputFile: path.resolve(dirname, 'generated-schema.graphql'),
   },
 
-  cors: [
-    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001',
-  ],
+  cors: [process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001'],
 
-  csrf: [
-    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001',
-  ],
-})
+  csrf: [process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001'],
+});

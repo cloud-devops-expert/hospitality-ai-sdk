@@ -6,15 +6,21 @@ describe('Inventory Forecasting', () => {
     { id: '1', name: 'Eggs (dozen)', currentStock: 50, avgDailyConsumption: 15, perishable: true },
     { id: '2', name: 'Milk (liters)', currentStock: 30, avgDailyConsumption: 12, perishable: true },
     { id: '3', name: 'Coffee (kg)', currentStock: 10, avgDailyConsumption: 2, perishable: false },
-    { id: '4', name: 'Bread (loaves)', currentStock: 40, avgDailyConsumption: 18, perishable: true },
+    {
+      id: '4',
+      name: 'Bread (loaves)',
+      currentStock: 40,
+      avgDailyConsumption: 18,
+      perishable: true,
+    },
   ];
 
   describe('Moving Average Forecasting', () => {
     it('should forecast for each item', () => {
-      const forecasts = sampleItems.map(item => forecastInventoryMovingAverage(item));
+      const forecasts = sampleItems.map((item) => forecastInventoryMovingAverage(item));
 
       expect(forecasts).toHaveLength(sampleItems.length);
-      forecasts.forEach(forecast => {
+      forecasts.forEach((forecast) => {
         expect(forecast.daysUntilStockout).toBeGreaterThan(0);
         expect(forecast.recommendedOrder).toBeGreaterThanOrEqual(0);
       });
@@ -168,7 +174,7 @@ describe('Inventory Forecasting', () => {
 
   describe('Real-world Scenarios', () => {
     it('should forecast eggs correctly', () => {
-      const eggs = sampleItems.find(i => i.name.includes('Eggs'))!;
+      const eggs = sampleItems.find((i) => i.name.includes('Eggs'))!;
       const forecast = forecastInventoryMovingAverage(eggs);
 
       expect(forecast.daysUntilStockout).toBeCloseTo(50 / 15, 0);
@@ -176,14 +182,14 @@ describe('Inventory Forecasting', () => {
     });
 
     it('should forecast milk correctly', () => {
-      const milk = sampleItems.find(i => i.name.includes('Milk'))!;
+      const milk = sampleItems.find((i) => i.name.includes('Milk'))!;
       const forecast = forecastInventoryMovingAverage(milk);
 
       expect(forecast.daysUntilStockout).toBe(2); // 30 stock / 12 daily usage = 2.5, rounded down
     });
 
     it('should forecast coffee correctly', () => {
-      const coffee = sampleItems.find(i => i.name.includes('Coffee'))!;
+      const coffee = sampleItems.find((i) => i.name.includes('Coffee'))!;
       const forecast = forecastInventoryMovingAverage(coffee);
 
       expect(forecast.daysUntilStockout).toBe(5); // 10 / 2 = 5

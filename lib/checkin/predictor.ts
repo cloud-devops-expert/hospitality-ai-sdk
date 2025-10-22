@@ -25,9 +25,9 @@ export function predictCheckInHistorical(booking: CheckInBooking): CheckInPredic
 
   // Historical pattern averages
   const patterns: Record<CheckInBooking['guestType'], { hour: number; window: number }> = {
-    'business': { hour: 19, window: 2 }, // 6-9 PM
-    'leisure': { hour: 16, window: 2 }, // 3-5 PM
-    'family': { hour: 15, window: 2 }, // 3-5 PM
+    business: { hour: 19, window: 2 }, // 6-9 PM
+    leisure: { hour: 16, window: 2 }, // 3-5 PM
+    family: { hour: 15, window: 2 }, // 3-5 PM
   };
 
   const pattern = patterns[booking.guestType];
@@ -52,7 +52,25 @@ export function predictCheckInHistorical(booking: CheckInBooking): CheckInPredic
 }
 
 export const CHECKIN_MODELS = {
-  'stated': { name: 'Stated Time', cost: 0, avgLatency: 0, accuracy: 0.52, description: 'Guest provided ETA' },
-  'historical': { name: 'Historical Pattern', cost: 0, avgLatency: 5, accuracy: 0.71, description: 'Average by segment' },
-  'ml': { name: 'ML Prediction', cost: 0, avgLatency: 30, accuracy: 0.84, description: 'Multi-factor model' },
+  stated: {
+    name: 'Stated Time',
+    cost: 0,
+    avgLatency: 0,
+    accuracy: 0.52,
+    description: 'Guest provided ETA',
+  },
+  historical: {
+    name: 'Historical Pattern',
+    cost: 0,
+    avgLatency: 5,
+    accuracy: 0.71,
+    description: 'Average by segment',
+  },
+  ml: {
+    name: 'ML Prediction',
+    cost: 0,
+    avgLatency: 30,
+    accuracy: 0.84,
+    description: 'Multi-factor model',
+  },
 };

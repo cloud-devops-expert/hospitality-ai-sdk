@@ -66,7 +66,8 @@ export const TenantConstraintConfigs: CollectionConfig = {
       defaultValue: 0,
       label: 'Weight',
       admin: {
-        description: 'Override default weight. Higher = more important (positive = reward, negative = penalty)',
+        description:
+          'Override default weight. Higher = more important (positive = reward, negative = penalty)',
       },
     },
     {
@@ -91,7 +92,9 @@ export const TenantConstraintConfigs: CollectionConfig = {
     afterChange: [
       async ({ doc, operation }) => {
         // Log to console when constraint configs change
-        console.log(`[Timefold] Constraint config ${operation}: Tenant=${doc.tenant}, Template=${doc.constraintTemplate}, Enabled=${doc.enabled}`);
+        console.warn(
+          `[Timefold] Constraint config ${operation}: Tenant=${doc.tenant}, Template=${doc.constraintTemplate}, Enabled=${doc.enabled}`
+        );
 
         // TODO: Trigger Timefold solver cache invalidation via API
         // This would call the Java microservice to reload constraints for this tenant

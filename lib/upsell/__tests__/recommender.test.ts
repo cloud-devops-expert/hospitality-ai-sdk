@@ -15,16 +15,19 @@ describe('Upsell Recommendations', () => {
       const result = recommendUpsellsRuleBased(businessProfile);
 
       expect(result.recommendations.length).toBeGreaterThan(0);
-      expect(result.recommendations.some(r =>
-        r.offer.name.toLowerCase().includes('checkout') ||
-        r.offer.name.toLowerCase().includes('workspace') ||
-        r.offer.name.toLowerCase().includes('lounge')
-      )).toBe(true);
+      expect(
+        result.recommendations.some(
+          (r) =>
+            r.offer.name.toLowerCase().includes('checkout') ||
+            r.offer.name.toLowerCase().includes('workspace') ||
+            r.offer.name.toLowerCase().includes('lounge')
+        )
+      ).toBe(true);
     });
 
     it('should have higher conversion for business offers', () => {
       const result = recommendUpsellsRuleBased(businessProfile);
-      const businessOffer = result.recommendations.find(r =>
+      const businessOffer = result.recommendations.find((r) =>
         r.offer.name.toLowerCase().includes('checkout')
       );
 
@@ -47,11 +50,14 @@ describe('Upsell Recommendations', () => {
 
       expect(result.recommendations.length).toBeGreaterThan(0);
       // With occasion set, should get room upgrades and spa offers
-      expect(result.recommendations.some(r =>
-        r.offer.category === 'room-upgrade' ||
-        r.offer.name.toLowerCase().includes('spa') ||
-        r.offer.name.toLowerCase().includes('champagne')
-      )).toBe(true);
+      expect(
+        result.recommendations.some(
+          (r) =>
+            r.offer.category === 'room-upgrade' ||
+            r.offer.name.toLowerCase().includes('spa') ||
+            r.offer.name.toLowerCase().includes('champagne')
+        )
+      ).toBe(true);
     });
   });
 
@@ -68,11 +74,14 @@ describe('Upsell Recommendations', () => {
       const result = recommendUpsellsRuleBased(familyProfile);
 
       expect(result.recommendations.length).toBeGreaterThan(0);
-      expect(result.recommendations.some(r =>
-        r.offer.name.toLowerCase().includes('breakfast') ||
-        r.offer.name.toLowerCase().includes('family') ||
-        r.offer.name.toLowerCase().includes('suite')
-      )).toBe(true);
+      expect(
+        result.recommendations.some(
+          (r) =>
+            r.offer.name.toLowerCase().includes('breakfast') ||
+            r.offer.name.toLowerCase().includes('family') ||
+            r.offer.name.toLowerCase().includes('suite')
+        )
+      ).toBe(true);
     });
   });
 
@@ -89,11 +98,14 @@ describe('Upsell Recommendations', () => {
       const result = recommendUpsellsRuleBased(coupleProfile);
 
       expect(result.recommendations.length).toBeGreaterThan(0);
-      expect(result.recommendations.some(r =>
-        r.offer.name.toLowerCase().includes('room') ||
-        r.offer.name.toLowerCase().includes('spa') ||
-        r.offer.name.toLowerCase().includes('dinner')
-      )).toBe(true);
+      expect(
+        result.recommendations.some(
+          (r) =>
+            r.offer.name.toLowerCase().includes('room') ||
+            r.offer.name.toLowerCase().includes('spa') ||
+            r.offer.name.toLowerCase().includes('dinner')
+        )
+      ).toBe(true);
     });
   });
 
@@ -109,11 +121,14 @@ describe('Upsell Recommendations', () => {
 
       const result = recommendUpsellsRuleBased(anniversaryProfile);
 
-      expect(result.recommendations.some(r =>
-        r.offer.name.toLowerCase().includes('champagne') ||
-        r.offer.name.toLowerCase().includes('romantic') ||
-        r.offer.name.toLowerCase().includes('couples')
-      )).toBe(true);
+      expect(
+        result.recommendations.some(
+          (r) =>
+            r.offer.name.toLowerCase().includes('champagne') ||
+            r.offer.name.toLowerCase().includes('romantic') ||
+            r.offer.name.toLowerCase().includes('couples')
+        )
+      ).toBe(true);
     });
 
     it('should enhance recommendations for birthdays', () => {
@@ -141,11 +156,14 @@ describe('Upsell Recommendations', () => {
 
       const result = recommendUpsellsRuleBased(honeymoonProfile);
 
-      expect(result.recommendations.some(r =>
-        r.offer.name.toLowerCase().includes('honeymoon') ||
-        r.offer.name.toLowerCase().includes('suite') ||
-        r.offer.name.toLowerCase().includes('spa')
-      )).toBe(true);
+      expect(
+        result.recommendations.some(
+          (r) =>
+            r.offer.name.toLowerCase().includes('honeymoon') ||
+            r.offer.name.toLowerCase().includes('suite') ||
+            r.offer.name.toLowerCase().includes('spa')
+        )
+      ).toBe(true);
     });
   });
 
@@ -160,7 +178,9 @@ describe('Upsell Recommendations', () => {
       };
 
       const result = recommendUpsellsRuleBased(economyProfile);
-      const avgPrice = result.recommendations.reduce((sum, r) => sum + r.offer.price, 0) / result.recommendations.length;
+      const avgPrice =
+        result.recommendations.reduce((sum, r) => sum + r.offer.price, 0) /
+        result.recommendations.length;
 
       expect(avgPrice).toBeLessThan(100);
     });
@@ -176,7 +196,7 @@ describe('Upsell Recommendations', () => {
 
       const result = recommendUpsellsRuleBased(luxuryProfile);
 
-      expect(result.recommendations.some(r => r.offer.price > 100)).toBe(true);
+      expect(result.recommendations.some((r) => r.offer.price > 100)).toBe(true);
     });
   });
 
@@ -192,7 +212,7 @@ describe('Upsell Recommendations', () => {
 
       const result = recommendUpsellsRuleBased(profile);
 
-      result.recommendations.forEach(rec => {
+      result.recommendations.forEach((rec) => {
         expect(rec.expectedConversion).toBeGreaterThan(0);
         expect(rec.expectedConversion).toBeLessThanOrEqual(1);
       });
@@ -209,7 +229,7 @@ describe('Upsell Recommendations', () => {
 
       const result = recommendUpsellsRuleBased(profile);
 
-      expect(result.recommendations.some(r => r.expectedConversion > 0.1)).toBe(true);
+      expect(result.recommendations.some((r) => r.expectedConversion > 0.1)).toBe(true);
     });
   });
 
@@ -225,7 +245,7 @@ describe('Upsell Recommendations', () => {
 
       const result = recommendUpsellsRuleBased(profile);
 
-      result.recommendations.forEach(rec => {
+      result.recommendations.forEach((rec) => {
         expect(rec.reason).toBeTruthy();
         expect(rec.reason.length).toBeGreaterThan(10);
       });

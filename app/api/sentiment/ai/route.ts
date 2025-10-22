@@ -5,10 +5,7 @@ export async function POST(request: NextRequest) {
     const { text } = await request.json();
 
     if (!text) {
-      return NextResponse.json(
-        { error: 'Text is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Text is required' }, { status: 400 });
     }
 
     // Check if API key is configured
@@ -21,7 +18,7 @@ export async function POST(request: NextRequest) {
           confidence: 0,
           keywords: [],
           method: 'ai',
-          error: 'AI analysis not available - API key not configured'
+          error: 'AI analysis not available - API key not configured',
         },
         { status: 200 }
       );
@@ -32,23 +29,24 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',
-            content: 'You are a sentiment analysis expert for hospitality reviews. Analyze the sentiment and respond with a JSON object containing: score (number from -1 to 1), sentiment (positive/negative/neutral), confidence (0 to 1), and keywords (array of important words).'
+            content:
+              'You are a sentiment analysis expert for hospitality reviews. Analyze the sentiment and respond with a JSON object containing: score (number from -1 to 1), sentiment (positive/negative/neutral), confidence (0 to 1), and keywords (array of important words).',
           },
           {
             role: 'user',
-            content: `Analyze this guest review: "${text}"`
-          }
+            content: `Analyze this guest review: "${text}"`,
+          },
         ],
         temperature: 0.3,
-        max_tokens: 200
-      })
+        max_tokens: 200,
+      }),
     });
 
     if (!response.ok) {
@@ -68,15 +66,14 @@ export async function POST(request: NextRequest) {
         score: 0,
         sentiment: 'neutral',
         confidence: 0.5,
-        keywords: []
+        keywords: [],
       };
     }
 
     return NextResponse.json({
       ...result,
-      method: 'ai'
+      method: 'ai',
     });
-
   } catch (error) {
     console.error('AI sentiment analysis error:', error);
     return NextResponse.json(
@@ -86,7 +83,7 @@ export async function POST(request: NextRequest) {
         confidence: 0,
         keywords: [],
         method: 'ai',
-        error: 'AI analysis failed'
+        error: 'AI analysis failed',
       },
       { status: 200 }
     );

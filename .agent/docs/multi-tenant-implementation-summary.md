@@ -15,6 +15,7 @@ Successfully implemented a complete multi-tenant, database-driven constraint man
 Created a complete PostgreSQL schema with:
 
 **Tables**:
+
 - `tenants` - Hotel properties (3 sample tenants created)
 - `constraint_templates` - Reusable constraint definitions (14 templates)
 - `tenant_constraint_configs` - Tenant-specific overrides (42 configs total)
@@ -23,24 +24,17 @@ Created a complete PostgreSQL schema with:
 **Constraint Templates** (14 total):
 
 **HARD Constraints** (Must never be violated):
+
 1. `ROOM_TYPE_MATCH` - Guest gets requested room type
 2. `NO_DOUBLE_BOOKING` - No overlapping room assignments
 3. `ACCESSIBILITY_REQUIRED` - Accessible rooms for guests with needs
 4. `SMOKING_POLICY` - Smokers to smoking rooms, non-smokers to non-smoking
 5. `PET_POLICY` - Pets only in pet-friendly rooms
 
-**SOFT Constraints** (Preferences to optimize):
-6. `VIP_OCEAN_VIEW` - VIP guests get ocean view (weight: 100)
-7. `VIP_HIGH_FLOOR` - VIP guests get high floors (weight: 80)
-8. `VIEW_PREFERENCE` - Match guest view preferences (weight: 50)
-9. `FLOOR_PREFERENCE` - Match floor preferences (weight: 40)
-10. `QUIET_LOCATION` - Away from elevators/ice machines (weight: 60)
-11. `CONNECTING_ROOMS` - Families get adjacent rooms (weight: 70)
-12. `EARLY_CHECKIN` - Early check-in requests prioritized (weight: 30)
-13. `LATE_CHECKOUT` - Late checkout requests prioritized (weight: 30)
-14. `BUDGET_CONSTRAINT` - Penalize premium room assignments (weight: -50)
+**SOFT Constraints** (Preferences to optimize): 6. `VIP_OCEAN_VIEW` - VIP guests get ocean view (weight: 100) 7. `VIP_HIGH_FLOOR` - VIP guests get high floors (weight: 80) 8. `VIEW_PREFERENCE` - Match guest view preferences (weight: 50) 9. `FLOOR_PREFERENCE` - Match floor preferences (weight: 40) 10. `QUIET_LOCATION` - Away from elevators/ice machines (weight: 60) 11. `CONNECTING_ROOMS` - Families get adjacent rooms (weight: 70) 12. `EARLY_CHECKIN` - Early check-in requests prioritized (weight: 30) 13. `LATE_CHECKOUT` - Late checkout requests prioritized (weight: 30) 14. `BUDGET_CONSTRAINT` - Penalize premium room assignments (weight: -50)
 
 **Features**:
+
 - JSON Schema validation for tenant parameters
 - Audit logging via triggers
 - Helper functions for querying active constraints
@@ -49,6 +43,7 @@ Created a complete PostgreSQL schema with:
 ### 2. Sample Tenants with Distinct Configurations
 
 **Ocean View Luxury Resort** (150 rooms):
+
 - Hotel Type: Luxury
 - VIP Ocean View: **150** (higher than default 100)
 - VIP High Floor: **120** (higher than default 80)
@@ -57,6 +52,7 @@ Created a complete PostgreSQL schema with:
 - Parameters: `minLoyaltyTier: 2`, ocean/beach views
 
 **Budget Inn Downtown** (80 rooms):
+
 - Hotel Type: Budget
 - VIP Ocean View: **DISABLED**
 - VIP High Floor: **DISABLED**
@@ -65,6 +61,7 @@ Created a complete PostgreSQL schema with:
 - Parameters: `budgetBufferPercent: 5%`
 
 **Business Tower Hotel** (200 rooms):
+
 - Hotel Type: Business
 - Quiet Location: **90** (very high priority)
 - VIP Ocean View: **60** (moderate, city+ocean views)
@@ -76,16 +73,19 @@ Created a complete PostgreSQL schema with:
 Created 3 fully-functional PayloadCMS collections:
 
 **Tenants** (`src/payload/collections/Tenants.ts`):
+
 - Fields: name, slug, hotelType, totalRooms, timezone
 - Admin-only create/update/delete
 - Public read access
 
 **ConstraintTemplates** (`src/payload/collections/ConstraintTemplates.ts`):
+
 - Fields: code, name, description, constraintType, defaultWeight, category
 - JSON fields for parameterSchema and exampleParameters
 - Admin-only management
 
 **TenantConstraintConfigs** (`src/payload/collections/TenantConstraintConfigs.ts`):
+
 - Relationship fields to Tenants and ConstraintTemplates
 - Fields: enabled, weight, parameters, notes
 - Editor-level access for configuration
@@ -93,6 +93,7 @@ Created 3 fully-functional PayloadCMS collections:
 - `afterChange` hook for future solver cache invalidation
 
 **Admin Organization**:
+
 - Grouped under "Timefold Constraints" in PayloadCMS admin
 - Integrated into `payload.config.ts`
 - Ready for UI management
@@ -102,6 +103,7 @@ Created 3 fully-functional PayloadCMS collections:
 Created comprehensive documentation:
 
 **`.agent/docs/timefold-multi-tenant-rules-architecture.md`** (Complete Architecture):
+
 - Database schema design
 - Dynamic constraint provider (Java)
 - Hot-reload strategy with solver cache
@@ -111,24 +113,28 @@ Created comprehensive documentation:
 - Migration path from static to dynamic constraints
 
 **`.agent/docs/hotel-constraints-guide.md`** (28KB):
+
 - Detailed explanation of all 14 constraints
 - Real-world scenarios for each constraint
 - Weight tuning guidance
 - Scoring examples
 
 **`.agent/docs/constraint-solver-comparison.md`** (15KB):
+
 - Traditional JavaScript vs Timefold comparison
 - Performance benchmarks
 - Cost analysis
 - When to use each approach
 
 **`.agent/docs/constraint-solving-research.md`** (47KB):
+
 - Full research on Timefold vs OptaPlanner
 - Integration patterns
 - Deployment strategies
 - Commercial considerations
 
 **`.agent/tasks/timefold-integration.md`** (7.7KB):
+
 - 4-phase implementation roadmap
 - Timeline estimates
 - Risk assessment
@@ -136,6 +142,7 @@ Created comprehensive documentation:
 ### 5. Working Timefold Example
 
 **Bed Allocation Quickstart**:
+
 - Location: `.agent/timefold-samples/timefold-quickstarts/java/bed-allocation/`
 - Status: ✅ Running on http://localhost:8080
 - Framework: Quarkus 3.28.3
@@ -143,6 +150,7 @@ Created comprehensive documentation:
 - Purpose: Hands-on learning of Timefold constraint solving
 
 **Hotel Allocation Example**:
+
 - Location: `.agent/timefold-samples/hotel-room-allocation-example.java`
 - Complete Java implementation with 14 hotel-specific constraints
 - Demonstrates all constraint patterns
@@ -150,16 +158,19 @@ Created comprehensive documentation:
 ## Technical Decisions
 
 ### UUID Generation
+
 - **Decision**: Use PostgreSQL's built-in `gen_random_uuid()`
 - **Reason**: UUID v7 implementation had bytea hex literal issues
 - **TODO**: Implement proper UUID v7 in future migration
 
 ### User References
+
 - **Decision**: Use `INTEGER` foreign keys to PayloadCMS users table
 - **Reason**: PayloadCMS created users table with integer IDs (not UUID)
 - **Impact**: Compatible with existing PayloadCMS schema
 
 ### Constraint Parameters
+
 - **Decision**: Use JSONB for flexible tenant-specific parameters
 - **Reason**: Allows each tenant to customize constraint behavior (e.g., minLoyaltyTier)
 - **Validation**: JSON Schema stored in `constraint_templates.parameter_schema`
@@ -167,17 +178,20 @@ Created comprehensive documentation:
 ## Database Query Examples
 
 ### View All Tenant Constraints
+
 ```sql
 SELECT * FROM v_tenant_constraint_summary
 ORDER BY tenant_name, constraint_type DESC, weight DESC;
 ```
 
 ### Get Active Constraints for a Tenant
+
 ```sql
 SELECT * FROM get_tenant_constraints('a0000000-0000-0000-0000-000000000001');
 ```
 
 ### View Constraint Change History
+
 ```sql
 SELECT * FROM constraint_config_history
 ORDER BY created_at DESC LIMIT 10;
@@ -188,6 +202,7 @@ ORDER BY created_at DESC LIMIT 10;
 **Admin Panel**: http://localhost:3001/admin
 
 **Collections Available**:
+
 - Tenants (3 entries)
 - Constraint Templates (14 entries)
 - Tenant Constraint Configs (42 entries)
@@ -271,17 +286,21 @@ ORDER BY created_at DESC LIMIT 10;
 ## Key Files Reference
 
 ### Database
+
 - `001_multi_tenant_constraints.sql` - Complete schema
 
 ### PayloadCMS Collections
+
 - `src/payload/collections/Tenants.ts`
 - `src/payload/collections/ConstraintTemplates.ts`
 - `src/payload/collections/TenantConstraintConfigs.ts`
 
 ### Configuration
+
 - `payload.config.ts` - Added Timefold collections
 
 ### Documentation
+
 - `timefold-multi-tenant-rules-architecture.md` - Architecture guide
 - `hotel-constraints-guide.md` - Constraint details
 - `constraint-solver-comparison.md` - JS vs Timefold
@@ -289,28 +308,33 @@ ORDER BY created_at DESC LIMIT 10;
 - `timefold-integration.md` - Implementation roadmap
 
 ### Examples
+
 - `hotel-room-allocation-example.java` - Complete Java example
 - `.agent/timefold-samples/timefold-quickstarts/` - Running examples
 
 ## Success Metrics
 
 **Code Quality**:
+
 - 6,001 lines of code added
 - 0 breaking changes
 - Full backward compatibility
 
 **Database**:
+
 - 4 new tables
 - 14 constraint templates
 - 42 tenant configurations
 - 3 sample tenants
 
 **Documentation**:
+
 - 5 comprehensive guides (97KB total)
 - 1 implementation roadmap
 - Multiple code examples
 
 **Functionality**:
+
 - Complete CRUD via PayloadCMS
 - Audit trail for compliance
 - Hot-reload capability

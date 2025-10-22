@@ -8,16 +8,19 @@
 ## What We've Done So Far
 
 ### 1. ✅ Installed Prerequisites
+
 - **Java**: OpenJDK 23 (already installed)
 - **Maven**: 3.9.11 (installed via Homebrew)
 - **Location**: `/opt/homebrew/Cellar/maven/3.9.11/`
 
 ### 2. ✅ Cloned Timefold Quickstarts
+
 - **Repository**: https://github.com/TimefoldAI/timefold-quickstarts
 - **Local Path**: `.agent/timefold-samples/timefold-quickstarts/`
 - **Clone Method**: Shallow clone (`--depth 1`) to save space
 
 ### 3. ⏳ Running Bed Allocation Example (In Progress)
+
 - **Example**: `java/bed-allocation`
 - **Framework**: Quarkus 3.28.3
 - **Timefold Version**: 1.27.0
@@ -26,6 +29,7 @@
 - **Expected Time**: 3-5 minutes total
 
 ### 4. ⏸ Pending
+
 - Wait for Quarkus to start
 - Access UI at http://localhost:8080
 - Test the bed allocation solver
@@ -70,14 +74,14 @@
 
 **Bed Allocation ≈ Hotel Room Allocation**
 
-| Hospital Bed Allocation | Hotel Room Allocation |
-|------------------------|----------------------|
-| Patient → Bed | Guest → Room |
-| Medical requirements | Accessibility needs |
-| Gender separation | Smoking preferences |
-| Department proximity | VIP floor preferences |
-| Minimize room changes | Minimize reassignments |
-| Infection control | Noise levels |
+| Hospital Bed Allocation | Hotel Room Allocation  |
+| ----------------------- | ---------------------- |
+| Patient → Bed           | Guest → Room           |
+| Medical requirements    | Accessibility needs    |
+| Gender separation       | Smoking preferences    |
+| Department proximity    | VIP floor preferences  |
+| Minimize room changes   | Minimize reassignments |
+| Infection control       | Noise levels           |
 
 Both problems share the same constraint solving patterns, making this an ideal learning example.
 
@@ -97,7 +101,7 @@ export function allocateRoomRuleBased(
   const candidates = availableRooms.filter(/* ... */);
 
   // Score each candidate room (greedy)
-  const scoredRooms = candidates.map(room => {
+  const scoredRooms = candidates.map((room) => {
     let score = 50; // Base score
     if (guest.preferences.accessible && room.accessible) {
       score += 30;
@@ -116,6 +120,7 @@ export function allocateRoomRuleBased(
 ```
 
 **Characteristics**:
+
 - Greedy algorithm
 - Processes guests one-by-one
 - First guest gets best room
@@ -160,6 +165,7 @@ public Constraint genderConflict(ConstraintFactory factory) {
 ```
 
 **Characteristics**:
+
 - Global optimization
 - Considers all guests + all rooms simultaneously
 - Metaheuristics (Local Search, Tabu Search)
@@ -173,11 +179,13 @@ public Constraint genderConflict(ConstraintFactory factory) {
 ## Key Learnings (So Far)
 
 ### 1. **No JavaScript Support**
+
 - Timefold is Java/Kotlin only
 - Python bindings exist but are 50% slower
 - Must use microservice architecture for integration
 
 ### 2. **Integration Pattern**
+
 ```
 Next.js (TypeScript) → HTTP REST → Timefold (Java) → JSON Response
 ```
@@ -185,6 +193,7 @@ Next.js (TypeScript) → HTTP REST → Timefold (Java) → JSON Response
 ### 3. **When to Use Each**
 
 **Use Traditional JS When**:
+
 - Simple scenarios (few constraints)
 - Speed critical (<20ms)
 - Cost must be $0
@@ -192,6 +201,7 @@ Next.js (TypeScript) → HTTP REST → Timefold (Java) → JSON Response
 - Occupancy < 80%
 
 **Use Timefold When**:
+
 - Complex scenarios (many constraints)
 - Global optimum needed
 - High occupancy (95%+)
@@ -201,10 +211,7 @@ Next.js (TypeScript) → HTTP REST → Timefold (Java) → JSON Response
 ### 4. **Hybrid Approach**
 
 ```typescript
-export async function allocateRooms(
-  guestStays: GuestStay[],
-  rooms: Room[]
-) {
+export async function allocateRooms(guestStays: GuestStay[], rooms: Room[]) {
   // Try traditional first
   const traditional = traditionalAllocate(guestStays, rooms);
 
@@ -223,6 +230,7 @@ export async function allocateRooms(
 ```
 
 **Result**:
+
 - 85% of allocations at $0 cost (traditional)
 - 15% of allocations using Timefold (~$1-5/mo)
 - Overall satisfaction: 87-90%
@@ -232,6 +240,7 @@ export async function allocateRooms(
 ## Next Steps
 
 ### Immediate (Waiting on)
+
 1. ⏳ Quarkus finishes dependency download
 2. ⏳ Server starts at http://localhost:8080
 3. Test the UI
@@ -239,18 +248,21 @@ export async function allocateRooms(
 5. Observe the optimization process
 
 ### Code Analysis
+
 1. Read domain model (`PatientStay.java`, `Bed.java`)
 2. Read constraints (`BedAllocationConstraintProvider.java`)
 3. Read REST API (`BedAllocationResource.java`)
 4. Understand scoring (HardSoftScore)
 
 ### Documentation
+
 1. Map hospital bed → hotel room concepts
 2. Document constraint patterns
 3. Create integration guide for Next.js
 4. Estimate costs for production
 
 ### Implementation (Future)
+
 1. Create hotel-specific Timefold domain model
 2. Build Quarkus microservice
 3. Create TypeScript client wrapper
@@ -262,18 +274,21 @@ export async function allocateRooms(
 ## Resources
 
 ### Official Timefold
+
 - **Docs**: https://docs.timefold.ai/
 - **GitHub**: https://github.com/TimefoldAI/timefold-solver
 - **Quickstarts**: https://github.com/TimefoldAI/timefold-quickstarts
 - **Forum**: https://github.com/TimefoldAI/timefold-solver/discussions
 
 ### Project Files
+
 - Full research: `.agent/docs/constraint-solving-research.md` (47KB)
 - Quick comparison: `.agent/docs/constraint-solver-comparison.md` (15KB)
 - Task plan: `.agent/tasks/timefold-integration.md` (7.7KB)
 - This document: `.agent/docs/timefold-setup-progress.md`
 
 ### Local Paths
+
 - Quickstarts: `.agent/timefold-samples/timefold-quickstarts/`
 - Bed allocation: `.agent/timefold-samples/timefold-quickstarts/java/bed-allocation/`
 - Meeting scheduling: `.agent/timefold-samples/timefold-quickstarts/java/meeting-scheduling/`
@@ -282,9 +297,9 @@ export async function allocateRooms(
 
 ## Current Terminal Sessions
 
-| Port | Service | Status |
-|------|---------|--------|
-| 3001 | Next.js (Hospitality AI SDK) | ✅ Running |
+| Port | Service                           | Status      |
+| ---- | --------------------------------- | ----------- |
+| 3001 | Next.js (Hospitality AI SDK)      | ✅ Running  |
 | 8080 | Quarkus (Timefold Bed Allocation) | ⏳ Starting |
 
 **Note**: Both services can run simultaneously without conflicts.
