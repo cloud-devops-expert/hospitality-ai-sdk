@@ -6,6 +6,7 @@ import {
   CheckInBooking,
   CheckInPrediction,
   predictCheckInHistorical,
+  predictCheckInML,
   CHECKIN_MODELS,
 } from '@/lib/checkin/predictor';
 
@@ -29,7 +30,24 @@ export default function CheckInPage() {
       statedArrivalTime: new Date(`2024-01-01T${statedTime}`),
     };
 
-    const prediction = predictCheckInHistorical(booking);
+    let prediction: CheckInPrediction;
+
+    if (selectedAlgorithm === 'ml') {
+      prediction = predictCheckInML(booking);
+    } else if (selectedAlgorithm === 'historical') {
+      prediction = predictCheckInHistorical(booking);
+    } else {
+      // Stated time - just use the stated arrival time
+      prediction = {
+        bookingId: booking.id,
+        predictedTime: booking.statedArrivalTime!,
+        confidenceWindow: 0,
+        accuracy: 0.52,
+        method: 'stated',
+        processingTime: 0,
+      };
+    }
+
     setResult(prediction);
   };
 
@@ -56,24 +74,20 @@ export default function CheckInPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {(['stated', 'historical', 'ml'] as const).map((algo) => {
               const info = getAlgorithmInfo(algo);
-              const isAvailable = algo === 'historical' || algo === 'stated';
               return (
                 <button
                   key={algo}
-                  onClick={() => isAvailable && setSelectedAlgorithm(algo)}
-                  disabled={!isAvailable}
+                  onClick={() => setSelectedAlgorithm(algo)}
                   className={`p-4 rounded-lg border-2 transition-all text-left ${
                     selectedAlgorithm === algo
                       ? 'border-brand-600 dark:border-brand-400 bg-brand-50 dark:bg-brand-900/20'
-                      : isAvailable
-                        ? 'border-gray-300 dark:border-gray-600 hover:border-brand-400'
-                        : 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-brand-400'
                   }`}
                 >
                   <div className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                     {info.name}
-                    {!isAvailable && (
-                      <span className="ml-2 text-xs text-gray-500">(Coming Soon)</span>
+                    {algo === 'ml' && (
+                      <span className="ml-2 text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-1 rounded">NEW</span>
                     )}
                   </div>
                   <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
