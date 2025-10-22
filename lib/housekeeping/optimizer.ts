@@ -28,29 +28,40 @@ export function optimizeRouteGreedy(rooms: Room[], currentFloor: number = 1): Cl
   let floor = currentFloor;
   let distance = 0;
 
-  // Sort by priority first
-  remaining.sort((a, b) => {
-    const priorityScore = { vip: 3, priority: 2, normal: 1 };
-    return priorityScore[b.priority] - priorityScore[a.priority];
-  });
+  const priorityScore = { vip: 3, priority: 2, normal: 1 };
 
   while (remaining.length > 0) {
-    // Find closest room on same floor, then nearest floor
+    // Find best room considering floor proximity, priority, and room distance
     let nearest = remaining[0];
-    let minDist = Math.abs(nearest.floor - floor) * 100 + parseInt(nearest.number);
+    let minScore = calculateRoomScore(nearest, floor, priorityScore);
 
     for (const room of remaining) {
-      const dist = Math.abs(room.floor - floor) * 100 + parseInt(room.number);
-      if (dist < minDist) {
-        minDist = dist;
+      const score = calculateRoomScore(room, floor, priorityScore);
+      if (score < minScore) {
+        minScore = score;
         nearest = room;
       }
     }
 
+    // Calculate actual distance for tracking
+    const floorChange = Math.abs(nearest.floor - floor);
+    const roomDistance = Math.abs(parseInt(nearest.number) - (floor * 100));
+    distance += floorChange * 50 + roomDistance;
+
     route.push(nearest);
-    distance += minDist;
     floor = nearest.floor;
     remaining.splice(remaining.indexOf(nearest), 1);
+  }
+
+  // Helper function to score rooms (lower is better)
+  function calculateRoomScore(room: Room, currentFloor: number, priorityWeights: Record<string, number>): number {
+    const floorChange = Math.abs(room.floor - currentFloor);
+    const roomDist = Math.abs(parseInt(room.number) % 100); // Distance within floor
+    const priorityPenalty = (4 - priorityWeights[room.priority]) * 500; // VIP gets -1500, priority -1000, normal -500
+
+    // Score = floor_changes(heavily weighted) + priority_penalty + room_distance
+    // Lower score = better choice
+    return floorChange * 2000 + priorityPenalty + roomDist;
   }
 
   const totalTime = route.reduce((sum, r) => sum + r.estimatedCleanTime, 0) + distance * 0.5;
