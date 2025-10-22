@@ -74,6 +74,32 @@ export default function ReviewResponsePage() {
         </p>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            How It Works
+          </h2>
+          <div className="space-y-3 text-gray-700 dark:text-gray-300 mb-6">
+            <p>
+              <strong>3 Generation Methods:</strong> Template (instant, $0), RAG (context-aware, Coming Soon), LLM (personalized, Coming Soon)
+            </p>
+            <p>
+              <strong>Template Algorithm:</strong> Rule-based response generation with sentiment-specific templates - positive reviews get thank-you messages, negative reviews get apology + resolution offers
+            </p>
+            <p>
+              <strong>Personalization:</strong> Extracts guest name, specific mentions (room, staff, food) and incorporates them into responses for authentic engagement
+            </p>
+            <p>
+              <strong>Tone Matching:</strong> Adjusts response tone based on review rating and sentiment - empathetic for complaints, enthusiastic for praise, balanced for mixed reviews
+            </p>
+            <p>
+              <strong>Platform Optimization:</strong> Adapts formatting and style for each review platform (Google, TripAdvisor, Booking.com) for optimal presentation
+            </p>
+            <p>
+              <strong>Response Time:</strong> Generates responses instantly to enable quick turnaround and maintain high engagement rates
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
+              <strong>Performance:</strong> &lt;5ms generation | Zero cost | Enables 100% review response rate | Maintains consistent brand voice
+            </p>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>
