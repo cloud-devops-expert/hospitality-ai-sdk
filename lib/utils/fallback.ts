@@ -153,8 +153,8 @@ export const LIBRARY_FLAGS = {
     timeout: 100,
   },
   forecast: {
-    useSimpleStats: process.env.NEXT_PUBLIC_USE_SIMPLE_STATS === 'true',
-    timeout: 150,
+    useBrainJS: process.env.NEXT_PUBLIC_USE_BRAINJS === 'true',
+    timeout: 200, // LSTM takes longer to train
   },
   pricing: {
     useRegression: process.env.NEXT_PUBLIC_USE_REGRESSION === 'true',
