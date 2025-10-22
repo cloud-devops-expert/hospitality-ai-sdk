@@ -130,6 +130,35 @@ export default function BenchmarkPage() {
           Compare traditional algorithms with ML approaches across cost, latency, and accuracy
         </p>
 
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-8">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            How It Works
+          </h2>
+          <div className="space-y-3 text-gray-700 dark:text-gray-300">
+            <p>
+              <strong>Comprehensive ML Benchmarking:</strong> Compare traditional algorithms vs ML approaches across 4 key hospitality modules
+            </p>
+            <p>
+              <strong>3 Key Metrics:</strong> Latency (speed), Cost (per 1K operations), Accuracy (performance quality) - the "iron triangle" of ML evaluation
+            </p>
+            <p>
+              <strong>Cost Analysis:</strong> Calculates monthly operational costs based on your usage volume - most traditional methods are $0, ML methods range from $0 (browser-based) to $0.50/1K (LLM)
+            </p>
+            <p>
+              <strong>Trade-off Visualization:</strong> Helps identify the optimal method for your use case - Traditional for high volume + cost sensitivity, ML for accuracy-critical applications
+            </p>
+            <p>
+              <strong>ROI Calculator:</strong> Shows monthly cost projections at different operation volumes (1K, 10K, 100K) to inform budget planning
+            </p>
+            <p>
+              <strong>Decision Framework:</strong> Zero cost methods (Traditional, Browser ML) for baseline → Hybrid for smart escalation → Pure ML for maximum accuracy
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
+              <strong>Key Insight:</strong> 70-80% of operations can use zero-cost methods, reserve expensive ML for edge cases where accuracy justifies cost
+            </p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
           <button
             onClick={() => setSelectedModule('sentiment')}
