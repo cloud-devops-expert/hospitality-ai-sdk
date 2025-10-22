@@ -32,6 +32,15 @@ Supports multiple inventory categories with tailored algorithms:
 - **Amenities**: Moderate risk, predictable consumption
 - **Cleaning Supplies**: Low risk, stable demand
 
+### 5. **Lot and Location Management** (NEW!)
+Complete warehouse management with expiration control:
+- **FEFO/FIFO Allocation**: Automatic First Expired First Out or First In First Out
+- **Expiration Monitoring**: Real-time alerts for items approaching expiration
+- **Location Optimization**: Smart warehouse organization for faster picking
+- **Batch Traceability**: Full lot tracking from supplier to consumption
+- **Rotation Analytics**: Score and optimize inventory rotation practices
+- **Multi-Zone Support**: Cold storage, dry storage, prep area, kitchen, bar
+
 ## Quick Start
 
 ```typescript
