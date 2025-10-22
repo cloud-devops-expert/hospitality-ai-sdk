@@ -173,6 +173,21 @@ export default function ForecastPage() {
               <strong>Performance:</strong> Statistical: 20ms | ARIMA: 35ms | Prophet: 28ms | LSTM: 45ms | All zero cost | Goal: 80%+ trend accuracy
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { forecastProphet } from '@/lib/forecast/ml-timeseries';
+
+const historicalData = [
+  { date: new Date('2025-01-01'), value: 65 },
+  { date: new Date('2025-01-02'), value: 72 },
+  // ... more data
+];
+
+const forecasts = forecastProphet(historicalData, 14);
+// => [{ date, predicted: 68.5, confidence: 0.85, trend: 'stable' }]`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>

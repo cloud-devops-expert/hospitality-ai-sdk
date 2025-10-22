@@ -79,6 +79,23 @@ export default function VisionPage() {
               <strong>Performance:</strong> ~200ms processing time | 85-92% accuracy across analysis types | Local processing (no cloud costs)
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { analyzeImage } from '@/lib/vision/detector';
+
+const input = {
+  imageId: 'img-123',
+  imageData: 'base64-encoded-image-data',
+  analysisType: 'cleanliness',
+  location: 'Room 205',
+  timestamp: new Date()
+};
+
+const result = await analyzeImage(input, { roomCapacity: 50 });
+// => { detections: [...], cleanlinessScore: 92, issues: [...] }`}</code>
+            </pre>
+          </div>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">

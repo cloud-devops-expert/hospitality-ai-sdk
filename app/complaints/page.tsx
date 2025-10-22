@@ -68,6 +68,22 @@ export default function ComplaintsPage() {
               <strong>Performance:</strong> &lt;5ms classification | Zero cost | 72% accuracy | Enables 24/7 automated triage
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { classifyComplaintKeyword } from '@/lib/complaints/classifier';
+
+const complaint = {
+  id: 'complaint-1',
+  guestName: 'John Smith',
+  text: 'The room is dirty and AC not working.',
+  timestamp: new Date()
+};
+
+const classification = classifyComplaintKeyword(complaint);
+// => { categories: ['cleanliness', 'maintenance'], urgency: 8 }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Available Methods
           </h3>

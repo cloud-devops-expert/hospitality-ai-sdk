@@ -154,6 +154,20 @@ export default function HousekeepingPage() {
               <strong>Performance:</strong> Greedy: 10ms | TSP: 25ms | Genetic: 50ms | Reduces cleaning time by 20-30% | Zero cost
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { optimizeRouteTSP } from '@/lib/housekeeping/optimizer';
+
+const rooms = [
+  { id: '101', floor: 1, status: 'dirty', priority: 'normal' },
+  { id: '207', floor: 2, status: 'dirty', priority: 'vip' }
+];
+
+const route = optimizeRouteTSP(rooms, currentFloor);
+// => { rooms: [...ordered], totalDistance: 45, efficiency: 0.85 }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>

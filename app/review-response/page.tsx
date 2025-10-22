@@ -102,6 +102,23 @@ export default function ReviewResponsePage() {
               <strong>Performance:</strong> &lt;5ms generation | Zero cost | Enables 100% review response rate | Maintains consistent brand voice
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { generateResponseTemplate } from '@/lib/review-response/generator';
+
+const review = {
+  id: '123',
+  guestName: 'Sarah Johnson',
+  rating: 5,
+  text: 'Amazing stay! Clean room, friendly staff.',
+  platform: 'google'
+};
+
+const response = generateResponseTemplate(review);
+// => { draftResponse: "Thank you Sarah...", sentiment: 'positive' }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>

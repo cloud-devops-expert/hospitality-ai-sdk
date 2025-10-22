@@ -120,6 +120,21 @@ export default function SentimentPage() {
               <strong>Performance:</strong> Traditional: 5ms | Browser ML: 50ms | Hybrid: 180ms avg | Goal: 70%+ at zero cost
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { analyzeTraditional } from '@/lib/sentiment/traditional';
+
+const result = analyzeTraditional("Amazing stay! Clean room, friendly staff.");
+// => { sentiment: 'positive', score: 0.85, confidence: 0.72 }
+
+// Or use hybrid for smart escalation
+import { analyzeHybrid } from '@/lib/sentiment/hybrid';
+
+const hybridResult = await analyzeHybrid(reviewText);
+// => { sentiment: 'positive', score: 0.87, usedAI: false, cost: 0 }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>

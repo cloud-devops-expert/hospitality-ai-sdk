@@ -113,6 +113,24 @@ export default function NoShowPage() {
               <strong>Performance:</strong> Rule-Based: 5ms | Logistic: 8ms | Gradient: 12ms | Zero cost | Enables smart overbooking strategy
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { predictNoShowGradientBoosting } from '@/lib/no-show/ml';
+
+const booking = {
+  id: 'booking-1',
+  bookingChannel: 'ota',
+  leadTimeDays: 30,
+  paymentMethod: 'pay-at-property',
+  hasSpecialRequests: false,
+  guestHistory: { totalStays: 0, noShowCount: 0 }
+};
+
+const prediction = predictNoShowGradientBoosting(booking);
+// => { probability: 0.35, riskLevel: 'medium', confidence: 0.82 }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>

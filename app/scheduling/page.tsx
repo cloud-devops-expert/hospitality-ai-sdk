@@ -62,6 +62,20 @@ export default function SchedulingPage() {
               <strong>Performance:</strong> &lt;20ms optimization | Zero cost | 73% coverage accuracy | Reduces labor costs by 15-20%
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { scheduleStaffOccupancyBased } from '@/lib/scheduling/optimizer';
+
+const staff = [
+  { id: '1', name: 'Alice', role: 'front-desk', hoursPerWeek: 40 },
+  { id: '2', name: 'Bob', role: 'housekeeping', hoursPerWeek: 40 }
+];
+
+const schedule = scheduleStaffOccupancyBased(staff, 75);
+// => { schedules: [...shifts], totalHours: 320, coverage: 0.95 }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Available Methods
           </h3>

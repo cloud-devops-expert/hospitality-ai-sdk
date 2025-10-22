@@ -94,6 +94,23 @@ export default function CheckInPage() {
               <strong>Performance:</strong> &lt;30ms processing | Zero external costs | Local processing | 13% accuracy improvement (Historical → ML)
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { predictCheckInML } from '@/lib/checkin/predictor';
+
+const booking = {
+  id: 'booking-1',
+  guestType: 'business',
+  bookingSource: 'direct',
+  distanceMiles: 30,
+  statedArrivalTime: new Date('2025-01-15T15:00')
+};
+
+const prediction = predictCheckInML(booking);
+// => { predictedTime: Date, confidenceWindow: 1.8, accuracy: 0.84 }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>

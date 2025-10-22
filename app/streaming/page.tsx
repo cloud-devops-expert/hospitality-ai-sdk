@@ -86,6 +86,23 @@ export default function StreamingPage() {
               <strong>Performance:</strong> &lt;50ms per event | Handles 100+ events/sec | Zero external dependencies | Local processing
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { LiveStreamProcessor, LiveDashboardFeed } from '@/lib/streaming/processor';
+
+const processor = new LiveStreamProcessor();
+const feed = new LiveDashboardFeed(processor);
+
+// Subscribe to processed events
+feed.subscribe((event) => {
+  console.log(event.isAnomaly ? 'Alert!' : 'Normal', event);
+});
+
+// Publish events
+await feed.publishEvent({ eventType: 'booking', data: { revenue: 350 } });`}</code>
+            </pre>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">

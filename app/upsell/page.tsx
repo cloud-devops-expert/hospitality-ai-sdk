@@ -74,6 +74,23 @@ export default function UpsellPage() {
               <strong>Performance:</strong> &lt;10ms generation time | 12% conversion rate | Zero cost | +20% average revenue per booking
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { recommendUpsellsRuleBased } from '@/lib/upsell/recommender';
+
+const profile = {
+  id: 'guest-1',
+  type: 'business',
+  occasion: 'none',
+  budget: 'mid-range',
+  previousPurchases: []
+};
+
+const result = recommendUpsellsRuleBased(profile);
+// => { recommendations: [{ offer: {...}, expectedConversion: 0.15 }] }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>

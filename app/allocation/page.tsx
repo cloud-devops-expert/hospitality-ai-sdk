@@ -181,6 +181,22 @@ export default function AllocationPage() {
               <strong>Performance:</strong> Rule-Based: 10ms | ML: 15ms | Goal: 85%+ satisfaction | Zero cost | Local processing
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { allocateRoomRuleBased } from '@/lib/allocation/rule-based';
+
+const guest = {
+  id: '123',
+  name: 'John Doe',
+  vipStatus: true,
+  preferences: { view: 'ocean', quiet: true }
+};
+
+const result = allocateRoomRuleBased(booking, guest, availableRooms);
+// => { assignedRoom: {...}, score: 94, reasons: [...] }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>

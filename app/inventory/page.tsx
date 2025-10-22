@@ -59,6 +59,23 @@ export default function InventoryPage() {
               <strong>Performance:</strong> &lt;5ms per item | Zero cost | 12% waste (down from 20%) | Prevents 95%+ stockouts
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { forecastInventoryMovingAverage } from '@/lib/inventory/forecaster';
+
+const item = {
+  id: '1',
+  name: 'Eggs (dozen)',
+  currentStock: 50,
+  avgDailyConsumption: 15,
+  perishable: true
+};
+
+const forecast = forecastInventoryMovingAverage(item);
+// => { daysUntilStockout: 3.3, recommendedOrder: 45, reorderNow: true }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Available Methods
           </h3>

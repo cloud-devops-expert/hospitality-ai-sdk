@@ -61,6 +61,20 @@ export default function EnergyPage() {
               <strong>Performance:</strong> &lt;10ms optimization | Zero cost | 18% energy savings | ROI: 3-6 months
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { optimizeEnergyScheduleBased } from '@/lib/energy/optimizer';
+
+const rooms = [
+  { roomId: 'room-1', occupied: true, guestPreferences: { preferredTemp: 22 } },
+  { roomId: 'room-2', occupied: false }
+];
+
+const optimization = optimizeEnergyScheduleBased(rooms, 28);
+// => { totalSavings: 18, recommendations: [...setpoints] }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Available Algorithms
           </h3>

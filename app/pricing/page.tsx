@@ -111,6 +111,21 @@ export default function PricingPage() {
               <strong>Performance:</strong> Traditional: 5ms | Linear: 8ms | Neural: 12ms | All zero cost | Local processing | +30% revenue target
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { calculateDynamicPrice } from '@/lib/pricing/traditional';
+
+const pricing = calculateDynamicPrice({
+  basePrice: 200,
+  date: new Date('2025-07-15'),
+  occupancyRate: 0.85,
+  daysUntilStay: 30,
+  roomType: 'double'
+});
+// => { finalPrice: 268, adjustments: [...], originalPrice: 200 }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>

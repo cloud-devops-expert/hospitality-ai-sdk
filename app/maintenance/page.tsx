@@ -76,6 +76,23 @@ export default function MaintenancePage() {
               <strong>Performance:</strong> &lt;5ms prediction | Zero cost | 75% failure prevention | Reduces maintenance costs by 40%
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { predictMaintenanceUsageBased } from '@/lib/maintenance/predictor';
+
+const asset = {
+  id: 'hvac-1',
+  type: 'hvac',
+  ageMonths: 36,
+  usageHours: 2400,
+  lastMaintenance: new Date('2024-08-01')
+};
+
+const prediction = predictMaintenanceUsageBased(asset);
+// => { daysUntilMaintenance: 15, failureRisk: 0.42, priority: 'medium' }`}</code>
+            </pre>
+          </div>
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
             Select Algorithm
           </h3>

@@ -166,6 +166,23 @@ export default function CompetitiveIntelligencePage() {
               <strong>Performance:</strong> &lt;100ms analysis time | Handles 50+ competitors | 43 test cases | Zero API costs | Local processing only
             </p>
           </div>
+          <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 mb-6">
+            <p className="text-xs text-gray-400 mb-2 font-semibold">Sample Code</p>
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+              <code>{`import { analyzeMarketPosition, analyzePositioning } from '@/lib/competitive/analyzer';
+
+const competitors = [
+  { name: 'Luxury Suites', category: 'luxury', pricing: { averageRate: 350 } },
+  { name: 'Business Inn', category: 'midscale', pricing: { averageRate: 150 } }
+];
+
+const marketAnalysis = analyzeMarketPosition(yourHotel, competitors);
+// => { totalRooms: 450, avgOccupancy: 73, marketSize: '$2.5M' }
+
+const positioning = analyzePositioning(yourHotel, competitors);
+// => { pricePercentile: 65, qualityPercentile: 78, valueScore: 1.2 }`}</code>
+            </pre>
+          </div>
         </div>
 
         {/* Tabs */}
