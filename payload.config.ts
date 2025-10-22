@@ -20,7 +20,7 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || '',
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001',
 
   admin: {
     user: Users.slug,
@@ -72,10 +72,10 @@ export default buildConfig({
   },
 
   cors: [
-    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001',
   ],
 
   csrf: [
-    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001',
   ],
 })
