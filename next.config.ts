@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   experimental: {
     reactCompiler: false,
+    turbo: {
+      // Turbopack configuration to suppress warnings
+      rules: {},
+    },
   },
 };
 

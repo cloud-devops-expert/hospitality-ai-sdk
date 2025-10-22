@@ -91,36 +91,8 @@ export default function Home() {
 
   const advancedMLFeatures = [
     {
-      name: 'Sustainability Metrics',
-      description: 'Track carbon footprint, water usage, waste management, and ESG compliance',
-      href: '/sustainability',
-      tests: 39,
-      status: 'latest',
-    },
-    {
-      name: 'Quality Assurance',
-      description: 'Automated inspections, route optimization, and staff performance tracking',
-      href: '/quality-assurance',
-      tests: 38,
-      status: 'latest',
-    },
-    {
-      name: 'Long-Term Forecasting',
-      description: 'Multi-year forecasting with scenario planning, NPV, and IRR analysis',
-      href: '/long-term-forecast',
-      tests: 36,
-      status: 'latest',
-    },
-    {
-      name: 'Guest Journey Mapping',
-      description: 'Track 11-stage guest journeys with touchpoint optimization and bottleneck detection',
-      href: '/journey',
-      tests: 27,
-      status: 'latest',
-    },
-    {
       name: 'Competitive Intelligence',
-      description: 'Market analysis, competitive positioning, amenity gap analysis, and strategy',
+      description: 'Market analysis, competitive positioning, amenity gap analysis, and strategic recommendations',
       href: '/competitive',
       tests: 43,
       status: 'latest',
@@ -134,16 +106,9 @@ export default function Home() {
     },
     {
       name: 'Computer Vision',
-      description: 'Facility monitoring, occupancy detection, safety hazards, and asset tracking',
+      description: 'Facility monitoring with image upload, occupancy detection, and safety analysis',
       href: '/vision',
       tests: 34,
-      status: 'latest',
-    },
-    {
-      name: 'Voice & Speech Analysis',
-      description: 'Call transcription analysis, sentiment tracking, and booking intent detection',
-      href: '/speech',
-      tests: 50,
       status: 'latest',
     },
   ];
@@ -222,11 +187,11 @@ export default function Home() {
           <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
             Advanced ML Features
             <span className="ml-3 text-sm bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 px-3 py-1 rounded-full">
-              303 TESTS
+              113 TESTS
             </span>
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
-            Comprehensive ML coverage with zero-cost local processing • 100% test pass rate
+            Zero-cost local processing with interactive demos • 100% test pass rate
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {advancedMLFeatures.map((feature) => (

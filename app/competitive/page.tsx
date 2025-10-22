@@ -147,11 +147,11 @@ export default function CompetitiveIntelligencePage() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={\`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap \${
+                className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap \${
                   activeTab === tab
                     ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                     : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-                }\`}
+                }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
@@ -217,7 +217,7 @@ export default function CompetitiveIntelligencePage() {
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-6">
                     <div
                       className="bg-gradient-to-r from-blue-500 to-blue-600 h-6 rounded-full flex items-center justify-end pr-2"
-                      style={{ width: \`\${marketShare.estimatedShare}%\` }}
+                      style={{ width: `\${marketShare.estimatedShare}%` }}
                     >
                       <span className="text-white text-xs font-semibold">{marketShare.estimatedShare}%</span>
                     </div>
@@ -226,13 +226,13 @@ export default function CompetitiveIntelligencePage() {
                 <div className="flex items-center gap-4 pt-2">
                   <span className="text-sm text-gray-600 dark:text-gray-400">Trend:</span>
                   <span
-                    className={\`px-4 py-2 rounded-full text-sm font-medium \${
+                    className={`px-4 py-2 rounded-full text-sm font-medium \${
                       marketShare.trend === 'gaining'
                         ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                         : marketShare.trend === 'losing'
                         ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                         : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                    }\`}
+                    }`}
                   >
                     📈 {marketShare.trend.toUpperCase()}
                   </span>
@@ -451,9 +451,9 @@ export default function CompetitiveIntelligencePage() {
                   <div className="flex justify-between items-center p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
                     <span className="text-gray-700 dark:text-gray-300 font-medium">Variance</span>
                     <span
-                      className={\`text-2xl font-bold \${
+                      className={`text-2xl font-bold \${
                         priceComparison.variance > 0 ? 'text-red-600' : 'text-green-600'
-                      }\`}
+                      }`}
                     >
                       {priceComparison.variance > 0 ? '+' : ''}
                       {priceComparison.variance}%
@@ -463,13 +463,13 @@ export default function CompetitiveIntelligencePage() {
                 <div className="flex flex-col justify-center">
                   <div className="mb-4">
                     <span
-                      className={\`inline-block px-6 py-3 rounded-full text-lg font-bold \${
+                      className={`inline-block px-6 py-3 rounded-full text-lg font-bold \${
                         priceComparison.pricePosition === 'premium'
                           ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400'
                           : priceComparison.pricePosition === 'discount'
                           ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                           : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-                      }\`}
+                      }`}
                     >
                       {priceComparison.pricePosition.toUpperCase()} POSITIONING
                     </span>
@@ -503,11 +503,11 @@ export default function CompetitiveIntelligencePage() {
                         ${comp.price}
                       </span>
                       <span
-                        className={\`text-sm font-semibold px-3 py-1 rounded-full \${
+                        className={`text-sm font-semibold px-3 py-1 rounded-full \${
                           comp.difference > 0
                             ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                             : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                        }\`}
+                        }`}
                       >
                         {comp.difference > 0 ? '+' : ''}
                         {comp.difference}%
@@ -597,13 +597,13 @@ export default function CompetitiveIntelligencePage() {
                             </span>
                             <div className="flex items-center gap-2 mt-1">
                               <span
-                                className={\`px-3 py-1 rounded-full text-xs font-bold \${
+                                className={`px-3 py-1 rounded-full text-xs font-bold \${
                                   amenity.priority === 'high'
                                     ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                                     : amenity.priority === 'medium'
                                     ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400'
                                     : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                                }\`}
+                                }`}
                               >
                                 {amenity.priority.toUpperCase()} PRIORITY
                               </span>
@@ -625,7 +625,7 @@ export default function CompetitiveIntelligencePage() {
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div
                           className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full"
-                          style={{ width: \`\${amenity.prevalence}%\` }}
+                          style={{ width: `\${amenity.prevalence}%` }}
                         />
                       </div>
                     </div>
@@ -719,13 +719,13 @@ export default function CompetitiveIntelligencePage() {
                       <div className="flex items-center gap-2">
                         <span className="text-gray-600 dark:text-gray-400">⚙️ Effort:</span>
                         <span
-                          className={\`capitalize font-semibold \${
+                          className={`capitalize font-semibold \${
                             action.effort === 'high'
                               ? 'text-red-600 dark:text-red-400'
                               : action.effort === 'medium'
                               ? 'text-orange-600 dark:text-orange-400'
                               : 'text-green-600 dark:text-green-400'
-                          }\`}
+                          }`}
                         >
                           {action.effort}
                         </span>
@@ -733,13 +733,13 @@ export default function CompetitiveIntelligencePage() {
                       <div className="flex items-center gap-2">
                         <span className="text-gray-600 dark:text-gray-400">📊 Impact:</span>
                         <span
-                          className={\`capitalize font-semibold \${
+                          className={`capitalize font-semibold \${
                             action.impact === 'high'
                               ? 'text-green-600 dark:text-green-400'
                               : action.impact === 'medium'
                               ? 'text-orange-600 dark:text-orange-400'
                               : 'text-gray-600 dark:text-gray-400'
-                          }\`}
+                          }`}
                         >
                           {action.impact}
                         </span>

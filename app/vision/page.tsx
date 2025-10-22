@@ -7,12 +7,27 @@ export default function VisionPage() {
   const [analysisType, setAnalysisType] = useState<'facility' | 'occupancy' | 'cleanliness' | 'safety' | 'asset'>('facility');
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [imageData, setImageData] = useState<string>('');
+  const [imagePreview, setImagePreview] = useState<string>('');
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setImageData(base64);
+        setImagePreview(base64);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const runAnalysis = async () => {
     setLoading(true);
     const input: ImageAnalysisInput = {
       imageId: `img-${Date.now()}`,
-      imageData: 'sample-image-data-base64',
+      imageData: imageData || 'sample-image-data-base64',
       analysisType,
       location: 'Demo Location',
       timestamp: new Date(),
@@ -52,10 +67,32 @@ export default function VisionPage() {
               </button>
             ))}
           </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Upload Image (Optional)
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="block w-full text-sm text-gray-900 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer focus:outline-none"
+            />
+            {imagePreview && (
+              <div className="mt-4">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="max-w-full h-auto max-h-64 rounded-lg border border-gray-300 dark:border-gray-600"
+                />
+              </div>
+            )}
+          </div>
+
           <button
             onClick={runAnalysis}
             disabled={loading}
-            className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold"
+            className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? '🔄 Analyzing...' : '🚀 Run Analysis'}
           </button>
@@ -66,6 +103,20 @@ export default function VisionPage() {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Analysis Results
             </h2>
+
+            {imagePreview && (
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Analyzed Image
+                </h3>
+                <img
+                  src={imagePreview}
+                  alt="Analyzed"
+                  className="max-w-full h-auto max-h-96 rounded-lg border border-gray-300 dark:border-gray-600"
+                />
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                 <div className="text-sm text-gray-600 dark:text-gray-400">Overall Score</div>
