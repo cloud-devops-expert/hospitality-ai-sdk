@@ -1,0 +1,112 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - button "Toggle theme" [ref=e5] [cursor=pointer]:
+        - img [ref=e6]
+      - generic [ref=e8]:
+        - heading "Hospitality AI SDK" [level=1] [ref=e9]
+        - paragraph [ref=e10]: Cost-effective AI solutions for hospitality management
+        - paragraph [ref=e11]: Mix of LLMs, traditional algorithms, and local-first approaches
+      - generic [ref=e12]:
+        - heading "Core Features" [level=2] [ref=e13]
+        - generic [ref=e14]:
+          - link "Sentiment Analysis Analyze guest reviews using traditional, ML, and hybrid approaches" [ref=e15] [cursor=pointer]:
+            - /url: /sentiment
+            - heading "Sentiment Analysis" [level=3] [ref=e16]
+            - paragraph [ref=e17]: Analyze guest reviews using traditional, ML, and hybrid approaches
+          - link "Room Allocation Optimize room assignments with rule-based and ML algorithms" [ref=e18] [cursor=pointer]:
+            - /url: /allocation
+            - heading "Room Allocation" [level=3] [ref=e19]
+            - paragraph [ref=e20]: Optimize room assignments with rule-based and ML algorithms
+          - link "Dynamic Pricing Smart pricing using algorithmic, regression, and neural network models" [ref=e21] [cursor=pointer]:
+            - /url: /pricing
+            - heading "Dynamic Pricing" [level=3] [ref=e22]
+            - paragraph [ref=e23]: Smart pricing using algorithmic, regression, and neural network models
+          - link "Demand Forecast Predict occupancy with statistical and ML time-series methods" [ref=e24] [cursor=pointer]:
+            - /url: /forecast
+            - heading "Demand Forecast" [level=3] [ref=e25]
+            - paragraph [ref=e26]: Predict occupancy with statistical and ML time-series methods
+      - generic [ref=e27]:
+        - 'heading "New: Additional Use CasesNEW" [level=2] [ref=e28]'
+        - generic [ref=e29]:
+          - link "No-Show Prediction Predict booking no-show risk with rule-based, logistic regression, and gradient boosting" [ref=e30] [cursor=pointer]:
+            - /url: /no-show
+            - heading "No-Show Prediction" [level=3] [ref=e31]
+            - paragraph [ref=e32]: Predict booking no-show risk with rule-based, logistic regression, and gradient boosting
+          - link "Review Response Generator Generate professional responses to guest reviews with sentiment analysis" [ref=e33] [cursor=pointer]:
+            - /url: /review-response
+            - heading "Review Response Generator" [level=3] [ref=e34]
+            - paragraph [ref=e35]: Generate professional responses to guest reviews with sentiment analysis
+          - link "Housekeeping Routes Optimize cleaning routes with greedy, TSP, and genetic algorithms" [ref=e36] [cursor=pointer]:
+            - /url: /housekeeping
+            - heading "Housekeeping Routes" [level=3] [ref=e37]
+            - paragraph [ref=e38]: Optimize cleaning routes with greedy, TSP, and genetic algorithms
+          - link "Upsell Recommendations Generate personalized upsell offers based on guest profiles" [ref=e39] [cursor=pointer]:
+            - /url: /upsell
+            - heading "Upsell Recommendations" [level=3] [ref=e40]
+            - paragraph [ref=e41]: Generate personalized upsell offers based on guest profiles
+          - link "Energy Management Optimize HVAC settings to reduce energy costs" [ref=e42] [cursor=pointer]:
+            - /url: /energy
+            - heading "Energy Management" [level=3] [ref=e43]
+            - paragraph [ref=e44]: Optimize HVAC settings to reduce energy costs
+          - link "Staff Scheduling Optimize staff schedules based on occupancy forecasts" [ref=e45] [cursor=pointer]:
+            - /url: /scheduling
+            - heading "Staff Scheduling" [level=3] [ref=e46]
+            - paragraph [ref=e47]: Optimize staff schedules based on occupancy forecasts
+          - link "F&B Inventory Forecast inventory needs to reduce waste and prevent stockouts" [ref=e48] [cursor=pointer]:
+            - /url: /inventory
+            - heading "F&B Inventory" [level=3] [ref=e49]
+            - paragraph [ref=e50]: Forecast inventory needs to reduce waste and prevent stockouts
+          - link "Complaint Classification Automatically classify and route guest complaints" [ref=e51] [cursor=pointer]:
+            - /url: /complaints
+            - heading "Complaint Classification" [level=3] [ref=e52]
+            - paragraph [ref=e53]: Automatically classify and route guest complaints
+          - link "Maintenance Prediction Predict equipment maintenance needs to prevent failures" [ref=e54] [cursor=pointer]:
+            - /url: /maintenance
+            - heading "Maintenance Prediction" [level=3] [ref=e55]
+            - paragraph [ref=e56]: Predict equipment maintenance needs to prevent failures
+          - link "Check-in Time Prediction Predict actual guest check-in times to optimize staffing" [ref=e57] [cursor=pointer]:
+            - /url: /checkin
+            - heading "Check-in Time Prediction" [level=3] [ref=e58]
+            - paragraph [ref=e59]: Predict actual guest check-in times to optimize staffing
+      - generic [ref=e60]:
+        - heading "Advanced ML Features113 TESTS" [level=2] [ref=e61]
+        - paragraph [ref=e62]: Zero-cost local processing with interactive demos • 100% test pass rate
+        - generic [ref=e63]:
+          - link "Competitive Intelligence 43 tests Market analysis, competitive positioning, amenity gap analysis, and strategic recommendations" [ref=e64] [cursor=pointer]:
+            - /url: /competitive
+            - generic [ref=e65]:
+              - heading "Competitive Intelligence" [level=3] [ref=e66]
+              - generic [ref=e67]: 43 tests
+            - paragraph [ref=e68]: Market analysis, competitive positioning, amenity gap analysis, and strategic recommendations
+          - link "Real-Time Streaming ML 36 tests Live event processing, anomaly detection, and real-time dashboard feeds" [ref=e69] [cursor=pointer]:
+            - /url: /streaming
+            - generic [ref=e70]:
+              - heading "Real-Time Streaming ML" [level=3] [ref=e71]
+              - generic [ref=e72]: 36 tests
+            - paragraph [ref=e73]: Live event processing, anomaly detection, and real-time dashboard feeds
+          - link "Computer Vision 34 tests Facility monitoring with image upload, occupancy detection, and safety analysis" [ref=e74] [cursor=pointer]:
+            - /url: /vision
+            - generic [ref=e75]:
+              - heading "Computer Vision" [level=3] [ref=e76]
+              - generic [ref=e77]: 34 tests
+            - paragraph [ref=e78]: Facility monitoring with image upload, occupancy detection, and safety analysis
+      - generic [ref=e79]:
+        - heading "Utilities" [level=2] [ref=e80]
+        - 'link "ML Benchmarks Compare all algorithms: cost, latency, and accuracy metrics" [ref=e82] [cursor=pointer]':
+          - /url: /benchmark
+          - heading "ML Benchmarks" [level=3] [ref=e83]
+          - paragraph [ref=e84]: "Compare all algorithms: cost, latency, and accuracy metrics"
+      - generic [ref=e85]:
+        - paragraph [ref=e86]: Built with Next.js, TypeScript, and Vercel AI SDK
+        - paragraph [ref=e87]: Focus on sustainability and cost reduction
+        - paragraph [ref=e88]:
+          - strong [ref=e89]: 929 tests
+          - text: across 31 modules • 100% pass rate • Zero-cost ML processing
+  - button "Open Next.js Dev Tools" [ref=e95] [cursor=pointer]:
+    - img [ref=e96]
+  - alert [ref=e99]
+```

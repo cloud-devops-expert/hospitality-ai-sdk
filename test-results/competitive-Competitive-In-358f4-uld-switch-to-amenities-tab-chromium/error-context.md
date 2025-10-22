@@ -1,0 +1,75 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - heading "🎯 Competitive Intelligence" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Market analysis, competitive positioning, and strategic insights
+      - generic [ref=e7]:
+        - generic [ref=e8]: 43 tests • 100% coverage
+        - generic [ref=e9]: Zero-cost local processing
+    - navigation [ref=e11]:
+      - button "Overview" [ref=e12] [cursor=pointer]
+      - button "Positioning" [ref=e13] [cursor=pointer]
+      - button "Pricing" [ref=e14] [cursor=pointer]
+      - button "Amenities" [active] [ref=e15] [cursor=pointer]
+      - button "Recommendations" [ref=e16] [cursor=pointer]
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - heading "Amenity Coverage Analysis" [level=2] [ref=e19]
+        - generic [ref=e20]:
+          - generic [ref=e22]: 67%
+          - generic [ref=e23]: Amenity Coverage Score
+        - generic [ref=e24]:
+          - heading "✅ Your Amenities (6)" [level=3] [ref=e25]
+          - generic [ref=e26]:
+            - generic [ref=e27]: pool
+            - generic [ref=e28]: gym
+            - generic [ref=e29]: restaurant
+            - generic [ref=e30]: wifi
+            - generic [ref=e31]: parking
+            - generic [ref=e32]: rooftop-bar
+        - generic [ref=e33]:
+          - heading "⭐ Unique Competitive Advantages (1)" [level=3] [ref=e34]
+          - generic [ref=e36]: ⭐ rooftop-bar
+      - generic [ref=e37]:
+        - heading "💰 Investment Opportunities" [level=2] [ref=e38]
+        - generic [ref=e39]:
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]: 🥇
+              - generic [ref=e44]:
+                - text: spa
+                - generic [ref=e45]:
+                  - generic [ref=e46]: LOW PRIORITY
+                  - generic [ref=e47]: 33% of competitors
+            - generic [ref=e48]:
+              - generic [ref=e49]: $100,000
+              - generic [ref=e50]: est. cost
+          - generic [ref=e54]:
+            - generic [ref=e55]:
+              - generic [ref=e56]: 🥈
+              - generic [ref=e57]:
+                - text: concierge
+                - generic [ref=e58]:
+                  - generic [ref=e59]: LOW PRIORITY
+                  - generic [ref=e60]: 33% of competitors
+            - generic [ref=e61]:
+              - generic [ref=e62]: $10,000
+              - generic [ref=e63]: est. cost
+          - generic [ref=e67]:
+            - generic [ref=e68]:
+              - generic [ref=e69]: 🥉
+              - generic [ref=e70]:
+                - text: business-center
+                - generic [ref=e71]:
+                  - generic [ref=e72]: LOW PRIORITY
+                  - generic [ref=e73]: 33% of competitors
+            - generic [ref=e74]:
+              - generic [ref=e75]: $15,000
+              - generic [ref=e76]: est. cost
+  - button "Open Next.js Dev Tools" [ref=e84] [cursor=pointer]:
+    - img [ref=e85]
+  - alert [ref=e88]
+```
