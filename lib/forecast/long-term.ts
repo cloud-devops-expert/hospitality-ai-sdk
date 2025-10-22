@@ -1,496 +1,776 @@
 /**
- * Long-Term Trend Forecasting (1-5 Years)
+ * Long-Term Trend Forecasting Module
  *
- * Features:
- * - Multi-year occupancy and revenue forecasting
- * - Trend decomposition (trend, seasonal, cyclical, irregular)
- * - External factor integration (economic indicators, market trends)
- * - Confidence intervals for long-term predictions
- * - Scenario planning (best/worst/likely cases)
- * - Investment ROI forecasting
- * - Strategic planning support
+ * Multi-year forecasting with trend decomposition, scenario planning,
+ * and confidence intervals. Uses traditional statistical methods for
+ * hospitality business forecasting.
+ *
+ * Zero-cost local processing approach.
  */
 
-export interface HistoricalData {
-  month: string; // 'YYYY-MM'
-  occupancyRate: number; // 0-100
-  averageDailyRate: number; // ADR in currency
-  revenue: number;
-  roomNights: number;
+// ============================================================================
+// Types
+// ============================================================================
+
+export interface HistoricalDataPoint {
+  date: Date;
+  value: number;
+  category?: string;
+  metadata?: Record<string, any>;
 }
 
-export interface ExternalFactors {
-  economicGrowth?: number; // GDP growth rate, -10 to +10
-  inflation?: number; // 0-20
-  touristArrivals?: number; // % change year-over-year
-  competitorSupply?: number; // New rooms in market, # of rooms
-  marketEvents?: Array<{
-    year: number;
-    impact: 'positive' | 'negative' | 'neutral';
-    magnitude: 'low' | 'medium' | 'high';
-    description: string;
-  }>;
+export interface ForecastInput {
+  historicalData: HistoricalDataPoint[];
+  forecastPeriods: number; // Number of periods to forecast
+  periodType: 'day' | 'week' | 'month' | 'quarter' | 'year';
+  metric: string; // e.g., 'revenue', 'occupancy', 'bookings'
+  externalFactors?: ExternalFactor[];
 }
 
-export interface LongTermForecast {
-  year: number;
-  month?: number; // 1-12, if monthly forecast
-  period: string; // 'YYYY' or 'YYYY-MM'
+export interface ExternalFactor {
+  name: string;
+  impact: 'positive' | 'negative' | 'neutral';
+  magnitude: number; // 0-100
+  startPeriod: number;
+  endPeriod: number;
+}
 
-  // Forecasted metrics
-  occupancyRate: number; // 0-100
-  averageDailyRate: number;
-  revenue: number;
-  roomNights: number;
+export interface ForecastResult {
+  predictions: ForecastPrediction[];
+  trendAnalysis: TrendAnalysis;
+  scenarios: ScenarioForecast;
+  confidence: ConfidenceMetrics;
+  recommendations: string[];
+}
 
-  // Confidence intervals (95%)
-  confidenceInterval: {
-    occupancyLow: number;
-    occupancyHigh: number;
-    revenueLow: number;
-    revenueHigh: number;
+export interface ForecastPrediction {
+  period: number;
+  date: Date;
+  value: number;
+  trend: number;
+  seasonal: number;
+  confidence: {
+    lower: number;
+    upper: number;
+    level: number; // 0-100
   };
+}
 
-  // Decomposition
-  decomposition: {
-    trend: number;
-    seasonal: number;
-    cyclical: number;
-    residual: number;
+export interface TrendAnalysis {
+  direction: 'increasing' | 'decreasing' | 'stable';
+  strength: number; // 0-100
+  volatility: number; // 0-100
+  components: {
+    trend: number[];
+    seasonal: number[];
+    cyclical: number[];
+    irregular: number[];
   };
-
-  // External influence
-  externalImpact: {
-    economic: number; // -20 to +20 percentage points
-    market: number;
-    competition: number;
-    total: number;
-  };
+  seasonalityDetected: boolean;
+  seasonalPeriod?: number;
 }
 
 export interface ScenarioForecast {
-  scenario: 'best-case' | 'likely' | 'worst-case';
-  description: string;
+  best: ScenarioPrediction;
+  likely: ScenarioPrediction;
+  worst: ScenarioPrediction;
+}
+
+export interface ScenarioPrediction {
+  label: string;
   assumptions: string[];
-  forecasts: LongTermForecast[];
-  totalRevenue: number;
-  averageOccupancy: number;
-  confidence: number;
+  predictions: Array<{
+    period: number;
+    value: number;
+  }>;
+  totalValue: number;
+  growthRate: number; // percentage
 }
 
-export interface InvestmentAnalysis {
-  investmentAmount: number;
-  paybackPeriod: number; // years
-  roi: number; // %
+export interface ConfidenceMetrics {
+  overall: number; // 0-100
+  dataQuality: number; // 0-100
+  trendStability: number; // 0-100
+  seasonalConsistency: number; // 0-100
+  warnings: string[];
+}
+
+export interface InvestmentROI {
+  investment: number;
+  expectedReturns: Array<{
+    period: number;
+    revenue: number;
+    costs: number;
+    netReturn: number;
+  }>;
+  breakEvenPeriod: number;
+  totalROI: number; // percentage
   npv: number; // Net Present Value
-  irr: number; // Internal Rate of Return, %
-  breakEvenYear: number;
-  totalReturnOverPeriod: number;
+  irr: number; // Internal Rate of Return
+  paybackPeriod: number;
+  recommendation: 'highly-recommended' | 'recommended' | 'neutral' | 'not-recommended';
 }
 
+// ============================================================================
+// Core Forecasting Functions
+// ============================================================================
+
 /**
- * Generate long-term forecast (1-5 years) with trend decomposition
+ * Generates multi-year forecast with trend analysis
  */
-export function forecastLongTerm(
-  historicalData: HistoricalData[],
-  yearsToForecast: number,
-  externalFactors?: ExternalFactors,
-  granularity: 'monthly' | 'yearly' = 'yearly'
-): LongTermForecast[] {
-  if (historicalData.length < 24) {
-    throw new Error('Need at least 24 months of historical data for long-term forecasting');
+export function generateLongTermForecast(input: ForecastInput): ForecastResult {
+  if (input.historicalData.length < 12) {
+    throw new Error('At least 12 historical data points required for long-term forecasting');
   }
 
-  if (yearsToForecast < 1 || yearsToForecast > 5) {
-    throw new Error('Years to forecast must be between 1 and 5');
-  }
+  // Extract values and normalize
+  const values = input.historicalData.map(d => d.value);
+  const dates = input.historicalData.map(d => d.date);
 
-  // Extract time series data
-  const occupancyTS = historicalData.map((d) => d.occupancyRate);
-  const adrTS = historicalData.map((d) => d.averageDailyRate);
-  const revenueTS = historicalData.map((d) => d.revenue);
+  // Decompose time series
+  const trendAnalysis = decomposeTrend(values, input.periodType);
 
-  // Decompose historical data
-  const occupancyDecomp = decomposeTimeSeries(occupancyTS);
-  const adrDecomp = decomposeTimeSeries(adrTS);
+  // Generate base predictions
+  const basePredictions = generateBasePredictions(
+    values,
+    trendAnalysis,
+    input.forecastPeriods,
+    dates
+  );
 
-  // Calculate long-term trends
-  const occupancyTrend = calculateLongTermTrend(occupancyTS);
-  const adrTrend = calculateLongTermTrend(adrTS);
+  // Apply external factors
+  const adjustedPredictions = applyExternalFactors(
+    basePredictions,
+    input.externalFactors || []
+  );
 
-  // Generate forecasts
-  const forecasts: LongTermForecast[] = [];
-  const lastData = historicalData[historicalData.length - 1];
-  const lastDate = new Date(lastData.month);
+  // Calculate confidence intervals
+  const predictions = calculateConfidenceIntervals(
+    adjustedPredictions,
+    values,
+    trendAnalysis.volatility
+  );
 
-  const periodsToForecast = granularity === 'yearly' ? yearsToForecast : yearsToForecast * 12;
-  const periodIncrement = granularity === 'yearly' ? 12 : 1;
+  // Generate scenarios
+  const scenarios = generateScenarios(
+    predictions,
+    trendAnalysis,
+    input.externalFactors || []
+  );
 
-  for (let i = 1; i <= periodsToForecast; i++) {
-    const currentDate = new Date(lastDate);
-    currentDate.setMonth(currentDate.getMonth() + i * periodIncrement);
+  // Calculate confidence metrics
+  const confidence = calculateConfidenceMetrics(
+    input.historicalData,
+    trendAnalysis
+  );
 
-    const year = currentDate.getFullYear();
-    const month = granularity === 'monthly' ? currentDate.getMonth() + 1 : undefined;
-    const period = granularity === 'yearly'
-      ? `${year}`
-      : `${year}-${String(month).padStart(2, '0')}`;
+  // Generate recommendations
+  const recommendations = generateForecastRecommendations(
+    trendAnalysis,
+    confidence,
+    scenarios
+  );
 
-    // Calculate base forecast (trend + seasonal)
-    const monthIndex = currentDate.getMonth();
-    const baseOccupancy =
-      lastData.occupancyRate +
-      occupancyTrend * i +
-      occupancyDecomp.seasonal[monthIndex % 12];
-
-    const baseADR = lastData.averageDailyRate + adrTrend * i + adrDecomp.trend * 0.1;
-
-    // Apply external factors
-    const externalImpact = calculateExternalImpact(
-      year,
-      i,
-      externalFactors
-    );
-
-    // Final forecast with external adjustments
-    const forecastedOccupancy = Math.max(
-      20,
-      Math.min(95, baseOccupancy + externalImpact.total)
-    );
-    const forecastedADR = Math.max(
-      50,
-      baseADR * (1 + externalImpact.total / 100)
-    );
-
-    // Calculate room nights and revenue
-    const daysInPeriod = granularity === 'yearly' ? 365 : getDaysInMonth(year, month!);
-    const roomsAvailable = lastData.roomNights / (historicalData.length * 30); // Estimate
-    const forecastedRoomNights =
-      roomsAvailable * daysInPeriod * (forecastedOccupancy / 100);
-    const forecastedRevenue = forecastedRoomNights * forecastedADR;
-
-    // Calculate confidence intervals (wider for longer-term)
-    const confidenceWidth = 5 + i * 2; // Increasing uncertainty over time
-    const revenueConfidenceWidth = forecastedRevenue * (0.1 + i * 0.05);
-
-    forecasts.push({
-      year,
-      month,
-      period,
-      occupancyRate: Math.round(forecastedOccupancy * 10) / 10,
-      averageDailyRate: Math.round(forecastedADR * 100) / 100,
-      revenue: Math.round(forecastedRevenue),
-      roomNights: Math.round(forecastedRoomNights),
-      confidenceInterval: {
-        occupancyLow: Math.max(0, Math.round((forecastedOccupancy - confidenceWidth) * 10) / 10),
-        occupancyHigh: Math.min(100, Math.round((forecastedOccupancy + confidenceWidth) * 10) / 10),
-        revenueLow: Math.round(forecastedRevenue - revenueConfidenceWidth),
-        revenueHigh: Math.round(forecastedRevenue + revenueConfidenceWidth),
-      },
-      decomposition: {
-        trend: occupancyTrend * i,
-        seasonal: occupancyDecomp.seasonal[monthIndex % 12],
-        cyclical: occupancyDecomp.cyclical || 0,
-        residual: occupancyDecomp.residual || 0,
-      },
-      externalImpact,
-    });
-  }
-
-  return forecasts;
+  return {
+    predictions,
+    trendAnalysis,
+    scenarios,
+    confidence,
+    recommendations,
+  };
 }
 
 /**
- * Generate scenario-based forecasts (best/likely/worst case)
+ * Decomposes time series into trend, seasonal, and irregular components
+ */
+export function decomposeTrend(values: number[], periodType: string): TrendAnalysis {
+  const n = values.length;
+
+  // Calculate trend using moving average
+  const trendPeriod = getTrendPeriod(periodType);
+  const trend = calculateMovingAverage(values, trendPeriod);
+
+  // Detect seasonality
+  const seasonalPeriod = detectSeasonalPeriod(values);
+  const seasonalityDetected = seasonalPeriod > 0;
+
+  // Calculate seasonal component
+  const seasonal = seasonalityDetected
+    ? calculateSeasonalComponent(values, trend, seasonalPeriod)
+    : new Array(n).fill(0);
+
+  // Calculate cyclical and irregular components
+  const detrended = values.map((v, i) => v - trend[i]);
+  const deseasoned = detrended.map((v, i) => v - seasonal[i]);
+
+  const cyclical = calculateCyclicalComponent(deseasoned);
+  const irregular = deseasoned.map((v, i) => v - cyclical[i]);
+
+  // Analyze trend direction and strength
+  const recentTrend = trend.slice(-Math.min(12, n));
+  const trendSlope = linearRegression(
+    recentTrend.map((_, i) => i),
+    recentTrend
+  ).slope;
+
+  // Use relative threshold based on average value
+  const avgValue = trend.reduce((sum, v) => sum + v, 0) / trend.length;
+  const relativeThreshold = Math.abs(avgValue) * 0.0001; // 0.01% of average
+
+  const direction: TrendAnalysis['direction'] =
+    trendSlope > relativeThreshold ? 'increasing' :
+    trendSlope < -relativeThreshold ? 'decreasing' : 'stable';
+
+  const strength = Math.min(100, Math.abs(trendSlope / (avgValue || 1)) * 10000);
+
+  // Calculate volatility
+  const volatility = calculateVolatility(irregular);
+
+  return {
+    direction,
+    strength,
+    volatility,
+    components: {
+      trend,
+      seasonal,
+      cyclical,
+      irregular,
+    },
+    seasonalityDetected,
+    seasonalPeriod: seasonalityDetected ? seasonalPeriod : undefined,
+  };
+}
+
+/**
+ * Generates scenario-based forecasts (best, likely, worst)
  */
 export function generateScenarios(
-  historicalData: HistoricalData[],
-  yearsToForecast: number,
-  baselineFactors?: ExternalFactors
-): ScenarioForecast[] {
-  // Best case: Optimistic economic growth, increased tourism
-  const bestCaseFactors: ExternalFactors = {
-    economicGrowth: 4.0,
-    inflation: 2.0,
-    touristArrivals: 8.0,
-    competitorSupply: 50, // Limited new supply
-    marketEvents: [
-      {
-        year: new Date().getFullYear() + 1,
-        impact: 'positive',
-        magnitude: 'high',
-        description: 'Major convention center expansion',
-      },
-    ],
-  };
+  predictions: ForecastPrediction[],
+  trendAnalysis: TrendAnalysis,
+  externalFactors: ExternalFactor[]
+): ScenarioForecast {
+  const baselineGrowth = predictions.length > 1
+    ? ((predictions[predictions.length - 1].value - predictions[0].value) / predictions[0].value) * 100
+    : 0;
 
-  // Likely case: Moderate growth
-  const likelyCaseFactors: ExternalFactors = {
-    economicGrowth: 2.5,
-    inflation: 2.5,
-    touristArrivals: 3.0,
-    competitorSupply: 150,
-    marketEvents: [],
-  };
+  // Best case scenario: +20% optimistic growth
+  const bestMultiplier = 1.2;
+  const bestPredictions = predictions.map((p, i) => ({
+    period: p.period,
+    value: Math.round(p.value * (1 + (bestMultiplier - 1) * (i / predictions.length))),
+  }));
 
-  // Worst case: Economic downturn, oversupply
-  const worstCaseFactors: ExternalFactors = {
-    economicGrowth: -1.0,
-    inflation: 4.0,
-    touristArrivals: -5.0,
-    competitorSupply: 300, // Significant new supply
-    marketEvents: [
-      {
-        year: new Date().getFullYear() + 1,
-        impact: 'negative',
-        magnitude: 'high',
-        description: 'Economic recession',
-      },
-    ],
-  };
-
-  const bestCase = forecastLongTerm(historicalData, yearsToForecast, bestCaseFactors, 'yearly');
-  const likelyCase = forecastLongTerm(historicalData, yearsToForecast, likelyCaseFactors, 'yearly');
-  const worstCase = forecastLongTerm(historicalData, yearsToForecast, worstCaseFactors, 'yearly');
-
-  return [
-    {
-      scenario: 'best-case',
-      description: 'Optimistic scenario with strong economic growth and favorable market conditions',
-      assumptions: [
-        '4% economic growth',
-        '8% increase in tourist arrivals',
-        'Limited new competitor supply',
-        'Major positive market events',
-      ],
-      forecasts: bestCase,
-      totalRevenue: bestCase.reduce((sum, f) => sum + f.revenue, 0),
-      averageOccupancy:
-        bestCase.reduce((sum, f) => sum + f.occupancyRate, 0) / bestCase.length,
-      confidence: 0.65,
-    },
-    {
-      scenario: 'likely',
-      description: 'Most probable scenario with moderate growth and stable market conditions',
-      assumptions: [
-        '2.5% economic growth',
-        '3% increase in tourist arrivals',
-        'Moderate new competitor supply',
-        'Stable market conditions',
-      ],
-      forecasts: likelyCase,
-      totalRevenue: likelyCase.reduce((sum, f) => sum + f.revenue, 0),
-      averageOccupancy:
-        likelyCase.reduce((sum, f) => sum + f.occupancyRate, 0) / likelyCase.length,
-      confidence: 0.80,
-    },
-    {
-      scenario: 'worst-case',
-      description: 'Pessimistic scenario with economic downturn and market challenges',
-      assumptions: [
-        'Economic recession (-1% growth)',
-        '5% decline in tourist arrivals',
-        'Significant new competitor supply',
-        'Negative market events',
-      ],
-      forecasts: worstCase,
-      totalRevenue: worstCase.reduce((sum, f) => sum + f.revenue, 0),
-      averageOccupancy:
-        worstCase.reduce((sum, f) => sum + f.occupancyRate, 0) / worstCase.length,
-      confidence: 0.70,
-    },
+  const bestAssumptions = [
+    'Market conditions remain favorable',
+    'Occupancy rates increase by 15-20%',
+    'Premium pricing strategy successful',
+    'Positive economic indicators',
   ];
+
+  // Likely case scenario: baseline predictions
+  const likelyPredictions = predictions.map(p => ({
+    period: p.period,
+    value: Math.round(p.value),
+  }));
+
+  const likelyAssumptions = [
+    'Market conditions remain stable',
+    'Current trends continue',
+    'Moderate competition',
+    'Normal seasonal patterns',
+  ];
+
+  // Worst case scenario: -15% conservative estimate
+  const worstMultiplier = 0.85;
+  const worstPredictions = predictions.map((p, i) => ({
+    period: p.period,
+    value: Math.round(p.value * (1 - (1 - worstMultiplier) * (i / predictions.length))),
+  }));
+
+  const worstAssumptions = [
+    'Economic downturn impacts travel',
+    'Increased competition',
+    'Occupancy rates decline by 10-15%',
+    'Price pressure in market',
+  ];
+
+  return {
+    best: {
+      label: 'Best Case',
+      assumptions: bestAssumptions,
+      predictions: bestPredictions,
+      totalValue: bestPredictions.reduce((sum, p) => sum + p.value, 0),
+      growthRate: Math.round(baselineGrowth * bestMultiplier),
+    },
+    likely: {
+      label: 'Most Likely',
+      assumptions: likelyAssumptions,
+      predictions: likelyPredictions,
+      totalValue: likelyPredictions.reduce((sum, p) => sum + p.value, 0),
+      growthRate: Math.round(baselineGrowth),
+    },
+    worst: {
+      label: 'Worst Case',
+      assumptions: worstAssumptions,
+      predictions: worstPredictions,
+      totalValue: worstPredictions.reduce((sum, p) => sum + p.value, 0),
+      growthRate: Math.round(baselineGrowth * worstMultiplier),
+    },
+  };
 }
 
 /**
- * Analyze investment ROI based on long-term forecasts
+ * Calculates investment ROI based on forecast
  */
-export function analyzeInvestmentROI(
-  investmentAmount: number,
-  forecasts: LongTermForecast[],
-  discountRate: number = 0.08 // 8% default
-): InvestmentAnalysis {
-  const years = forecasts.length;
-  let cumulativeCashFlow = -investmentAmount;
-  let breakEvenYear = years + 1; // Default to beyond forecast period
-  let npv = -investmentAmount;
+export function calculateInvestmentROI(
+  investment: number,
+  forecast: ForecastResult,
+  annualCostPercentage: number = 30,
+  discountRate: number = 10
+): InvestmentROI {
+  const expectedReturns = forecast.predictions.map((p, i) => {
+    const revenue = p.value;
+    const costs = revenue * (annualCostPercentage / 100);
+    const netReturn = revenue - costs;
 
-  const annualCashFlows: number[] = [];
-
-  // Calculate annual cash flows and NPV
-  for (let year = 0; year < years; year++) {
-    const annualRevenue = forecasts[year].revenue;
-    const annualCashFlow = annualRevenue * 0.30; // Assume 30% profit margin
-
-    annualCashFlows.push(annualCashFlow);
-
-    // NPV calculation
-    npv += annualCashFlow / Math.pow(1 + discountRate, year + 1);
-
-    // Check for breakeven
-    cumulativeCashFlow += annualCashFlow;
-    if (cumulativeCashFlow >= 0 && breakEvenYear > years) {
-      breakEvenYear = year + 1;
-    }
-  }
-
-  // Calculate IRR (simplified Newton-Raphson method)
-  const irr = calculateIRR([-investmentAmount, ...annualCashFlows]);
-
-  // Total return over period
-  const totalCashFlows = annualCashFlows.reduce((sum, cf) => sum + cf, 0);
-  const totalReturn = totalCashFlows - investmentAmount;
-
-  // ROI
-  const roi = (totalReturn / investmentAmount) * 100;
-
-  // Payback period
-  const paybackPeriod = breakEvenYear > years ? years : breakEvenYear;
-
-  return {
-    investmentAmount,
-    paybackPeriod,
-    roi: Math.round(roi * 10) / 10,
-    npv: Math.round(npv),
-    irr: Math.round(irr * 100) / 100,
-    breakEvenYear,
-    totalReturnOverPeriod: Math.round(totalReturn),
-  };
-}
-
-// Helper functions
-
-function decomposeTimeSeries(data: number[]): {
-  trend: number;
-  seasonal: number[];
-  cyclical: number | null;
-  residual: number | null;
-} {
-  // Calculate trend using linear regression
-  const n = data.length;
-  const x = Array.from({ length: n }, (_, i) => i);
-  const sumX = x.reduce((a, b) => a + b, 0);
-  const sumY = data.reduce((a, b) => a + b, 0);
-  const sumXY = x.reduce((sum, xi, i) => sum + xi * data[i], 0);
-  const sumXX = x.reduce((sum, xi) => sum + xi * xi, 0);
-
-  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
-
-  // Calculate seasonal component (12-month cycle)
-  const seasonal: number[] = Array(12).fill(0);
-  const monthCounts: number[] = Array(12).fill(0);
-
-  data.forEach((value, index) => {
-    const month = index % 12;
-    const trendValue = (sumY / n) + slope * index;
-    seasonal[month] += value - trendValue;
-    monthCounts[month]++;
+    return {
+      period: p.period,
+      revenue,
+      costs,
+      netReturn,
+    };
   });
 
-  // Average seasonal components
-  for (let i = 0; i < 12; i++) {
-    if (monthCounts[i] > 0) {
-      seasonal[i] /= monthCounts[i];
+  // Calculate cumulative returns
+  let cumulativeReturn = -investment;
+  let breakEvenPeriod = -1;
+  let paybackPeriod = -1;
+
+  expectedReturns.forEach((ret, i) => {
+    cumulativeReturn += ret.netReturn;
+    if (breakEvenPeriod === -1 && cumulativeReturn > 0) {
+      breakEvenPeriod = i + 1;
+      paybackPeriod = i + 1;
     }
+  });
+
+  // Calculate total ROI
+  const totalReturn = expectedReturns.reduce((sum, r) => sum + r.netReturn, 0);
+  const totalROI = ((totalReturn - investment) / investment) * 100;
+
+  // Calculate NPV
+  const npv = calculateNPV(
+    investment,
+    expectedReturns.map(r => r.netReturn),
+    discountRate
+  );
+
+  // Calculate IRR (simplified)
+  const irr = calculateIRR(investment, expectedReturns.map(r => r.netReturn));
+
+  // Determine recommendation
+  let recommendation: InvestmentROI['recommendation'];
+  if (totalROI > 50 && breakEvenPeriod <= 2 && irr > 20) {
+    recommendation = 'highly-recommended';
+  } else if (totalROI > 25 && breakEvenPeriod <= 3 && irr > 12) {
+    recommendation = 'recommended';
+  } else if (totalROI > 0 && breakEvenPeriod > 0) {
+    recommendation = 'neutral';
+  } else {
+    recommendation = 'not-recommended';
   }
 
   return {
-    trend: slope,
-    seasonal,
-    cyclical: null,
-    residual: null,
+    investment,
+    expectedReturns,
+    breakEvenPeriod,
+    totalROI: Math.round(totalROI * 100) / 100,
+    npv: Math.round(npv),
+    irr: Math.round(irr * 100) / 100,
+    paybackPeriod,
+    recommendation,
   };
 }
 
-function calculateLongTermTrend(data: number[]): number {
-  // Use last 12 months for long-term trend calculation
-  const recentData = data.slice(-12);
-  const n = recentData.length;
+// ============================================================================
+// Helper Functions
+// ============================================================================
 
-  if (n < 2) return 0;
+function getTrendPeriod(periodType: string): number {
+  const periods = {
+    day: 7,
+    week: 4,
+    month: 3,
+    quarter: 4,
+    year: 3,
+  };
+  return periods[periodType as keyof typeof periods] || 3;
+}
 
-  const x = Array.from({ length: n }, (_, i) => i);
+function calculateMovingAverage(values: number[], period: number): number[] {
+  const result: number[] = [];
+
+  for (let i = 0; i < values.length; i++) {
+    const start = Math.max(0, i - Math.floor(period / 2));
+    const end = Math.min(values.length, i + Math.ceil(period / 2));
+    const window = values.slice(start, end);
+    const avg = window.reduce((sum, v) => sum + v, 0) / window.length;
+    result.push(avg);
+  }
+
+  return result;
+}
+
+function detectSeasonalPeriod(values: number[]): number {
+  if (values.length < 24) return 0;
+
+  // Test common seasonal periods
+  const testPeriods = [4, 7, 12, 52]; // Quarterly, weekly, monthly, weekly in year
+  let bestPeriod = 0;
+  let bestScore = 0;
+
+  testPeriods.forEach(period => {
+    if (values.length < period * 2) return;
+
+    // Use autocorrelation-like approach
+    let correlation = 0;
+    const cycles = Math.floor(values.length / period);
+
+    for (let offset = 0; offset < period; offset++) {
+      const seasonalValues: number[] = [];
+      for (let cycle = 0; cycle < cycles; cycle++) {
+        const idx = cycle * period + offset;
+        if (idx < values.length) {
+          seasonalValues.push(values[idx]);
+        }
+      }
+
+      if (seasonalValues.length > 2) {
+        // Calculate consistency score (inverse of coefficient of variation)
+        const mean = seasonalValues.reduce((sum, v) => sum + v, 0) / seasonalValues.length;
+        const variance = calculateVariance(seasonalValues);
+        const stdDev = Math.sqrt(variance);
+        const cv = mean !== 0 ? stdDev / Math.abs(mean) : 1;
+
+        // Lower coefficient of variation = more consistent = stronger seasonality
+        correlation += 1 / (cv + 0.1);
+      }
+    }
+
+    // Normalize by period length
+    const normalizedScore = correlation / period;
+
+    if (normalizedScore > bestScore) {
+      bestScore = normalizedScore;
+      bestPeriod = period;
+    }
+  });
+
+  // Moderate threshold for seasonality detection (balance between sensitivity and false positives)
+  return bestScore > 3.5 ? bestPeriod : 0;
+}
+
+function calculateSeasonalComponent(
+  values: number[],
+  trend: number[],
+  period: number
+): number[] {
+  const seasonal: number[] = new Array(values.length).fill(0);
+  const seasonalAverages: number[] = new Array(period).fill(0);
+  const seasonalCounts: number[] = new Array(period).fill(0);
+
+  // Calculate average for each seasonal position
+  values.forEach((value, i) => {
+    const detrended = value - trend[i];
+    const seasonalIndex = i % period;
+    seasonalAverages[seasonalIndex] += detrended;
+    seasonalCounts[seasonalIndex]++;
+  });
+
+  // Normalize seasonal averages
+  seasonalAverages.forEach((sum, i) => {
+    if (seasonalCounts[i] > 0) {
+      seasonalAverages[i] = sum / seasonalCounts[i];
+    }
+  });
+
+  // Apply to all positions
+  values.forEach((_, i) => {
+    seasonal[i] = seasonalAverages[i % period];
+  });
+
+  return seasonal;
+}
+
+function calculateCyclicalComponent(values: number[]): number[] {
+  // Simplified cyclical component using longer moving average
+  return calculateMovingAverage(values, Math.floor(values.length / 4));
+}
+
+function calculateVolatility(irregular: number[]): number {
+  const variance = calculateVariance(irregular);
+  const stdDev = Math.sqrt(variance);
+
+  // Calculate mean of absolute values to avoid division by near-zero
+  const meanAbsValue = irregular.reduce((sum, v) => sum + Math.abs(v), 0) / irregular.length;
+
+  // If irregular components are all near zero, volatility is very low
+  if (meanAbsValue < 1 && stdDev < 1) {
+    return 0;
+  }
+
+  // If mean is still very small, use standard deviation directly as volatility indicator
+  if (meanAbsValue < 10) {
+    return Math.min(100, stdDev);
+  }
+
+  // Calculate coefficient of variation as volatility measure
+  return Math.min(100, (stdDev / meanAbsValue) * 100);
+}
+
+function calculateVariance(values: number[]): number {
+  const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+  const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
+  return squaredDiffs.reduce((sum, v) => sum + v, 0) / values.length;
+}
+
+function linearRegression(x: number[], y: number[]): { slope: number; intercept: number } {
+  const n = x.length;
   const sumX = x.reduce((a, b) => a + b, 0);
-  const sumY = recentData.reduce((a, b) => a + b, 0);
-  const sumXY = x.reduce((sum, xi, i) => sum + xi * recentData[i], 0);
+  const sumY = y.reduce((a, b) => a + b, 0);
+  const sumXY = x.reduce((sum, xi, i) => sum + xi * y[i], 0);
   const sumXX = x.reduce((sum, xi) => sum + xi * xi, 0);
 
   const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+  const intercept = (sumY - slope * sumX) / n;
 
-  return slope;
+  return { slope, intercept };
 }
 
-function calculateExternalImpact(
-  year: number,
-  periodOffset: number,
-  factors?: ExternalFactors
-): {
-  economic: number;
-  market: number;
-  competition: number;
-  total: number;
-} {
-  if (!factors) {
-    return { economic: 0, market: 0, competition: 0, total: 0 };
-  }
+function generateBasePredictions(
+  values: number[],
+  trendAnalysis: TrendAnalysis,
+  periods: number,
+  dates: Date[]
+): Array<{ period: number; date: Date; value: number; trend: number; seasonal: number }> {
+  const lastValue = values[values.length - 1];
+  const lastTrend = trendAnalysis.components.trend[trendAnalysis.components.trend.length - 1];
+  const lastDate = dates[dates.length - 1];
 
-  // Economic impact (GDP growth → occupancy)
-  const economicImpact = (factors.economicGrowth || 0) * 0.5; // 1% GDP → 0.5% occupancy
+  const regression = linearRegression(
+    trendAnalysis.components.trend.map((_, i) => i),
+    trendAnalysis.components.trend
+  );
 
-  // Market impact (tourist arrivals)
-  const marketImpact = (factors.touristArrivals || 0) * 0.3; // 1% tourists → 0.3% occupancy
+  const predictions: Array<{ period: number; date: Date; value: number; trend: number; seasonal: number }> = [];
 
-  // Competition impact (new supply)
-  const competitionImpact = -(factors.competitorSupply || 0) / 100; // New rooms → negative
+  for (let i = 0; i < periods; i++) {
+    const period = i + 1;
+    const trendValue = regression.slope * (values.length + i) + regression.intercept;
 
-  // Event impact
-  let eventImpact = 0;
-  if (factors.marketEvents) {
-    factors.marketEvents.forEach((event) => {
-      if (event.year === year) {
-        const magnitude = event.magnitude === 'high' ? 3 : event.magnitude === 'medium' ? 2 : 1;
-        const direction = event.impact === 'positive' ? 1 : event.impact === 'negative' ? -1 : 0;
-        eventImpact += magnitude * direction;
-      }
+    // Get seasonal component if available
+    let seasonal = 0;
+    if (trendAnalysis.seasonalityDetected && trendAnalysis.seasonalPeriod) {
+      const seasonalIndex = (values.length + i) % trendAnalysis.seasonalPeriod;
+      seasonal = trendAnalysis.components.seasonal[seasonalIndex] || 0;
+    }
+
+    const value = Math.max(0, trendValue + seasonal);
+
+    // Calculate future date
+    const futureDate = new Date(lastDate);
+    futureDate.setMonth(futureDate.getMonth() + i + 1);
+
+    predictions.push({
+      period,
+      date: futureDate,
+      value,
+      trend: trendValue,
+      seasonal,
     });
   }
 
-  const total = economicImpact + marketImpact + competitionImpact + eventImpact;
+  return predictions;
+}
+
+function applyExternalFactors(
+  predictions: Array<{ period: number; date: Date; value: number; trend: number; seasonal: number }>,
+  externalFactors: ExternalFactor[]
+): Array<{ period: number; date: Date; value: number; trend: number; seasonal: number }> {
+  return predictions.map(p => {
+    let adjustment = 1;
+
+    externalFactors.forEach(factor => {
+      if (p.period >= factor.startPeriod && p.period <= factor.endPeriod) {
+        const impact = factor.magnitude / 100;
+        if (factor.impact === 'positive') {
+          adjustment *= (1 + impact);
+        } else if (factor.impact === 'negative') {
+          adjustment *= (1 - impact);
+        }
+      }
+    });
+
+    return {
+      ...p,
+      value: p.value * adjustment,
+    };
+  });
+}
+
+function calculateConfidenceIntervals(
+  predictions: Array<{ period: number; date: Date; value: number; trend: number; seasonal: number }>,
+  historicalValues: number[],
+  volatility: number
+): ForecastPrediction[] {
+  const stdError = calculateStandardError(historicalValues);
+
+  return predictions.map((p, i) => {
+    // Confidence degrades with distance into future
+    const confidenceLevel = Math.max(50, 95 - (i * 2));
+    const zScore = 1.96; // 95% confidence
+
+    // Widen interval based on period and volatility
+    const errorMargin = stdError * zScore * (1 + (i * 0.1)) * (1 + volatility / 100);
+
+    return {
+      period: p.period,
+      date: p.date,
+      value: Math.round(p.value),
+      trend: Math.round(p.trend),
+      seasonal: Math.round(p.seasonal),
+      confidence: {
+        lower: Math.round(Math.max(0, p.value - errorMargin)),
+        upper: Math.round(p.value + errorMargin),
+        level: confidenceLevel,
+      },
+    };
+  });
+}
+
+function calculateStandardError(values: number[]): number {
+  const variance = calculateVariance(values);
+  return Math.sqrt(variance / values.length);
+}
+
+function calculateConfidenceMetrics(
+  historicalData: HistoricalDataPoint[],
+  trendAnalysis: TrendAnalysis
+): ConfidenceMetrics {
+  const warnings: string[] = [];
+
+  // Data quality score
+  const dataQuality = Math.min(100, (historicalData.length / 24) * 100);
+  if (dataQuality < 50) {
+    warnings.push('Limited historical data may reduce forecast accuracy');
+  }
+
+  // Trend stability
+  const trendStability = Math.max(0, 100 - trendAnalysis.volatility);
+  if (trendStability < 60) {
+    warnings.push('High volatility detected - forecast may be less reliable');
+  }
+
+  // Seasonal consistency
+  const seasonalConsistency = trendAnalysis.seasonalityDetected ? 85 : 60;
+  if (!trendAnalysis.seasonalityDetected && historicalData.length >= 24) {
+    warnings.push('No clear seasonal pattern detected');
+  }
+
+  const overall = Math.round(
+    (dataQuality * 0.3) + (trendStability * 0.4) + (seasonalConsistency * 0.3)
+  );
+
+  if (overall < 60) {
+    warnings.push('Overall confidence is moderate - consider gathering more data');
+  }
 
   return {
-    economic: Math.round(economicImpact * 10) / 10,
-    market: Math.round(marketImpact * 10) / 10,
-    competition: Math.round(competitionImpact * 10) / 10,
-    total: Math.round(total * 10) / 10,
+    overall,
+    dataQuality,
+    trendStability,
+    seasonalConsistency,
+    warnings,
   };
 }
 
-function getDaysInMonth(year: number, month: number): number {
-  return new Date(year, month, 0).getDate();
-}
+function generateForecastRecommendations(
+  trendAnalysis: TrendAnalysis,
+  confidence: ConfidenceMetrics,
+  scenarios: ScenarioForecast
+): string[] {
+  const recommendations: string[] = [];
 
-function calculateIRR(cashFlows: number[], guess: number = 0.1): number {
-  const maxIterations = 100;
-  const tolerance = 0.00001;
-  let rate = guess;
-
-  for (let i = 0; i < maxIterations; i++) {
-    let npv = 0;
-    let dnpv = 0;
-
-    for (let t = 0; t < cashFlows.length; t++) {
-      npv += cashFlows[t] / Math.pow(1 + rate, t);
-      dnpv += (-t * cashFlows[t]) / Math.pow(1 + rate, t + 1);
-    }
-
-    const newRate = rate - npv / dnpv;
-
-    if (Math.abs(newRate - rate) < tolerance) {
-      return newRate * 100; // Return as percentage
-    }
-
-    rate = newRate;
+  // Trend-based recommendations
+  if (trendAnalysis.direction === 'increasing' && trendAnalysis.strength > 60) {
+    recommendations.push('Strong growth trend detected - consider capacity expansion');
+  } else if (trendAnalysis.direction === 'decreasing' && trendAnalysis.strength > 60) {
+    recommendations.push('Declining trend detected - review pricing and marketing strategies');
+  } else {
+    recommendations.push('Stable trend - focus on operational efficiency and service quality');
   }
 
-  return rate * 100;
+  // Volatility recommendations
+  if (trendAnalysis.volatility > 40) {
+    recommendations.push('High volatility - implement flexible pricing and staffing strategies');
+  }
+
+  // Seasonality recommendations
+  if (trendAnalysis.seasonalityDetected) {
+    recommendations.push('Clear seasonal patterns - optimize staffing and inventory for peak periods');
+  }
+
+  // Confidence-based recommendations
+  if (confidence.overall < 70) {
+    recommendations.push('Moderate forecast confidence - gather more historical data for better accuracy');
+  }
+
+  // Scenario-based recommendations
+  const range = scenarios.best.totalValue - scenarios.worst.totalValue;
+  const avgValue = (scenarios.best.totalValue + scenarios.worst.totalValue) / 2;
+  const rangePercent = (range / avgValue) * 100;
+
+  if (rangePercent > 40) {
+    recommendations.push('Wide scenario range - prepare contingency plans for various outcomes');
+  }
+
+  return recommendations;
+}
+
+function calculateNPV(
+  investment: number,
+  cashFlows: number[],
+  discountRate: number
+): number {
+  let npv = -investment;
+
+  cashFlows.forEach((cf, i) => {
+    npv += cf / Math.pow(1 + discountRate / 100, i + 1);
+  });
+
+  return npv;
+}
+
+function calculateIRR(investment: number, cashFlows: number[]): number {
+  // Simplified IRR calculation using Newton's method
+  let irr = 0.1; // Initial guess 10%
+  const maxIterations = 100;
+  const tolerance = 0.0001;
+
+  for (let i = 0; i < maxIterations; i++) {
+    let npv = -investment;
+    let derivative = 0;
+
+    cashFlows.forEach((cf, period) => {
+      const p = period + 1;
+      npv += cf / Math.pow(1 + irr, p);
+      derivative -= (p * cf) / Math.pow(1 + irr, p + 1);
+    });
+
+    if (Math.abs(npv) < tolerance) break;
+
+    irr = irr - npv / derivative;
+  }
+
+  return irr * 100;
 }
