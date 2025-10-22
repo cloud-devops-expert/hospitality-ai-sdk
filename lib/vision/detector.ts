@@ -1,661 +1,627 @@
 /**
- * Computer Vision for Facility Monitoring
+ * Computer Vision Module
  *
- * Simulated computer vision capabilities for facility condition monitoring,
- * occupancy detection, and cleanliness assessment using algorithmic analysis.
+ * Facility condition monitoring, occupancy detection, cleanliness assessment,
+ * and safety hazard detection for hospitality operations.
  *
- * Note: This is a simulation-based implementation demonstrating ML concepts
- * without requiring actual CV libraries, maintaining zero-cost local processing.
- *
- * Features:
- * - Facility condition scoring from image metadata
- * - Occupancy estimation from sensor data
- * - Cleanliness assessment algorithms
- * - Safety hazard detection patterns
- * - Asset condition tracking
- * - Crowd density analysis
- *
- * @module lib/vision/detector
+ * Zero-cost local processing with browser-based ML patterns (TensorFlow.js-ready).
  */
 
 // ============================================================================
-// Types and Interfaces
+// Types
 // ============================================================================
 
-export interface ImageMetadata {
+export interface ImageAnalysisInput {
   imageId: string;
-  timestamp: Date;
+  imageData: string; // base64 or URL
+  analysisType: 'facility' | 'occupancy' | 'cleanliness' | 'safety' | 'asset';
   location: string;
-  type: 'facility' | 'room' | 'lobby' | 'corridor' | 'outdoor';
+  timestamp: Date;
+  metadata?: Record<string, any>;
+}
+
+export interface ImageAnalysisResult {
+  imageId: string;
+  analysisType: string;
+  detections: Detection[];
+  overallScore: number;
+  confidence: number;
+  insights: string[];
+  alerts: VisionAlert[];
+  processedAt: Date;
+  processingTime: number;
+}
+
+export interface Detection {
+  type: string;
+  label: string;
+  confidence: number;
+  boundingBox?: BoundingBox;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+}
+
+export interface BoundingBox {
+  x: number;
+  y: number;
   width: number;
   height: number;
-  brightness: number; // 0-255
-  contrast: number; // 0-100
-  sharpness: number; // 0-100
-  colorProfile?: {
-    dominantColors: string[];
-    saturation: number;
-  };
+}
+
+export interface VisionAlert {
+  alertId: string;
+  type: 'safety' | 'maintenance' | 'cleanliness' | 'occupancy';
+  severity: 'info' | 'warning' | 'error' | 'critical';
+  message: string;
+  location: string;
+  action: string;
 }
 
 export interface FacilityCondition {
-  imageId: string;
-  location: string;
-  conditionScore: number; // 0-100
-  cleanliness: number; // 0-100
-  maintenance: number; // 0-100
-  safety: number; // 0-100
-  detectedIssues: DetectedIssue[];
-  confidence: number; // 0-100
-  recommendations: string[];
+  condition: 'excellent' | 'good' | 'fair' | 'poor' | 'critical';
+  score: number;
+  issues: Issue[];
+  maintenanceNeeded: boolean;
+  estimatedCost: number;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
 }
 
-export interface DetectedIssue {
-  issueType: 'dirt' | 'damage' | 'clutter' | 'hazard' | 'wear' | 'stain';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  location: string;
-  confidence: number;
+export interface Issue {
+  category: string;
   description: string;
-  suggestedAction: string;
+  severity: 'minor' | 'moderate' | 'major' | 'critical';
+  location: string;
+  estimatedRepairTime: number; // hours
+  estimatedCost: number;
 }
 
 export interface OccupancyDetection {
-  location: string;
-  timestamp: Date;
-  estimatedOccupancy: number;
-  capacity: number;
-  occupancyRate: number; // 0-100
-  crowdDensity: 'empty' | 'sparse' | 'moderate' | 'crowded' | 'overcrowded';
-  confidence: number;
+  peopleCount: number;
+  crowdDensity: 'empty' | 'low' | 'medium' | 'high' | 'overcrowded';
+  safetyLevel: 'safe' | 'caution' | 'warning' | 'danger';
+  capacityUtilization: number; // percentage
   heatmapData?: number[][];
 }
 
-export interface SafetyHazard {
-  hazardId: string;
-  type: 'fire-risk' | 'slip-hazard' | 'obstruction' | 'electrical' | 'structural';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  location: string;
-  timestamp: Date;
-  confidence: number;
-  description: string;
-  immediateAction: string;
-  requiresEvacuation: boolean;
-}
-
-export interface AssetCondition {
-  assetId: string;
-  assetType: string;
-  location: string;
-  conditionScore: number; // 0-100
-  wear: number; // 0-100
-  functionality: number; // 0-100
-  lastInspected: Date;
-  estimatedRemainingLife: number; // days
-  replacementPriority: 'low' | 'medium' | 'high' | 'urgent';
-  maintenanceNeeded: boolean;
-}
-
 export interface CleanlinessAssessment {
-  location: string;
-  timestamp: Date;
-  overallCleanliness: number; // 0-100
-  surfaces: {
-    floor: number;
-    walls: number;
-    fixtures: number;
-    furniture: number;
-  };
-  detectedDirt: Array<{
-    type: 'dust' | 'stain' | 'debris' | 'organic';
-    severity: number;
-    location: string;
-  }>;
-  odorDetection?: {
-    detected: boolean;
-    type?: string;
-    intensity?: number;
-  };
+  cleanlinessScore: number;
+  rating: 'pristine' | 'clean' | 'acceptable' | 'needs_attention' | 'poor';
+  areasOfConcern: AreaConcern[];
+  passed: boolean;
   recommendations: string[];
 }
 
-export interface VisionAnalytics {
-  totalImages: number;
-  averageConditionScore: number;
-  averageCleanliness: number;
-  issuesDetected: number;
-  hazardsDetected: number;
-  locationsMonitored: string[];
-  trendAnalysis: {
-    improving: boolean;
-    changeRate: number;
-    prediction: number;
+export interface AreaConcern {
+  area: string;
+  issue: string;
+  severity: 'minor' | 'moderate' | 'major';
+  actionRequired: string;
+}
+
+export interface SafetyHazard {
+  hazardType: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  location: string;
+  description: string;
+  immediateAction: boolean;
+  riskLevel: number;
+  mitigation: string;
+}
+
+export interface AssetCondition {
+  assetType: string;
+  condition: 'new' | 'good' | 'worn' | 'damaged' | 'needs_replacement';
+  lifeRemaining: number; // percentage
+  replacementCost: number;
+  maintenanceSchedule: string;
+}
+
+// ============================================================================
+// Image Processing Utilities
+// ============================================================================
+
+export class ImageProcessor {
+  /**
+   * Simulates image feature extraction
+   * In production, this would use TensorFlow.js or similar
+   */
+  static extractFeatures(imageData: string): number[] {
+    // Simulate feature extraction from image
+    // In real implementation, this would use a CNN model
+    const hash = this.hashString(imageData);
+    const features: number[] = [];
+    
+    for (let i = 0; i < 128; i++) {
+      features.push((hash * (i + 1)) % 100 / 100);
+    }
+    
+    return features;
+  }
+
+  static hashString(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < Math.min(str.length, 100); i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return Math.abs(hash);
+  }
+
+  static calculateSimilarity(features1: number[], features2: number[]): number {
+    if (features1.length !== features2.length) return 0;
+    
+    let dotProduct = 0;
+    let norm1 = 0;
+    let norm2 = 0;
+    
+    for (let i = 0; i < features1.length; i++) {
+      dotProduct += features1[i] * features2[i];
+      norm1 += features1[i] * features1[i];
+      norm2 += features2[i] * features2[i];
+    }
+    
+    return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
+  }
+}
+
+// ============================================================================
+// Facility Condition Monitoring
+// ============================================================================
+
+export function assessFacilityCondition(
+  input: ImageAnalysisInput,
+  features: number[]
+): FacilityCondition {
+  // Simulate condition assessment based on image features
+  const avgFeatureValue = features.reduce((sum, f) => sum + f, 0) / features.length;
+  const variance = features.reduce((sum, f) => sum + Math.pow(f - avgFeatureValue, 2), 0) / features.length;
+  
+  const baseScore = avgFeatureValue * 100;
+  const variancePenalty = variance * 20;
+  const score = Math.max(0, Math.min(100, baseScore - variancePenalty));
+  
+  const issues: Issue[] = [];
+  let totalCost = 0;
+  
+  // Detect potential issues based on feature patterns
+  if (score < 60) {
+    issues.push({
+      category: 'structural',
+      description: 'Potential structural deterioration detected',
+      severity: 'major',
+      location: input.location,
+      estimatedRepairTime: 16,
+      estimatedCost: 5000,
+    });
+    totalCost += 5000;
+  }
+  
+  if (variance > 0.1) {
+    issues.push({
+      category: 'surface',
+      description: 'Surface irregularities detected',
+      severity: 'moderate',
+      location: input.location,
+      estimatedRepairTime: 4,
+      estimatedCost: 800,
+    });
+    totalCost += 800;
+  }
+  
+  let condition: FacilityCondition['condition'];
+  let priority: FacilityCondition['priority'];
+  
+  if (score >= 90) {
+    condition = 'excellent';
+    priority = 'low';
+  } else if (score >= 75) {
+    condition = 'good';
+    priority = 'low';
+  } else if (score >= 60) {
+    condition = 'fair';
+    priority = 'medium';
+  } else if (score >= 40) {
+    condition = 'poor';
+    priority = 'high';
+  } else {
+    condition = 'critical';
+    priority = 'urgent';
+  }
+  
+  return {
+    condition,
+    score: Math.round(score),
+    issues,
+    maintenanceNeeded: issues.length > 0,
+    estimatedCost: totalCost,
+    priority,
   };
 }
 
 // ============================================================================
-// Core Vision Processing Functions
+// Occupancy Detection
 // ============================================================================
 
-/**
- * Analyzes facility condition from image metadata
- */
-export function analyzeFacilityCondition(
-  metadata: ImageMetadata,
-  historicalData?: FacilityCondition[]
-): FacilityCondition {
-  // Simulate ML-based image analysis using metadata
-
-  // Brightness indicates lighting quality and cleanliness
-  const cleanlinessFromBrightness = Math.min(100, (metadata.brightness / 255) * 120);
-
-  // Contrast indicates detail visibility and maintenance
-  const maintenanceFromContrast = metadata.contrast;
-
-  // Sharpness indicates image quality and focus
-  const qualityFromSharpness = metadata.sharpness;
-
-  // Base scores
-  let cleanliness = Math.round((cleanlinessFromBrightness + qualityFromSharpness) / 2);
-  let maintenance = Math.round(maintenanceFromContrast);
-  let safety = 85; // Default safe unless issues detected
-
-  // Detect issues based on metadata patterns
-  const detectedIssues: DetectedIssue[] = [];
-
-  // Low brightness might indicate poor lighting or dirt
-  if (metadata.brightness < 100) {
-    detectedIssues.push({
-      issueType: 'dirt',
-      severity: metadata.brightness < 50 ? 'high' : 'medium',
-      location: metadata.location,
-      confidence: 75,
-      description: 'Low brightness indicates potential cleanliness or lighting issues',
-      suggestedAction: 'Inspect and clean area, check lighting',
-    });
-    cleanliness = Math.max(0, cleanliness - 20);
+export function detectOccupancy(
+  input: ImageAnalysisInput,
+  features: number[],
+  roomCapacity: number
+): OccupancyDetection {
+  // Simulate people counting based on image features
+  // In production, this would use object detection model
+  const activityLevel = features.slice(0, 32).reduce((sum, f) => sum + f, 0) / 32;
+  const peopleCount = Math.round(activityLevel * roomCapacity * 1.5);
+  
+  const capacityUtilization = Math.min(100, (peopleCount / roomCapacity) * 100);
+  
+  let crowdDensity: OccupancyDetection['crowdDensity'];
+  let safetyLevel: OccupancyDetection['safetyLevel'];
+  
+  if (capacityUtilization === 0) {
+    crowdDensity = 'empty';
+    safetyLevel = 'safe';
+  } else if (capacityUtilization < 25) {
+    crowdDensity = 'low';
+    safetyLevel = 'safe';
+  } else if (capacityUtilization < 60) {
+    crowdDensity = 'medium';
+    safetyLevel = 'safe';
+  } else if (capacityUtilization < 90) {
+    crowdDensity = 'high';
+    safetyLevel = 'caution';
+  } else {
+    crowdDensity = 'overcrowded';
+    safetyLevel = capacityUtilization > 100 ? 'danger' : 'warning';
   }
-
-  // Low contrast might indicate maintenance issues
-  if (metadata.contrast < 30) {
-    detectedIssues.push({
-      issueType: 'wear',
-      severity: 'medium',
-      location: metadata.location,
-      confidence: 70,
-      description: 'Low contrast suggests faded or worn surfaces',
-      suggestedAction: 'Schedule maintenance or repainting',
-    });
-    maintenance = Math.max(0, maintenance - 15);
-  }
-
-  // Low sharpness might indicate damage or obstruction
-  if (metadata.sharpness < 40) {
-    detectedIssues.push({
-      issueType: 'clutter',
-      severity: 'low',
-      location: metadata.location,
-      confidence: 65,
-      description: 'Unclear image suggests obstruction or equipment issues',
-      suggestedAction: 'Clear obstructions and verify camera functionality',
-    });
-    safety = Math.max(0, safety - 10);
-  }
-
-  // Check for color profile issues
-  if (metadata.colorProfile && metadata.colorProfile.saturation < 30) {
-    detectedIssues.push({
-      issueType: 'stain',
-      severity: 'low',
-      location: metadata.location,
-      confidence: 60,
-      description: 'Low saturation may indicate staining or discoloration',
-      suggestedAction: 'Inspect for stains and schedule deep cleaning',
-    });
-  }
-
-  // Historical trend analysis
-  if (historicalData && historicalData.length > 0) {
-    const avgHistorical = historicalData.reduce((sum, h) => sum + h.conditionScore, 0) / historicalData.length;
-    const currentEstimate = (cleanliness + maintenance + safety) / 3;
-
-    if (currentEstimate < avgHistorical - 15) {
-      detectedIssues.push({
-        issueType: 'damage',
-        severity: 'high',
-        location: metadata.location,
-        confidence: 80,
-        description: 'Significant decline in condition compared to historical average',
-        suggestedAction: 'Immediate inspection and remediation required',
-      });
-    }
-  }
-
-  const conditionScore = Math.round((cleanliness + maintenance + safety) / 3);
-
-  // Generate recommendations
-  const recommendations: string[] = [];
-  if (conditionScore < 60) {
-    recommendations.push('URGENT: Immediate inspection required');
-  }
-  if (cleanliness < 70) {
-    recommendations.push('Schedule deep cleaning');
-  }
-  if (maintenance < 70) {
-    recommendations.push('Arrange maintenance inspection');
-  }
-  if (detectedIssues.length > 2) {
-    recommendations.push('Multiple issues detected - prioritize resolution');
-  }
-
-  // Calculate confidence based on image quality
-  const confidence = Math.round(
-    (metadata.brightness / 255) * 40 +
-    (metadata.contrast / 100) * 30 +
-    (metadata.sharpness / 100) * 30
-  );
-
+  
   return {
-    imageId: metadata.imageId,
-    location: metadata.location,
-    conditionScore,
-    cleanliness,
-    maintenance,
-    safety,
-    detectedIssues,
-    confidence,
+    peopleCount,
+    crowdDensity,
+    safetyLevel,
+    capacityUtilization: Math.round(capacityUtilization),
+  };
+}
+
+// ============================================================================
+// Cleanliness Assessment
+// ============================================================================
+
+export function assessCleanliness(
+  input: ImageAnalysisInput,
+  features: number[]
+): CleanlinessAssessment {
+  // Simulate cleanliness detection based on image uniformity and brightness
+  const avgBrightness = features.slice(0, 64).reduce((sum, f) => sum + f, 0) / 64;
+  const uniformity = 1 - (features.slice(0, 64).reduce((sum, f) =>
+    sum + Math.abs(f - avgBrightness), 0) / 64);
+
+  const cleanlinessScore = Math.round(avgBrightness * 50 + uniformity * 50);
+  
+  let rating: CleanlinessAssessment['rating'];
+  const passed = cleanlinessScore >= 70;
+  
+  if (cleanlinessScore >= 95) {
+    rating = 'pristine';
+  } else if (cleanlinessScore >= 85) {
+    rating = 'clean';
+  } else if (cleanlinessScore >= 70) {
+    rating = 'acceptable';
+  } else if (cleanlinessScore >= 50) {
+    rating = 'needs_attention';
+  } else {
+    rating = 'poor';
+  }
+  
+  const areasOfConcern: AreaConcern[] = [];
+  const recommendations: string[] = [];
+  
+  if (cleanlinessScore < 70) {
+    areasOfConcern.push({
+      area: input.location,
+      issue: 'General cleanliness below standards',
+      severity: cleanlinessScore < 50 ? 'major' : 'moderate',
+      actionRequired: 'Deep cleaning required',
+    });
+    recommendations.push('Schedule immediate deep cleaning');
+  }
+  
+  if (uniformity < 0.7) {
+    areasOfConcern.push({
+      area: input.location,
+      issue: 'Inconsistent cleaning quality',
+      severity: 'minor',
+      actionRequired: 'Review cleaning procedures',
+    });
+    recommendations.push('Train staff on consistent cleaning standards');
+  }
+  
+  return {
+    cleanlinessScore,
+    rating,
+    areasOfConcern,
+    passed,
     recommendations,
   };
 }
 
-/**
- * Estimates occupancy from sensor data and patterns
- */
-export function estimateOccupancy(
-  location: string,
-  sensorData: {
-    motionEvents: number;
-    noiseLevel: number; // 0-100
-    temperature: number;
-    co2Level?: number;
-  },
-  capacity: number
-): OccupancyDetection {
-  // ML-based occupancy estimation using multiple signals
+// ============================================================================
+// Safety Hazard Detection
+// ============================================================================
 
-  // Motion events indicate activity
-  const motionFactor = Math.min(1, sensorData.motionEvents / 10);
-
-  // Noise level correlates with occupancy
-  const noiseFactor = sensorData.noiseLevel / 100;
-
-  // CO2 level increases with occupancy
-  const co2Factor = sensorData.co2Level ? Math.min(1, sensorData.co2Level / 1000) : 0.5;
-
-  // Temperature can indicate body heat (slight correlation)
-  const tempFactor = Math.max(0, Math.min(1, (sensorData.temperature - 20) / 5));
-
-  // Weighted combination
-  const occupancyEstimate = Math.round(
-    capacity * (motionFactor * 0.4 + noiseFactor * 0.3 + co2Factor * 0.2 + tempFactor * 0.1)
-  );
-
-  const occupancyRate = Math.min(100, (occupancyEstimate / capacity) * 100);
-
-  // Determine crowd density
-  let crowdDensity: OccupancyDetection['crowdDensity'];
-  if (occupancyRate < 10) {
-    crowdDensity = 'empty';
-  } else if (occupancyRate < 40) {
-    crowdDensity = 'sparse';
-  } else if (occupancyRate < 70) {
-    crowdDensity = 'moderate';
-  } else if (occupancyRate < 95) {
-    crowdDensity = 'crowded';
-  } else {
-    crowdDensity = 'overcrowded';
-  }
-
-  // Confidence based on sensor availability and consistency
-  const sensorsAvailable = 2 + (sensorData.co2Level ? 1 : 0);
-  const confidence = Math.round(
-    (sensorsAvailable / 3) * 100 * 0.8 +
-    (sensorData.motionEvents > 0 ? 20 : 0)
-  );
-
-  // Generate heatmap data (simulated)
-  const heatmapData = generateHeatmap(occupancyRate);
-
-  return {
-    location,
-    timestamp: new Date(),
-    estimatedOccupancy: occupancyEstimate,
-    capacity,
-    occupancyRate: Math.round(occupancyRate),
-    crowdDensity,
-    confidence,
-    heatmapData,
-  };
-}
-
-/**
- * Detects safety hazards from image analysis
- */
 export function detectSafetyHazards(
-  metadata: ImageMetadata,
-  environmentalData?: {
-    temperature: number;
-    humidity: number;
-    smokeDetected: boolean;
-  }
+  input: ImageAnalysisInput,
+  features: number[]
 ): SafetyHazard[] {
   const hazards: SafetyHazard[] = [];
-
-  // Check for fire risk (high temperature + smoke)
-  if (environmentalData?.temperature && environmentalData.temperature > 40) {
+  
+  // Simulate hazard detection based on anomalous features
+  const edgeComplexity = features.slice(32, 64).reduce((sum, f) => sum + Math.abs(f - 0.5), 0) / 32;
+  const colorVariation = features.slice(64, 96).reduce((sum, f, i, arr) => 
+    i > 0 ? sum + Math.abs(f - arr[i - 1]) : sum, 0) / 31;
+  
+  if (edgeComplexity > 0.3) {
     hazards.push({
-      hazardId: `hazard_${Date.now()}_fire`,
-      type: 'fire-risk',
-      severity: environmentalData.smokeDetected ? 'critical' : 'high',
-      location: metadata.location,
-      timestamp: new Date(),
-      confidence: environmentalData.smokeDetected ? 95 : 70,
-      description: `Elevated temperature (${environmentalData.temperature}°C)${environmentalData.smokeDetected ? ' and smoke detected' : ''}`,
-      immediateAction: 'Evacuate area and contact emergency services',
-      requiresEvacuation: environmentalData.smokeDetected,
-    });
-  }
-
-  // Check for slip hazards (high humidity in certain locations)
-  if (environmentalData?.humidity && environmentalData.humidity > 80 &&
-      (metadata.type === 'lobby' || metadata.type === 'corridor')) {
-    hazards.push({
-      hazardId: `hazard_${Date.now()}_slip`,
-      type: 'slip-hazard',
+      hazardType: 'obstacle',
       severity: 'medium',
-      location: metadata.location,
-      timestamp: new Date(),
-      confidence: 75,
-      description: `High humidity (${environmentalData.humidity}%) may create slippery surfaces`,
-      immediateAction: 'Place caution signs and increase monitoring',
-      requiresEvacuation: false,
+      location: input.location,
+      description: 'Potential obstruction detected in walkway',
+      immediateAction: false,
+      riskLevel: 60,
+      mitigation: 'Clear walkways and ensure proper signage',
     });
   }
-
-  // Check for obstructions (low sharpness in corridors)
-  if (metadata.sharpness < 30 && metadata.type === 'corridor') {
+  
+  if (colorVariation > 0.4) {
     hazards.push({
-      hazardId: `hazard_${Date.now()}_obstruction`,
-      type: 'obstruction',
-      severity: 'medium',
-      location: metadata.location,
-      timestamp: new Date(),
-      confidence: 65,
-      description: 'Potential obstruction blocking corridor',
-      immediateAction: 'Clear obstruction and verify emergency exit accessibility',
-      requiresEvacuation: false,
-    });
-  }
-
-  // Check for electrical issues (very low brightness)
-  if (metadata.brightness < 30 && metadata.type === 'facility') {
-    hazards.push({
-      hazardId: `hazard_${Date.now()}_electrical`,
-      type: 'electrical',
+      hazardType: 'spill',
       severity: 'high',
-      location: metadata.location,
-      timestamp: new Date(),
-      confidence: 70,
-      description: 'Abnormally low lighting may indicate electrical issues',
-      immediateAction: 'Inspect electrical systems and lighting fixtures',
-      requiresEvacuation: false,
+      location: input.location,
+      description: 'Possible liquid spill or slippery surface',
+      immediateAction: true,
+      riskLevel: 80,
+      mitigation: 'Immediate cleanup and place warning signs',
     });
   }
-
+  
   return hazards;
 }
 
-/**
- * Assesses asset condition for predictive maintenance
- */
+// ============================================================================
+// Asset Condition Tracking
+// ============================================================================
+
 export function assessAssetCondition(
-  assetId: string,
-  assetType: string,
-  location: string,
-  visualData: {
-    appearance: number; // 0-100
-    wearVisible: boolean;
-    lastInspectionDays: number;
-  },
-  usageMetrics?: {
-    hoursUsed: number;
-    cyclesCompleted: number;
-  }
+  input: ImageAnalysisInput,
+  features: number[],
+  assetType: string
 ): AssetCondition {
-  // Base condition from appearance
-  let conditionScore = visualData.appearance;
-
-  // Wear factor
-  const wearScore = visualData.wearVisible ? 50 : 90;
-
-  // Time since last inspection affects confidence
-  const inspectionRecency = Math.max(0, 100 - visualData.lastInspectionDays);
-
-  // Usage-based wear calculation
-  let usageWear = 100;
-  if (usageMetrics) {
-    const expectedLife = 10000; // hours
-    usageWear = Math.max(0, 100 - (usageMetrics.hoursUsed / expectedLife) * 100);
-  }
-
-  // Combine factors
-  const functionality = Math.round((conditionScore + inspectionRecency) / 2);
-  const wear = Math.round((wearScore + usageWear) / 2);
-  const finalConditionScore = Math.round((conditionScore + wearScore + usageWear) / 3);
-
-  // Estimate remaining life
-  const estimatedRemainingLife = Math.round((wear / 100) * 365 * 3); // Up to 3 years
-
-  // Determine replacement priority
-  let replacementPriority: AssetCondition['replacementPriority'];
-  if (finalConditionScore < 30) {
-    replacementPriority = 'urgent';
-  } else if (finalConditionScore < 50) {
-    replacementPriority = 'high';
-  } else if (finalConditionScore < 70) {
-    replacementPriority = 'medium';
+  // Simulate asset wear detection
+  const wearLevel = 1 - (features.reduce((sum, f) => sum + f, 0) / features.length);
+  const lifeRemaining = Math.max(0, 100 - (wearLevel * 150));
+  
+  let condition: AssetCondition['condition'];
+  if (lifeRemaining > 80) {
+    condition = 'new';
+  } else if (lifeRemaining > 60) {
+    condition = 'good';
+  } else if (lifeRemaining > 40) {
+    condition = 'worn';
+  } else if (lifeRemaining > 20) {
+    condition = 'damaged';
   } else {
-    replacementPriority = 'low';
+    condition = 'needs_replacement';
   }
-
-  const maintenanceNeeded = finalConditionScore < 70 || visualData.wearVisible;
-
+  
+  const assetCosts: Record<string, number> = {
+    furniture: 500,
+    fixture: 300,
+    equipment: 2000,
+    flooring: 1500,
+    wallcovering: 800,
+  };
+  
+  const replacementCost = assetCosts[assetType.toLowerCase()] || 1000;
+  
   return {
-    assetId,
     assetType,
-    location,
-    conditionScore: finalConditionScore,
-    wear,
-    functionality,
-    lastInspected: new Date(Date.now() - visualData.lastInspectionDays * 24 * 60 * 60 * 1000),
-    estimatedRemainingLife,
-    replacementPriority,
-    maintenanceNeeded,
-  };
-}
-
-/**
- * Performs comprehensive cleanliness assessment
- */
-export function assessCleanliness(
-  location: string,
-  imageData: ImageMetadata,
-  detailedScans?: {
-    floorCoverage: number; // 0-100
-    wallCondition: number; // 0-100
-    fixturesCleanliness: number; // 0-100
-    furnitureCondition: number; // 0-100;
-  }
-): CleanlinessAssessment {
-  // Base cleanliness from image brightness
-  const baseCleanliness = (imageData.brightness / 255) * 100;
-
-  // Surface scores - map detailedScans properties to expected surface names
-  const surfaces = detailedScans ? {
-    floor: detailedScans.floorCoverage,
-    walls: detailedScans.wallCondition,
-    fixtures: detailedScans.fixturesCleanliness,
-    furniture: detailedScans.furnitureCondition,
-  } : {
-    floor: baseCleanliness,
-    walls: baseCleanliness * 1.1,
-    fixtures: baseCleanliness * 0.9,
-    furniture: baseCleanliness * 0.95,
-  };
-
-  // Ensure all scores are 0-100
-  surfaces.floor = Math.min(100, surfaces.floor);
-  surfaces.walls = Math.min(100, surfaces.walls);
-  surfaces.fixtures = Math.min(100, surfaces.fixtures);
-  surfaces.furniture = Math.min(100, surfaces.furniture);
-
-  // Overall cleanliness
-  const overallCleanliness = Math.round(
-    (surfaces.floor * 0.3 +
-     surfaces.walls * 0.2 +
-     surfaces.fixtures * 0.25 +
-     surfaces.furniture * 0.25)
-  );
-
-  // Detect dirt patterns
-  const detectedDirt: CleanlinessAssessment['detectedDirt'] = [];
-
-  if (surfaces.floor < 70) {
-    detectedDirt.push({
-      type: 'debris',
-      severity: 100 - surfaces.floor,
-      location: 'floor',
-    });
-  }
-
-  if (surfaces.walls < 80) {
-    detectedDirt.push({
-      type: 'stain',
-      severity: 100 - surfaces.walls,
-      location: 'walls',
-    });
-  }
-
-  if (surfaces.fixtures < 75) {
-    detectedDirt.push({
-      type: 'dust',
-      severity: 100 - surfaces.fixtures,
-      location: 'fixtures',
-    });
-  }
-
-  // Odor detection simulation (based on cleanliness level)
-  const odorDetection = overallCleanliness < 60 ? {
-    detected: true,
-    type: 'mustiness',
-    intensity: 100 - overallCleanliness,
-  } : { detected: false };
-
-  // Recommendations
-  const recommendations: string[] = [];
-  if (overallCleanliness < 70) {
-    recommendations.push('Schedule immediate deep cleaning');
-  }
-  if (surfaces.floor < 70) {
-    recommendations.push('Focus on floor cleaning and maintenance');
-  }
-  if (surfaces.fixtures < 70) {
-    recommendations.push('Clean and polish fixtures');
-  }
-  if (detectedDirt.length > 2) {
-    recommendations.push('Comprehensive cleaning required across multiple surfaces');
-  }
-  if (odorDetection.detected) {
-    recommendations.push('Address odor sources and improve ventilation');
-  }
-
-  return {
-    location,
-    timestamp: new Date(),
-    overallCleanliness,
-    surfaces,
-    detectedDirt,
-    odorDetection,
-    recommendations,
-  };
-}
-
-/**
- * Analyzes trends across multiple vision assessments
- */
-export function analyzeVisionTrends(
-  assessments: FacilityCondition[]
-): VisionAnalytics {
-  if (assessments.length === 0) {
-    throw new Error('At least one assessment is required');
-  }
-
-  const totalImages = assessments.length;
-  const averageConditionScore = Math.round(
-    assessments.reduce((sum, a) => sum + a.conditionScore, 0) / totalImages
-  );
-  const averageCleanliness = Math.round(
-    assessments.reduce((sum, a) => sum + a.cleanliness, 0) / totalImages
-  );
-  const issuesDetected = assessments.reduce((sum, a) => sum + a.detectedIssues.length, 0);
-
-  const locationsMonitored = [...new Set(assessments.map(a => a.location))];
-
-  // Trend analysis
-  const firstHalf = assessments.slice(0, Math.floor(assessments.length / 2));
-  const secondHalf = assessments.slice(Math.floor(assessments.length / 2));
-
-  const firstAvg = firstHalf.reduce((sum, a) => sum + a.conditionScore, 0) / firstHalf.length;
-  const secondAvg = secondHalf.reduce((sum, a) => sum + a.conditionScore, 0) / secondHalf.length;
-
-  const improving = secondAvg > firstAvg;
-  const changeRate = ((secondAvg - firstAvg) / firstAvg) * 100;
-  const prediction = Math.round(secondAvg + (secondAvg - firstAvg));
-
-  return {
-    totalImages,
-    averageConditionScore,
-    averageCleanliness,
-    issuesDetected,
-    hazardsDetected: 0, // Would be calculated from separate hazard tracking
-    locationsMonitored,
-    trendAnalysis: {
-      improving,
-      changeRate: Math.round(changeRate),
-      prediction: Math.max(0, Math.min(100, prediction)),
-    },
+    condition,
+    lifeRemaining: Math.round(lifeRemaining),
+    replacementCost,
+    maintenanceSchedule: lifeRemaining < 50 ? 'quarterly' : 'annual',
   };
 }
 
 // ============================================================================
-// Helper Functions
+// Main Analysis Function
 // ============================================================================
 
-function generateHeatmap(occupancyRate: number): number[][] {
-  // Generate simple 10x10 heatmap
-  const size = 10;
-  const heatmap: number[][] = [];
-
-  for (let i = 0; i < size; i++) {
-    const row: number[] = [];
-    for (let j = 0; j < size; j++) {
-      // Center has higher density
-      const distance = Math.sqrt(Math.pow(i - size/2, 2) + Math.pow(j - size/2, 2));
-      const centerFactor = 1 - (distance / (size / 2));
-      const value = Math.round(occupancyRate * centerFactor * (0.8 + Math.random() * 0.4));
-      row.push(Math.max(0, Math.min(100, value)));
+export async function analyzeImage(
+  input: ImageAnalysisInput,
+  options: {
+    roomCapacity?: number;
+    assetType?: string;
+  } = {}
+): Promise<ImageAnalysisResult> {
+  const startTime = Date.now();
+  
+  const features = ImageProcessor.extractFeatures(input.imageData);
+  const detections: Detection[] = [];
+  const insights: string[] = [];
+  const alerts: VisionAlert[] = [];
+  let overallScore = 100;
+  
+  switch (input.analysisType) {
+    case 'facility': {
+      const condition = assessFacilityCondition(input, features);
+      overallScore = condition.score;
+      
+      detections.push({
+        type: 'facility_condition',
+        label: condition.condition,
+        confidence: 0.85,
+        description: `Facility condition: ${condition.condition}`,
+      });
+      
+      insights.push(`Facility is in ${condition.condition} condition`);
+      if (condition.maintenanceNeeded) {
+        insights.push(`Estimated maintenance cost: $${condition.estimatedCost}`);
+        
+        alerts.push({
+          alertId: `alert-${input.imageId}`,
+          type: 'maintenance',
+          severity: condition.priority === 'urgent' ? 'critical' : 'warning',
+          message: `Facility requires ${condition.priority} priority maintenance`,
+          location: input.location,
+          action: 'Schedule maintenance inspection',
+        });
+      }
+      break;
     }
-    heatmap.push(row);
+    
+    case 'occupancy': {
+      const occupancy = detectOccupancy(input, features, options.roomCapacity || 50);
+      overallScore = 100 - occupancy.capacityUtilization;
+      
+      detections.push({
+        type: 'occupancy',
+        label: occupancy.crowdDensity,
+        confidence: 0.75,
+        description: `Detected ${occupancy.peopleCount} people`,
+      });
+      
+      insights.push(`Crowd density: ${occupancy.crowdDensity}`);
+      insights.push(`Capacity utilization: ${occupancy.capacityUtilization}%`);
+      
+      if (occupancy.safetyLevel !== 'safe') {
+        alerts.push({
+          alertId: `alert-${input.imageId}`,
+          type: 'occupancy',
+          severity: occupancy.safetyLevel === 'danger' ? 'critical' : 'warning',
+          message: `Safety level: ${occupancy.safetyLevel}`,
+          location: input.location,
+          action: 'Monitor crowd levels and consider capacity restrictions',
+        });
+      }
+      break;
+    }
+    
+    case 'cleanliness': {
+      const cleanliness = assessCleanliness(input, features);
+      overallScore = cleanliness.cleanlinessScore;
+      
+      detections.push({
+        type: 'cleanliness',
+        label: cleanliness.rating,
+        confidence: 0.80,
+        description: `Cleanliness rating: ${cleanliness.rating}`,
+      });
+      
+      insights.push(`Cleanliness score: ${cleanliness.cleanlinessScore}/100`);
+      insights.push(...cleanliness.recommendations);
+      
+      if (!cleanliness.passed) {
+        alerts.push({
+          alertId: `alert-${input.imageId}`,
+          type: 'cleanliness',
+          severity: 'warning',
+          message: 'Cleanliness standards not met',
+          location: input.location,
+          action: 'Schedule cleaning and re-inspection',
+        });
+      }
+      break;
+    }
+    
+    case 'safety': {
+      const hazards = detectSafetyHazards(input, features);
+      const maxRisk = hazards.length > 0 ? Math.max(...hazards.map(h => h.riskLevel)) : 0;
+      overallScore = 100 - maxRisk;
+      
+      hazards.forEach(hazard => {
+        detections.push({
+          type: 'safety_hazard',
+          label: hazard.hazardType,
+          confidence: 0.70,
+          severity: hazard.severity,
+          description: hazard.description,
+        });
+        
+        insights.push(hazard.mitigation);
+        
+        if (hazard.immediateAction) {
+          alerts.push({
+            alertId: `alert-${input.imageId}-${hazard.hazardType}`,
+            type: 'safety',
+            severity: 'critical',
+            message: hazard.description,
+            location: input.location,
+            action: hazard.mitigation,
+          });
+        }
+      });
+      break;
+    }
+    
+    case 'asset': {
+      const asset = assessAssetCondition(input, features, options.assetType || 'equipment');
+      overallScore = asset.lifeRemaining;
+      
+      detections.push({
+        type: 'asset_condition',
+        label: asset.condition,
+        confidence: 0.75,
+        description: `Asset condition: ${asset.condition}`,
+      });
+      
+      insights.push(`Life remaining: ${asset.lifeRemaining}%`);
+      insights.push(`Replacement cost: $${asset.replacementCost}`);
+      
+      if (asset.lifeRemaining < 30) {
+        alerts.push({
+          alertId: `alert-${input.imageId}`,
+          type: 'maintenance',
+          severity: asset.condition === 'needs_replacement' ? 'error' : 'warning',
+          message: `Asset ${asset.condition}: plan for replacement`,
+          location: input.location,
+          action: 'Budget for asset replacement',
+        });
+      }
+      break;
+    }
   }
+  
+  const processingTime = Date.now() - startTime;
+  const confidence = detections.length > 0 
+    ? detections.reduce((sum, d) => sum + d.confidence, 0) / detections.length 
+    : 0;
+  
+  return {
+    imageId: input.imageId,
+    analysisType: input.analysisType,
+    detections,
+    overallScore: Math.round(overallScore),
+    confidence: Math.round(confidence * 100) / 100,
+    insights,
+    alerts,
+    processedAt: new Date(),
+    processingTime,
+  };
+}
 
-  return heatmap;
+// ============================================================================
+// Batch Processing
+// ============================================================================
+
+export async function analyzeBatch(
+  inputs: ImageAnalysisInput[],
+  options: { roomCapacity?: number; assetType?: string } = {}
+): Promise<ImageAnalysisResult[]> {
+  const results: ImageAnalysisResult[] = [];
+  
+  for (const input of inputs) {
+    const result = await analyzeImage(input, options);
+    results.push(result);
+  }
+  
+  return results;
 }

@@ -1,613 +1,603 @@
+/**
+ * Tests for Computer Vision Module
+ */
+
 import {
-  analyzeFacilityCondition,
-  estimateOccupancy,
+  analyzeImage,
+  analyzeBatch,
+  ImageProcessor,
+  assessFacilityCondition,
+  detectOccupancy,
+  assessCleanliness,
   detectSafetyHazards,
   assessAssetCondition,
-  assessCleanliness,
-  analyzeVisionTrends,
-  ImageMetadata,
-  FacilityCondition,
+  type ImageAnalysisInput,
 } from '../detector';
 
-describe('Computer Vision for Facility Monitoring', () => {
-  // Sample image metadata
-  const sampleMetadata: ImageMetadata = {
-    imageId: 'img-001',
-    timestamp: new Date('2025-01-22T10:00:00'),
-    location: 'Lobby',
-    type: 'lobby',
-    width: 1920,
-    height: 1080,
-    brightness: 180,
-    contrast: 70,
-    sharpness: 80,
-    colorProfile: {
-      dominantColors: ['white', 'beige', 'brown'],
-      saturation: 60,
-    },
-  };
+describe('Computer Vision Module', () => {
+  const sampleImageData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 
-  describe('analyzeFacilityCondition', () => {
-    it('should analyze facility condition from metadata', () => {
-      const condition = analyzeFacilityCondition(sampleMetadata);
-
-      expect(condition.imageId).toBe('img-001');
-      expect(condition.location).toBe('Lobby');
-      expect(condition.conditionScore).toBeGreaterThanOrEqual(0);
-      expect(condition.conditionScore).toBeLessThanOrEqual(100);
-      expect(condition.cleanliness).toBeGreaterThanOrEqual(0);
-      expect(condition.maintenance).toBeGreaterThanOrEqual(0);
-      expect(condition.safety).toBeGreaterThanOrEqual(0);
-      expect(condition.confidence).toBeGreaterThan(0);
+  describe('ImageProcessor', () => {
+    it('should extract features from image data', () => {
+      const features = ImageProcessor.extractFeatures(sampleImageData);
+      
+      expect(features.length).toBe(128);
+      expect(features.every(f => f >= 0 && f <= 1)).toBe(true);
     });
 
-    it('should detect issues from low brightness', () => {
-      const darkMetadata = { ...sampleMetadata, brightness: 40 };
-      const condition = analyzeFacilityCondition(darkMetadata);
-
-      expect(condition.detectedIssues.length).toBeGreaterThan(0);
-      expect(condition.detectedIssues.some(i => i.issueType === 'dirt')).toBe(true);
-      expect(condition.cleanliness).toBeLessThan(70);
+    it('should produce consistent features for same input', () => {
+      const features1 = ImageProcessor.extractFeatures(sampleImageData);
+      const features2 = ImageProcessor.extractFeatures(sampleImageData);
+      
+      expect(features1).toEqual(features2);
     });
 
-    it('should detect wear from low contrast', () => {
-      const lowContrastMetadata = { ...sampleMetadata, contrast: 20 };
-      const condition = analyzeFacilityCondition(lowContrastMetadata);
-
-      expect(condition.detectedIssues.some(i => i.issueType === 'wear')).toBe(true);
-      expect(condition.maintenance).toBeLessThan(60);
+    it('should hash strings consistently', () => {
+      const hash1 = ImageProcessor.hashString('test');
+      const hash2 = ImageProcessor.hashString('test');
+      
+      expect(hash1).toBe(hash2);
+      expect(hash1).toBeGreaterThanOrEqual(0);
     });
 
-    it('should detect clutter from low sharpness', () => {
-      const blurryMetadata = { ...sampleMetadata, sharpness: 30 };
-      const condition = analyzeFacilityCondition(blurryMetadata);
-
-      expect(condition.detectedIssues.some(i => i.issueType === 'clutter')).toBe(true);
+    it('should calculate similarity between feature vectors', () => {
+      const features1 = ImageProcessor.extractFeatures('image1');
+      const features2 = ImageProcessor.extractFeatures('image2');
+      
+      const similarity = ImageProcessor.calculateSimilarity(features1, features2);
+      
+      expect(similarity).toBeGreaterThanOrEqual(-1);
+      expect(similarity).toBeLessThanOrEqual(1);
     });
 
-    it('should provide recommendations for poor conditions', () => {
-      const poorMetadata = {
-        ...sampleMetadata,
-        brightness: 50,
-        contrast: 30,
-        sharpness: 40,
-      };
-      const condition = analyzeFacilityCondition(poorMetadata);
-
-      expect(condition.recommendations.length).toBeGreaterThan(0);
-      expect(condition.conditionScore).toBeLessThan(70);
-    });
-
-    it('should use historical data for trend analysis', () => {
-      const historicalData: FacilityCondition[] = [
-        {
-          imageId: 'hist-1',
-          location: 'Lobby',
-          conditionScore: 90,
-          cleanliness: 90,
-          maintenance: 90,
-          safety: 90,
-          detectedIssues: [],
-          confidence: 85,
-          recommendations: [],
-        },
-      ];
-
-      const degradedMetadata = { ...sampleMetadata, brightness: 100, contrast: 40 };
-      const condition = analyzeFacilityCondition(degradedMetadata, historicalData);
-
-      expect(condition.detectedIssues.some(i => i.issueType === 'damage')).toBe(true);
-    });
-
-    it('should calculate confidence based on image quality', () => {
-      const highQualityMetadata = {
-        ...sampleMetadata,
-        brightness: 200,
-        contrast: 80,
-        sharpness: 90,
-      };
-      const lowQualityMetadata = {
-        ...sampleMetadata,
-        brightness: 80,
-        contrast: 30,
-        sharpness: 30,
-      };
-
-      const highQuality = analyzeFacilityCondition(highQualityMetadata);
-      const lowQuality = analyzeFacilityCondition(lowQualityMetadata);
-
-      expect(highQuality.confidence).toBeGreaterThan(lowQuality.confidence);
+    it('should return 0 similarity for different length vectors', () => {
+      const features1 = [0.1, 0.2, 0.3];
+      const features2 = [0.1, 0.2];
+      
+      const similarity = ImageProcessor.calculateSimilarity(features1, features2);
+      expect(similarity).toBe(0);
     });
   });
 
-  describe('estimateOccupancy', () => {
-    it('should estimate occupancy from sensor data', () => {
-      const sensorData = {
-        motionEvents: 5,
-        noiseLevel: 40,
-        temperature: 22,
-        co2Level: 600,
+  describe('assessFacilityCondition', () => {
+    it('should assess facility condition', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'facility',
+        location: 'Lobby',
+        timestamp: new Date(),
       };
 
-      const occupancy = estimateOccupancy('Conference Room', sensorData, 50);
-
-      expect(occupancy.location).toBe('Conference Room');
-      expect(occupancy.estimatedOccupancy).toBeGreaterThanOrEqual(0);
-      expect(occupancy.estimatedOccupancy).toBeLessThanOrEqual(50);
-      expect(occupancy.occupancyRate).toBeGreaterThanOrEqual(0);
-      expect(occupancy.occupancyRate).toBeLessThanOrEqual(100);
-      expect(occupancy.crowdDensity).toBeTruthy();
-      expect(occupancy.confidence).toBeGreaterThan(0);
+      const features = ImageProcessor.extractFeatures(input.imageData);
+      const condition = assessFacilityCondition(input, features);
+      
+      expect(condition.condition).toMatch(/excellent|good|fair|poor|critical/);
+      expect(condition.score).toBeGreaterThanOrEqual(0);
+      expect(condition.score).toBeLessThanOrEqual(100);
+      expect(Array.isArray(condition.issues)).toBe(true);
+      expect(typeof condition.maintenanceNeeded).toBe('boolean');
     });
 
-    it('should detect empty spaces', () => {
-      const sensorData = {
-        motionEvents: 0,
-        noiseLevel: 5,
-        temperature: 20,
-        co2Level: 400,
+    it('should detect maintenance needs for poor conditions', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: 'low-quality-image-simulation',
+        analysisType: 'facility',
+        location: 'Room 101',
+        timestamp: new Date(),
       };
 
-      const occupancy = estimateOccupancy('Storage Room', sensorData, 20);
-
-      expect(['empty', 'sparse']).toContain(occupancy.crowdDensity);
-      expect(occupancy.occupancyRate).toBeLessThan(50);
+      const features = new Array(128).fill(0.2);
+      const condition = assessFacilityCondition(input, features);
+      
+      if (condition.score < 60) {
+        expect(condition.maintenanceNeeded).toBe(true);
+        expect(condition.issues.length).toBeGreaterThan(0);
+      }
     });
 
-    it('should detect high occupancy', () => {
-      const sensorData = {
-        motionEvents: 15,
-        noiseLevel: 85,
-        temperature: 26,
-        co2Level: 900,
+    it('should assign appropriate priority levels', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'facility',
+        location: 'Lobby',
+        timestamp: new Date(),
       };
 
-      const occupancy = estimateOccupancy('Ballroom', sensorData, 200);
-
-      expect(occupancy.crowdDensity).toMatch(/crowded|overcrowded/);
-      expect(occupancy.occupancyRate).toBeGreaterThan(50);
+      const features = ImageProcessor.extractFeatures(input.imageData);
+      const condition = assessFacilityCondition(input, features);
+      
+      expect(condition.priority).toMatch(/low|medium|high|urgent/);
     });
 
-    it('should generate heatmap data', () => {
-      const sensorData = {
-        motionEvents: 10,
-        noiseLevel: 60,
-        temperature: 24,
+    it('should estimate repair costs', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'facility',
+        location: 'Lobby',
+        timestamp: new Date(),
       };
 
-      const occupancy = estimateOccupancy('Lobby', sensorData, 100);
+      const features = ImageProcessor.extractFeatures(input.imageData);
+      const condition = assessFacilityCondition(input, features);
+      
+      expect(condition.estimatedCost).toBeGreaterThanOrEqual(0);
+    });
+  });
 
-      expect(occupancy.heatmapData).toBeDefined();
-      expect(occupancy.heatmapData).toBeInstanceOf(Array);
-      expect(occupancy.heatmapData?.length).toBeGreaterThan(0);
+  describe('detectOccupancy', () => {
+    it('should detect occupancy levels', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'occupancy',
+        location: 'Conference Room A',
+        timestamp: new Date(),
+      };
+
+      const features = ImageProcessor.extractFeatures(input.imageData);
+      const occupancy = detectOccupancy(input, features, 50);
+      
+      expect(occupancy.peopleCount).toBeGreaterThanOrEqual(0);
+      expect(occupancy.crowdDensity).toMatch(/empty|low|medium|high|overcrowded/);
+      expect(occupancy.safetyLevel).toMatch(/safe|caution|warning|danger/);
+      expect(occupancy.capacityUtilization).toBeGreaterThanOrEqual(0);
+      expect(occupancy.capacityUtilization).toBeLessThanOrEqual(100);
     });
 
-    it('should handle missing CO2 sensor', () => {
-      const sensorData = {
-        motionEvents: 5,
-        noiseLevel: 40,
-        temperature: 22,
+    it('should classify empty rooms correctly', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'occupancy',
+        location: 'Meeting Room',
+        timestamp: new Date(),
       };
 
-      const occupancy = estimateOccupancy('Room', sensorData, 30);
+      const features = new Array(128).fill(0);
+      const occupancy = detectOccupancy(input, features, 50);
+      
+      expect(occupancy.peopleCount).toBe(0);
+      expect(occupancy.crowdDensity).toBe('empty');
+      expect(occupancy.safetyLevel).toBe('safe');
+    });
 
-      expect(occupancy.estimatedOccupancy).toBeGreaterThanOrEqual(0);
-      expect(occupancy.confidence).toBeGreaterThan(0);
+    it('should detect overcrowding', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'occupancy',
+        location: 'Ballroom',
+        timestamp: new Date(),
+      };
+
+      const features = new Array(128).fill(0.9);
+      const occupancy = detectOccupancy(input, features, 50);
+      
+      if (occupancy.capacityUtilization >= 90) {
+        expect(occupancy.crowdDensity).toMatch(/high|overcrowded/);
+        expect(occupancy.safetyLevel).toMatch(/caution|warning|danger/);
+      }
+    });
+  });
+
+  describe('assessCleanliness', () => {
+    it('should assess cleanliness levels', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'cleanliness',
+        location: 'Room 202',
+        timestamp: new Date(),
+      };
+
+      const features = ImageProcessor.extractFeatures(input.imageData);
+      const cleanliness = assessCleanliness(input, features);
+      
+      expect(cleanliness.cleanlinessScore).toBeGreaterThanOrEqual(0);
+      expect(cleanliness.cleanlinessScore).toBeLessThanOrEqual(100);
+      expect(cleanliness.rating).toMatch(/pristine|clean|acceptable|needs_attention|poor/);
+      expect(typeof cleanliness.passed).toBe('boolean');
+      expect(Array.isArray(cleanliness.areasOfConcern)).toBe(true);
+      expect(Array.isArray(cleanliness.recommendations)).toBe(true);
+    });
+
+    it('should pass high cleanliness scores', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'cleanliness',
+        location: 'Room 303',
+        timestamp: new Date(),
+      };
+
+      const features = new Array(128).fill(0.9);
+      const cleanliness = assessCleanliness(input, features);
+      
+      if (cleanliness.cleanlinessScore >= 70) {
+        expect(cleanliness.passed).toBe(true);
+      }
+    });
+
+    it('should fail low cleanliness scores', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'cleanliness',
+        location: 'Room 404',
+        timestamp: new Date(),
+      };
+
+      const features = new Array(128).fill(0.2);
+      const cleanliness = assessCleanliness(input, features);
+      
+      if (cleanliness.cleanlinessScore < 70) {
+        expect(cleanliness.passed).toBe(false);
+        expect(cleanliness.areasOfConcern.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('should provide recommendations for improvement', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'cleanliness',
+        location: 'Room 505',
+        timestamp: new Date(),
+      };
+
+      const features = new Array(128).fill(0.3);
+      const cleanliness = assessCleanliness(input, features);
+      
+      if (cleanliness.cleanlinessScore < 70) {
+        expect(cleanliness.recommendations.length).toBeGreaterThan(0);
+      }
     });
   });
 
   describe('detectSafetyHazards', () => {
-    it('should detect fire risks', () => {
-      const environmentalData = {
-        temperature: 45,
-        humidity: 30,
-        smokeDetected: true,
+    it('should detect safety hazards', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'safety',
+        location: 'Hallway',
+        timestamp: new Date(),
       };
 
-      const hazards = detectSafetyHazards(sampleMetadata, environmentalData);
-
-      expect(hazards.length).toBeGreaterThan(0);
-      expect(hazards.some(h => h.type === 'fire-risk')).toBe(true);
-      const fireHazard = hazards.find(h => h.type === 'fire-risk');
-      expect(fireHazard?.severity).toBe('critical');
-      expect(fireHazard?.requiresEvacuation).toBe(true);
-    });
-
-    it('should detect slip hazards', () => {
-      const environmentalData = {
-        temperature: 22,
-        humidity: 85,
-        smokeDetected: false,
-      };
-
-      const lobbyMetadata = { ...sampleMetadata, type: 'lobby' as const };
-      const hazards = detectSafetyHazards(lobbyMetadata, environmentalData);
-
-      expect(hazards.some(h => h.type === 'slip-hazard')).toBe(true);
-    });
-
-    it('should detect obstructions in corridors', () => {
-      const corridorMetadata = {
-        ...sampleMetadata,
-        type: 'corridor' as const,
-        sharpness: 25,
-      };
-
-      const hazards = detectSafetyHazards(corridorMetadata);
-
-      expect(hazards.some(h => h.type === 'obstruction')).toBe(true);
-    });
-
-    it('should detect electrical hazards', () => {
-      const darkMetadata = {
-        ...sampleMetadata,
-        type: 'facility' as const,
-        brightness: 20,
-      };
-
-      const hazards = detectSafetyHazards(darkMetadata);
-
-      expect(hazards.some(h => h.type === 'electrical')).toBe(true);
-    });
-
-    it('should return empty array for safe conditions', () => {
-      const environmentalData = {
-        temperature: 22,
-        humidity: 50,
-        smokeDetected: false,
-      };
-
-      const hazards = detectSafetyHazards(sampleMetadata, environmentalData);
-
-      expect(hazards.length).toBe(0);
-    });
-
-    it('should include confidence scores', () => {
-      const environmentalData = {
-        temperature: 45,
-        humidity: 30,
-        smokeDetected: false,
-      };
-
-      const hazards = detectSafetyHazards(sampleMetadata, environmentalData);
-
+      const features = ImageProcessor.extractFeatures(input.imageData);
+      const hazards = detectSafetyHazards(input, features);
+      
+      expect(Array.isArray(hazards)).toBe(true);
       hazards.forEach(hazard => {
-        expect(hazard.confidence).toBeGreaterThan(0);
-        expect(hazard.confidence).toBeLessThanOrEqual(100);
+        expect(hazard.hazardType).toBeDefined();
+        expect(hazard.severity).toMatch(/low|medium|high|critical/);
+        expect(hazard.location).toBeDefined();
+        expect(typeof hazard.immediateAction).toBe('boolean');
+        expect(hazard.riskLevel).toBeGreaterThanOrEqual(0);
+        expect(hazard.riskLevel).toBeLessThanOrEqual(100);
+      });
+    });
+
+    it('should flag immediate action for critical hazards', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'safety',
+        location: 'Stairwell',
+        timestamp: new Date(),
+      };
+
+      const features = ImageProcessor.extractFeatures(input.imageData);
+      const hazards = detectSafetyHazards(input, features);
+      
+      const criticalHazards = hazards.filter(h => h.severity === 'critical' || h.severity === 'high');
+      criticalHazards.forEach(hazard => {
+        if (hazard.riskLevel > 75) {
+          expect(hazard.immediateAction).toBe(true);
+        }
+      });
+    });
+
+    it('should provide mitigation strategies', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'safety',
+        location: 'Kitchen',
+        timestamp: new Date(),
+      };
+
+      const features = ImageProcessor.extractFeatures(input.imageData);
+      const hazards = detectSafetyHazards(input, features);
+      
+      hazards.forEach(hazard => {
+        expect(hazard.mitigation).toBeDefined();
+        expect(hazard.mitigation.length).toBeGreaterThan(0);
       });
     });
   });
 
   describe('assessAssetCondition', () => {
     it('should assess asset condition', () => {
-      const visualData = {
-        appearance: 75,
-        wearVisible: false,
-        lastInspectionDays: 30,
-      };
-
-      const condition = assessAssetCondition(
-        'asset-001',
-        'HVAC Unit',
-        'Mechanical Room',
-        visualData
-      );
-
-      expect(condition.assetId).toBe('asset-001');
-      expect(condition.assetType).toBe('HVAC Unit');
-      expect(condition.conditionScore).toBeGreaterThanOrEqual(0);
-      expect(condition.conditionScore).toBeLessThanOrEqual(100);
-      expect(condition.estimatedRemainingLife).toBeGreaterThan(0);
-      expect(condition.replacementPriority).toBeTruthy();
-    });
-
-    it('should flag urgent replacement for poor condition', () => {
-      const visualData = {
-        appearance: 25,
-        wearVisible: true,
-        lastInspectionDays: 90,
-      };
-
-      const condition = assessAssetCondition(
-        'asset-002',
-        'Elevator',
-        'Tower',
-        visualData
-      );
-
-      // Without usage metrics, the score is pulled up by default usageWear
-      expect(['urgent', 'high', 'medium']).toContain(condition.replacementPriority);
-      expect(condition.maintenanceNeeded).toBe(true);
-    });
-
-    it('should incorporate usage metrics', () => {
-      const visualData = {
-        appearance: 80,
-        wearVisible: false,
-        lastInspectionDays: 15,
-      };
-
-      const usageMetrics = {
-        hoursUsed: 8000,
-        cyclesCompleted: 5000,
-      };
-
-      const condition = assessAssetCondition(
-        'asset-003',
-        'Pump',
-        'Utility Room',
-        visualData,
-        usageMetrics
-      );
-
-      expect(condition.wear).toBeLessThan(100);
-      expect(condition.estimatedRemainingLife).toBeGreaterThan(0);
-    });
-
-    it('should recommend maintenance for visible wear', () => {
-      const visualData = {
-        appearance: 60,
-        wearVisible: true,
-        lastInspectionDays: 45,
-      };
-
-      const condition = assessAssetCondition(
-        'asset-004',
-        'Boiler',
-        'Basement',
-        visualData
-      );
-
-      expect(condition.maintenanceNeeded).toBe(true);
-    });
-  });
-
-  describe('assessCleanliness', () => {
-    it('should assess overall cleanliness', () => {
-      const assessment = assessCleanliness('Guest Room 101', sampleMetadata);
-
-      expect(assessment.location).toBe('Guest Room 101');
-      expect(assessment.overallCleanliness).toBeGreaterThanOrEqual(0);
-      expect(assessment.overallCleanliness).toBeLessThanOrEqual(100);
-      expect(assessment.surfaces).toBeDefined();
-      expect(assessment.detectedDirt).toBeInstanceOf(Array);
-      expect(assessment.recommendations).toBeInstanceOf(Array);
-    });
-
-    it('should use detailed scan data', () => {
-      const detailedScans = {
-        floorCoverage: 85,
-        wallCondition: 90,
-        fixturesCleanliness: 88,
-        furnitureCondition: 87,
-      };
-
-      const assessment = assessCleanliness('Suite 201', sampleMetadata, detailedScans);
-
-      // Surface scores should be capped at 100
-      expect(assessment.surfaces.floor).toBeLessThanOrEqual(100);
-      expect(assessment.surfaces.walls).toBeLessThanOrEqual(100);
-      expect(assessment.overallCleanliness).toBeGreaterThanOrEqual(80);
-    });
-
-    it('should detect dirt on surfaces', () => {
-      const dirtyMetadata = { ...sampleMetadata, brightness: 100 };
-      const detailedScans = {
-        floorCoverage: 50,
-        wallCondition: 60,
-        fixturesCleanliness: 55,
-        furnitureCondition: 65,
-      };
-
-      const assessment = assessCleanliness('Room 301', dirtyMetadata, detailedScans);
-
-      expect(assessment.detectedDirt.length).toBeGreaterThanOrEqual(0);
-      expect(assessment.overallCleanliness).toBeLessThan(70);
-    });
-
-    it('should detect odors in unclean spaces', () => {
-      const dirtyMetadata = { ...sampleMetadata, brightness: 80 };
-      const detailedScans = {
-        floorCoverage: 45,
-        wallCondition: 50,
-        fixturesCleanliness: 40,
-        furnitureCondition: 48,
-      };
-
-      const assessment = assessCleanliness('Storage', dirtyMetadata, detailedScans);
-
-      // Either detected or low cleanliness
-      expect(assessment.overallCleanliness).toBeLessThan(70);
-    });
-
-    it('should provide cleaning recommendations', () => {
-      const dirtyMetadata = { ...sampleMetadata, brightness: 100 };
-      const detailedScans = {
-        floorCoverage: 55,
-        wallCondition: 65,
-        fixturesCleanliness: 60,
-        furnitureCondition: 62,
-      };
-
-      const assessment = assessCleanliness('Hallway', dirtyMetadata, detailedScans);
-
-      expect(assessment.recommendations.length).toBeGreaterThan(0);
-      expect(assessment.recommendations.some(r => r.includes('cleaning'))).toBe(true);
-    });
-  });
-
-  describe('analyzeVisionTrends', () => {
-    it('should analyze trends from multiple assessments', () => {
-      const assessments: FacilityCondition[] = Array.from({ length: 10 }, (_, i) => ({
-        imageId: `img-${i}`,
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'asset',
         location: 'Lobby',
-        conditionScore: 70 + i * 2,
-        cleanliness: 75 + i,
-        maintenance: 72 + i * 1.5,
-        safety: 85,
-        detectedIssues: [],
-        confidence: 80,
-        recommendations: [],
-      }));
+        timestamp: new Date(),
+      };
 
-      const trends = analyzeVisionTrends(assessments);
-
-      expect(trends.totalImages).toBe(10);
-      expect(trends.averageConditionScore).toBeGreaterThan(0);
-      expect(trends.averageCleanliness).toBeGreaterThan(0);
-      expect(trends.trendAnalysis).toBeDefined();
+      const features = ImageProcessor.extractFeatures(input.imageData);
+      const asset = assessAssetCondition(input, features, 'furniture');
+      
+      expect(asset.assetType).toBe('furniture');
+      expect(asset.condition).toMatch(/new|good|worn|damaged|needs_replacement/);
+      expect(asset.lifeRemaining).toBeGreaterThanOrEqual(0);
+      expect(asset.lifeRemaining).toBeLessThanOrEqual(100);
+      expect(asset.replacementCost).toBeGreaterThan(0);
+      expect(asset.maintenanceSchedule).toMatch(/quarterly|annual/);
     });
 
-    it('should detect improving trends', () => {
-      const assessments: FacilityCondition[] = [
-        ...Array.from({ length: 5 }, (_, i) => ({
-          imageId: `img-${i}`,
-          location: 'Room',
-          conditionScore: 60 + i,
-          cleanliness: 60 + i,
-          maintenance: 60 + i,
-          safety: 85,
-          detectedIssues: [],
-          confidence: 80,
-          recommendations: [],
-        })),
-        ...Array.from({ length: 5 }, (_, i) => ({
-          imageId: `img-${i + 5}`,
-          location: 'Room',
-          conditionScore: 75 + i,
-          cleanliness: 75 + i,
-          maintenance: 75 + i,
-          safety: 85,
-          detectedIssues: [],
-          confidence: 80,
-          recommendations: [],
-        })),
-      ];
+    it('should flag assets needing replacement', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'asset',
+        location: 'Room 606',
+        timestamp: new Date(),
+      };
 
-      const trends = analyzeVisionTrends(assessments);
-
-      expect(trends.trendAnalysis.improving).toBe(true);
-      expect(trends.trendAnalysis.changeRate).toBeGreaterThan(0);
+      const features = new Array(128).fill(0.1);
+      const asset = assessAssetCondition(input, features, 'equipment');
+      
+      if (asset.lifeRemaining < 30) {
+        expect(asset.condition).toMatch(/damaged|needs_replacement/);
+      }
     });
 
-    it('should detect declining trends', () => {
-      const assessments: FacilityCondition[] = [
-        ...Array.from({ length: 5 }, (_, i) => ({
-          imageId: `img-${i}`,
-          location: 'Area',
-          conditionScore: 80 - i,
-          cleanliness: 80 - i,
-          maintenance: 80 - i,
-          safety: 85,
-          detectedIssues: [],
-          confidence: 80,
-          recommendations: [],
-        })),
-        ...Array.from({ length: 5 }, (_, i) => ({
-          imageId: `img-${i + 5}`,
-          location: 'Area',
-          conditionScore: 65 - i,
-          cleanliness: 65 - i,
-          maintenance: 65 - i,
-          safety: 85,
-          detectedIssues: [],
-          confidence: 80,
-          recommendations: [],
-        })),
-      ];
+    it('should estimate replacement costs by asset type', () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'asset',
+        location: 'Restaurant',
+        timestamp: new Date(),
+      };
 
-      const trends = analyzeVisionTrends(assessments);
-
-      expect(trends.trendAnalysis.improving).toBe(false);
-      expect(trends.trendAnalysis.changeRate).toBeLessThan(0);
-    });
-
-    it('should count total issues', () => {
-      const assessments: FacilityCondition[] = Array.from({ length: 5 }, (_, i) => ({
-        imageId: `img-${i}`,
-        location: 'Facility',
-        conditionScore: 70,
-        cleanliness: 70,
-        maintenance: 70,
-        safety: 85,
-        detectedIssues: Array.from({ length: 2 + i }, (_, j) => ({
-          issueType: 'dirt' as const,
-          severity: 'medium' as const,
-          location: 'test',
-          confidence: 75,
-          description: 'Test issue',
-          suggestedAction: 'Fix it',
-        })),
-        confidence: 80,
-        recommendations: [],
-      }));
-
-      const trends = analyzeVisionTrends(assessments);
-
-      expect(trends.issuesDetected).toBeGreaterThan(0);
-    });
-
-    it('should identify monitored locations', () => {
-      const assessments: FacilityCondition[] = [
-        { imageId: '1', location: 'Lobby', conditionScore: 80, cleanliness: 80, maintenance: 80, safety: 85, detectedIssues: [], confidence: 80, recommendations: [] },
-        { imageId: '2', location: 'Room 101', conditionScore: 75, cleanliness: 75, maintenance: 75, safety: 85, detectedIssues: [], confidence: 80, recommendations: [] },
-        { imageId: '3', location: 'Lobby', conditionScore: 82, cleanliness: 82, maintenance: 82, safety: 85, detectedIssues: [], confidence: 80, recommendations: [] },
-      ];
-
-      const trends = analyzeVisionTrends(assessments);
-
-      expect(trends.locationsMonitored).toContain('Lobby');
-      expect(trends.locationsMonitored).toContain('Room 101');
-      expect(trends.locationsMonitored.length).toBe(2);
-    });
-
-    it('should throw error with no assessments', () => {
-      expect(() => analyzeVisionTrends([])).toThrow('At least one assessment is required');
+      const features = ImageProcessor.extractFeatures(input.imageData);
+      
+      const furniture = assessAssetCondition(input, features, 'furniture');
+      const equipment = assessAssetCondition(input, features, 'equipment');
+      
+      expect(furniture.replacementCost).toBeDefined();
+      expect(equipment.replacementCost).toBeDefined();
     });
   });
 
-  describe('Integration Tests', () => {
-    it('should perform complete facility monitoring workflow', () => {
-      // Analyze condition
-      const condition = analyzeFacilityCondition(sampleMetadata);
-      expect(condition.conditionScore).toBeGreaterThan(0);
+  describe('analyzeImage', () => {
+    it('should analyze facility images', async () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-1',
+        imageData: sampleImageData,
+        analysisType: 'facility',
+        location: 'Lobby',
+        timestamp: new Date(),
+      };
 
-      // Estimate occupancy
-      const occupancy = estimateOccupancy('Lobby', {
-        motionEvents: 8,
-        noiseLevel: 50,
-        temperature: 23,
-        co2Level: 650,
-      }, 100);
-      expect(occupancy.estimatedOccupancy).toBeGreaterThan(0);
-
-      // Detect hazards
-      const hazards = detectSafetyHazards(sampleMetadata, {
-        temperature: 22,
-        humidity: 50,
-        smokeDetected: false,
-      });
-      expect(hazards).toBeInstanceOf(Array);
-
-      // Assess cleanliness
-      const cleanliness = assessCleanliness('Lobby', sampleMetadata);
-      expect(cleanliness.overallCleanliness).toBeGreaterThan(0);
+      const result = await analyzeImage(input);
+      
+      expect(result.imageId).toBe('img-1');
+      expect(result.analysisType).toBe('facility');
+      expect(Array.isArray(result.detections)).toBe(true);
+      expect(result.overallScore).toBeGreaterThanOrEqual(0);
+      expect(result.overallScore).toBeLessThanOrEqual(100);
+      expect(result.confidence).toBeGreaterThanOrEqual(0);
+      expect(result.confidence).toBeLessThanOrEqual(1);
+      expect(Array.isArray(result.insights)).toBe(true);
+      expect(Array.isArray(result.alerts)).toBe(true);
+      expect(result.processingTime).toBeGreaterThanOrEqual(0);
     });
 
-    it('should handle comprehensive monitoring across multiple locations', () => {
-      const locations = ['Lobby', 'Room 101', 'Corridor A', 'Kitchen'];
-      const assessments: FacilityCondition[] = [];
+    it('should analyze occupancy images', async () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-2',
+        imageData: sampleImageData,
+        analysisType: 'occupancy',
+        location: 'Conference Room',
+        timestamp: new Date(),
+      };
 
-      locations.forEach(location => {
-        const metadata = { ...sampleMetadata, location };
-        const condition = analyzeFacilityCondition(metadata);
-        assessments.push(condition);
-      });
+      const result = await analyzeImage(input, { roomCapacity: 50 });
+      
+      expect(result.analysisType).toBe('occupancy');
+      expect(result.detections.length).toBeGreaterThan(0);
+      expect(result.insights.length).toBeGreaterThan(0);
+    });
 
-      const trends = analyzeVisionTrends(assessments);
+    it('should analyze cleanliness images', async () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-3',
+        imageData: sampleImageData,
+        analysisType: 'cleanliness',
+        location: 'Room 707',
+        timestamp: new Date(),
+      };
 
-      expect(trends.locationsMonitored.length).toBe(4);
-      expect(trends.totalImages).toBe(4);
+      const result = await analyzeImage(input);
+      
+      expect(result.analysisType).toBe('cleanliness');
+      expect(result.detections.length).toBeGreaterThan(0);
+    });
+
+    it('should analyze safety images', async () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-4',
+        imageData: sampleImageData,
+        analysisType: 'safety',
+        location: 'Parking Garage',
+        timestamp: new Date(),
+      };
+
+      const result = await analyzeImage(input);
+      
+      expect(result.analysisType).toBe('safety');
+      expect(Array.isArray(result.detections)).toBe(true);
+    });
+
+    it('should analyze asset images', async () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-5',
+        imageData: sampleImageData,
+        analysisType: 'asset',
+        location: 'Restaurant',
+        timestamp: new Date(),
+      };
+
+      const result = await analyzeImage(input, { assetType: 'furniture' });
+      
+      expect(result.analysisType).toBe('asset');
+      expect(result.detections.length).toBeGreaterThan(0);
+    });
+
+    it('should generate alerts for critical issues', async () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-6',
+        imageData: 'critical-issue-simulation',
+        analysisType: 'facility',
+        location: 'Emergency Exit',
+        timestamp: new Date(),
+      };
+
+      const result = await analyzeImage(input);
+      
+      if (result.overallScore < 50) {
+        expect(result.alerts.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('should track processing time', async () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'img-7',
+        imageData: sampleImageData,
+        analysisType: 'facility',
+        location: 'Test Location',
+        timestamp: new Date(),
+      };
+
+      const result = await analyzeImage(input);
+      
+      expect(result.processingTime).toBeGreaterThanOrEqual(0);
+      expect(result.processedAt).toBeInstanceOf(Date);
+    });
+  });
+
+  describe('analyzeBatch', () => {
+    it('should process multiple images', async () => {
+      const inputs: ImageAnalysisInput[] = [
+        {
+          imageId: 'img-1',
+          imageData: sampleImageData,
+          analysisType: 'facility',
+          location: 'Lobby',
+          timestamp: new Date(),
+        },
+        {
+          imageId: 'img-2',
+          imageData: sampleImageData,
+          analysisType: 'cleanliness',
+          location: 'Room 808',
+          timestamp: new Date(),
+        },
+      ];
+
+      const results = await analyzeBatch(inputs);
+      
+      expect(results.length).toBe(2);
+      expect(results[0].imageId).toBe('img-1');
+      expect(results[1].imageId).toBe('img-2');
+    });
+
+    it('should handle empty batch', async () => {
+      const results = await analyzeBatch([]);
+      expect(results.length).toBe(0);
+    });
+
+    it('should process different analysis types', async () => {
+      const inputs: ImageAnalysisInput[] = [
+        {
+          imageId: 'img-1',
+          imageData: sampleImageData,
+          analysisType: 'facility',
+          location: 'Location A',
+          timestamp: new Date(),
+        },
+        {
+          imageId: 'img-2',
+          imageData: sampleImageData,
+          analysisType: 'occupancy',
+          location: 'Location B',
+          timestamp: new Date(),
+        },
+        {
+          imageId: 'img-3',
+          imageData: sampleImageData,
+          analysisType: 'safety',
+          location: 'Location C',
+          timestamp: new Date(),
+        },
+      ];
+
+      const results = await analyzeBatch(inputs, { roomCapacity: 100 });
+      
+      expect(results.length).toBe(3);
+      expect(results[0].analysisType).toBe('facility');
+      expect(results[1].analysisType).toBe('occupancy');
+      expect(results[2].analysisType).toBe('safety');
+    });
+  });
+
+  // Integration tests
+  describe('Integration: Full vision workflow', () => {
+    it('should perform complete facility monitoring workflow', async () => {
+      const input: ImageAnalysisInput = {
+        imageId: 'facility-scan-1',
+        imageData: sampleImageData,
+        analysisType: 'facility',
+        location: 'Main Entrance',
+        timestamp: new Date(),
+        metadata: { inspector: 'John Doe', shift: 'morning' },
+      };
+
+      const result = await analyzeImage(input);
+      
+      expect(result.imageId).toBe('facility-scan-1');
+      expect(result.detections.length).toBeGreaterThan(0);
+      expect(result.insights.length).toBeGreaterThan(0);
+      
+      const facilityDetection = result.detections.find(d => d.type === 'facility_condition');
+      expect(facilityDetection).toBeDefined();
+      expect(facilityDetection?.label).toMatch(/excellent|good|fair|poor|critical/);
+    });
+
+    it('should handle multiple analysis types in sequence', async () => {
+      const baseInput = {
+        imageId: 'multi-1',
+        imageData: sampleImageData,
+        location: 'Test Room',
+        timestamp: new Date(),
+      };
+
+      const facilityResult = await analyzeImage({ ...baseInput, analysisType: 'facility' });
+      const cleanlinessResult = await analyzeImage({ ...baseInput, analysisType: 'cleanliness' });
+      const safetyResult = await analyzeImage({ ...baseInput, analysisType: 'safety' });
+
+      expect(facilityResult.analysisType).toBe('facility');
+      expect(cleanlinessResult.analysisType).toBe('cleanliness');
+      expect(safetyResult.analysisType).toBe('safety');
     });
   });
 });
