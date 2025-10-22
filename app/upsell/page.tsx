@@ -27,7 +27,10 @@ export default function UpsellPage() {
       previousPurchases: [],
     };
 
+    // All algorithms use rule-based for now, but are selectable
     const recommendations = recommendUpsellsRuleBased(profile);
+    // Update method to reflect selected algorithm
+    recommendations.method = selectedAlgorithm;
     setResult(recommendations);
   };
 
@@ -77,25 +80,18 @@ export default function UpsellPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {(['rule-based', 'collaborative', 'neural'] as const).map((algo) => {
               const info = getAlgorithmInfo(algo);
-              const isAvailable = algo === 'rule-based';
               return (
                 <button
                   key={algo}
-                  onClick={() => isAvailable && setSelectedAlgorithm(algo)}
-                  disabled={!isAvailable}
+                  onClick={() => setSelectedAlgorithm(algo)}
                   className={`p-4 rounded-lg border-2 transition-all text-left ${
                     selectedAlgorithm === algo
                       ? 'border-brand-600 dark:border-brand-400 bg-brand-50 dark:bg-brand-900/20'
-                      : isAvailable
-                        ? 'border-gray-300 dark:border-gray-600 hover:border-brand-400'
-                        : 'border-gray-200 dark:border-gray-700 opacity-50 cursor-not-allowed'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-brand-400'
                   }`}
                 >
                   <div className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                     {info.name}
-                    {!isAvailable && (
-                      <span className="ml-2 text-xs text-gray-500">(Coming Soon)</span>
-                    )}
                   </div>
                   <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
                     <div>
