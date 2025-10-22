@@ -15,6 +15,11 @@ import { CaseStudies } from './src/payload/collections/CaseStudies'
 import { Media } from './src/payload/collections/Media'
 import { Users } from './src/payload/collections/Users'
 
+// Timefold Constraint Management
+import { Tenants } from './src/payload/collections/Tenants'
+import { ConstraintTemplates } from './src/payload/collections/ConstraintTemplates'
+import { TenantConstraintConfigs } from './src/payload/collections/TenantConstraintConfigs'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -35,6 +40,7 @@ export default buildConfig({
   },
 
   collections: [
+    // Content
     Posts,
     Pages,
     Authors,
@@ -42,6 +48,13 @@ export default buildConfig({
     Tags,
     CaseStudies,
     Media,
+
+    // Timefold Constraints
+    Tenants,
+    ConstraintTemplates,
+    TenantConstraintConfigs,
+
+    // System
     Users,
   ],
 
