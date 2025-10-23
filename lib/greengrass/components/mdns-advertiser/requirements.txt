@@ -1,0 +1,3 @@
+# mDNS Service Advertiser Dependencies
+
+zeroconf==0.131.0

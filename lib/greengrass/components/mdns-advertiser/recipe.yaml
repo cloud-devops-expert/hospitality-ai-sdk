@@ -1,0 +1,148 @@
+---
+RecipeFormatVersion: '2020-01-25'
+ComponentName: com.hospitality-ai.mdns-advertiser
+ComponentVersion: '1.0.0'
+ComponentDescription: |
+  mDNS Service Advertiser for AWS IoT Greengrass.
+  Advertises the Greengrass server as "greengrass.local" on the local network
+  so staff devices can automatically discover and connect to it.
+
+  Service: _hospitality._tcp.local.
+  Hostname: greengrass.local
+  Port: 8000 (API gateway)
+
+ComponentPublisher: Hospitality AI SDK
+ComponentConfiguration:
+  DefaultConfiguration:
+    ServiceName: "Hospitality AI - Greengrass"
+    ServiceType: "_hospitality._tcp.local."
+    Port: 8000
+    Properties:
+      version: "1.0.0"
+      api: "v1"
+      endpoints: "sentiment,vision,speech,allocation,forecast"
+      manufacturer: "Hospitality AI SDK"
+      model: "AWS IoT Greengrass Core v2"
+      security: "network-isolated"
+
+Manifests:
+  - Platform:
+      os: linux
+
+    Lifecycle:
+      # Install dependencies
+      Install:
+        Script: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r {artifacts:path}/requirements.txt
+          echo "mDNS advertiser dependencies installed"
+
+      # Start the mDNS advertiser service
+      Run:
+        Script: |
+          echo "Starting mDNS advertiser service..."
+
+          # Export configuration as environment variables
+          export SERVICE_NAME="{configuration:/ServiceName}"
+          export SERVICE_TYPE="{configuration:/ServiceType}"
+          export PORT="{configuration:/Port}"
+
+          # Run the mDNS service
+          python3 {artifacts:path}/mdns_service.py
+
+        RequiresPrivilege: false
+
+      # Shutdown gracefully
+      Shutdown:
+        Script: |
+          echo "Stopping mDNS advertiser service..."
+          # Python script handles SIGTERM gracefully
+        Timeout: 10
+
+    Artifacts:
+      - URI: s3://hospitality-ai-greengrass-artifacts/mdns-advertiser/1.0.0/mdns_service.py
+        Permission:
+          Read: OWNER
+          Execute: NONE
+      - URI: s3://hospitality-ai-greengrass-artifacts/mdns-advertiser/1.0.0/requirements.txt
+        Permission:
+          Read: OWNER
+          Execute: NONE
+
+ComponentDependencies:
+  # No dependencies - this is a standalone component
+  # However, it should be deployed alongside the API gateway component
+  # so that the advertised port (8000) is actually available
+
+Lifecycle:
+  # The mDNS advertiser should run continuously
+  # It will automatically restart if it crashes
+  SetEnv:
+    PYTHONUNBUFFERED: "1"
+    PYTHONDONTWRITEBYTECODE: "1"
+
+---
+# DEPLOYMENT NOTES
+#
+# 1. Upload artifacts to S3:
+#    aws s3 cp lib/greengrass/components/mdns-advertiser/mdns_service.py \
+#      s3://hospitality-ai-greengrass-artifacts/mdns-advertiser/1.0.0/
+#    aws s3 cp lib/greengrass/components/mdns-advertiser/requirements.txt \
+#      s3://hospitality-ai-greengrass-artifacts/mdns-advertiser/1.0.0/
+#
+# 2. Create the component:
+#    aws greengrassv2 create-component-version \
+#      --inline-recipe fileb://recipe.yaml \
+#      --region us-east-1
+#
+# 3. Deploy to thing group:
+#    aws greengrassv2 create-deployment \
+#      --target-arn "arn:aws:iot:us-east-1:ACCOUNT:thinggroup/HospitalityAI" \
+#      --components '{
+#        "com.hospitality-ai.mdns-advertiser": {
+#          "componentVersion": "1.0.0",
+#          "configurationUpdate": {
+#            "merge": "{\"ServiceName\":\"Hospitality AI - Property 123\"}"
+#          }
+#        }
+#      }'
+#
+# 4. Verify deployment:
+#    # On the Greengrass device:
+#    sudo /greengrass/v2/bin/greengrass-cli component list
+#    sudo /greengrass/v2/bin/greengrass-cli component details \
+#      --name com.hospitality-ai.mdns-advertiser
+#
+# 5. Test mDNS discovery:
+#    # On macOS:
+#    dns-sd -B _hospitality._tcp local.
+#    dns-sd -L "Hospitality AI - Greengrass" _hospitality._tcp local.
+#    ping greengrass.local
+#
+#    # On Linux:
+#    avahi-browse -r _hospitality._tcp
+#    ping greengrass.local
+#
+#    # On Windows (with Bonjour Print Services):
+#    dns-sd -B _hospitality._tcp local.
+#    ping greengrass.local
+#
+# 6. Check logs:
+#    sudo tail -f /greengrass/v2/logs/com.hospitality-ai.mdns-advertiser.log
+#
+# TROUBLESHOOTING:
+#
+# - If mDNS not working on Linux, ensure Avahi is installed and running:
+#   sudo apt-get install avahi-daemon avahi-utils
+#   sudo systemctl start avahi-daemon
+#   sudo systemctl enable avahi-daemon
+#
+# - If port 5353 (mDNS) is blocked, check firewall:
+#   sudo ufw allow 5353/udp
+#   sudo iptables -A INPUT -p udp --dport 5353 -j ACCEPT
+#
+# - If .local resolution not working, check /etc/nsswitch.conf:
+#   hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4
+#
+# - For security, mDNS should only work on property LAN (VLAN 20):
+#   Configure Greengrass to bind mDNS only to property network interface
