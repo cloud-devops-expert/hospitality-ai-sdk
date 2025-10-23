@@ -197,20 +197,22 @@ When adding new features:
 
 ### Edge-First Development (CRITICAL)
 
-- **RULE 16**: **EDGE-FIRST ML ARCHITECTURE (HARD RULE)** - ALL ML inference MUST attempt edge/local processing before cloud
-  - **90% MUST run on AWS IoT Greengrass** - On-premise edge devices at each property (TIER 1 - PRIMARY)
+- **RULE 16**: **EDGE-FIRST ML ARCHITECTURE (HARD RULE)** - B2B-only, on-premise first
+  - **95% MUST run on AWS IoT Greengrass** - On-premise edge devices at each property (PRIMARY)
+    - **B2B Focus**: Staff operations only (no guest-facing apps)
     - Full Python ML stack (PyTorch, TensorFlow, Transformers, scikit-learn)
     - Real-time inference <50ms via local network
     - On-premise PMS integration, no cloud latency
     - One Greengrass Core device per property ($400 hardware, $204/year AWS)
-    - **Target**: 90%+ of B2B operations on-premise at near-zero marginal cost
-  - **9% MAY run on browser/mobile** - Guest-facing apps, kiosks, fallback (TIER 2 - SECONDARY)
-    - Transformers.js, TensorFlow Lite, ML Kit for consumer touchpoints
-    - Use when guest has mobile device but no property network access
-    - Offline-capable for degraded network scenarios
-  - **1% MAY use cloud APIs** - Batch processing, multi-property analytics (TIER 3 - TERTIARY)
-    - ONLY when technically impossible on-premise or user explicitly opts-in
-    - Model training, cross-property benchmarking, historical aggregation
+    - **Target**: 95%+ of B2B operations on-premise at near-zero marginal cost
+  - **5% MAY use cloud APIs** - Batch processing, multi-property analytics (SECONDARY)
+    - ONLY when technically impossible on-premise or requires cross-property data
+    - Model training, chain-wide benchmarking, historical aggregation
+    - Year-end reporting, regulatory compliance
+  - **NOT NEEDED**: Browser/Mobile ML (we're B2B only, not B2C)
+    - No guest-facing apps
+    - No kiosks or consumer touchpoints
+    - Focus 100% on property staff operations
   - **Cost Savings**: 97% reduction vs. cloud-heavy ($1.7M saved over 3 years)
   - **Reference**: `.agent/docs/iot-greengrass-architecture.md` (MANDATORY reading)
 
@@ -226,17 +228,14 @@ When adding new features:
 - **RULE 23**: ALWAYS implement both light and dark modes
 - **RULE 24**: Ensure all UI components support theme switching
 
-## Performance Targets
+## Performance Targets (B2B Only)
 
-- Traditional methods: <20ms
-- **IoT Greengrass (PRIMARY)**: <50ms - On-premise edge inference
-- Browser ML (Transformers.js): 50-200ms - Guest apps, kiosks
-- Mobile ML (TensorFlow Lite): 50-150ms - Mobile guest apps
-- Edge ML (Cloudflare Workers): 100-400ms - Global edge functions (rare)
-- Cloud APIs (LAST RESORT): <1000ms - Batch processing only
-- **Target (B2B)**: 90%+ operations at <50ms and near-$0 marginal cost (Greengrass)
-- **Target (B2C)**: 95%+ operations at <200ms and $0 cloud cost (browser/mobile)
-- Average cost per operation: <$0.00001 (target: $0 after initial hardware)
+- Traditional methods: <20ms (rules-based, zero ML cost)
+- **IoT Greengrass (PRIMARY - 95%)**: <50ms - On-premise edge inference for ALL staff operations
+- Cloud APIs (SECONDARY - 5%): <1000ms - Batch processing, multi-property analytics only
+- **Target**: 95%+ operations at <50ms and near-$0 marginal cost (Greengrass on-premise)
+- Average cost per operation: $0 (after initial $400 hardware per property)
+- **No Browser/Mobile ML needed** (B2B staff only, not consumer guests)
 
 ## Quality Checklist
 
@@ -256,27 +255,27 @@ Before marking a feature complete:
 
 See `.agent/docs/implementation-roadmap.md` for detailed 24-month plan.
 
-**Priority areas (EDGE-FIRST approach)**:
+**Priority areas (B2B EDGE-FIRST approach)**:
 
-1. **AWS IoT Greengrass** - Month 1-3 (HIGHEST PRIORITY - B2B PRIMARY)
+1. **AWS IoT Greengrass** - Month 1-3 (HIGHEST PRIORITY - B2B ONLY)
    - One device per property, full Python ML stack
    - On-premise sentiment, vision, speech, forecasting
-   - <50ms latency, 90% of B2B workloads
+   - <50ms latency, 95% of ALL B2B workloads
    - $40K Year 1 hardware, $204/year AWS cost
-2. **Browser/Mobile ML** - Month 2-4 (HIGH PRIORITY - B2C SECONDARY)
-   - Transformers.js for guest web apps
-   - TensorFlow Lite/ML Kit for mobile guest apps
-   - Kiosk applications, offline guest experiences
-3. **Edge Functions** - Month 4-5 (MEDIUM PRIORITY - GLOBAL FALLBACK)
-   - Cloudflare Workers for global edge inference
-   - Use when Greengrass unreachable or multi-property aggregation
-4. **Model Optimization** - Month 3-6 (ONGOING)
-   - Quantization for faster Greengrass inference
-   - Model pruning for browser/mobile deployment
-5. **Cloud APIs** - Month 6+ (LOWEST PRIORITY - BATCH ONLY)
-   - Multi-property analytics, model training, historical batch processing
+2. **Model Optimization** - Month 3-6 (HIGH PRIORITY - ONGOING)
+   - Quantization for faster Greengrass inference on CPU
+   - Model compression for Intel NUC deployment
+   - GPU acceleration for Jetson devices (high-volume properties)
+3. **Cloud APIs** - Month 6+ (LOW PRIORITY - BATCH ONLY)
+   - Multi-property analytics (chain-wide benchmarking)
+   - Model training (quarterly model updates)
+   - Historical batch processing (year-end reports)
+4. **~~Browser/Mobile ML~~** - NOT NEEDED (we're B2B only, not B2C)
+   - No guest-facing apps
+   - No kiosks or consumer touchpoints
+   - Focus 100% on staff operations via Greengrass
 
-**Hard Rule**: 90%+ of B2B ML operations MUST run on-premise (Greengrass) at near-zero marginal cost.
+**Hard Rule**: 95%+ of B2B ML operations MUST run on-premise (Greengrass) at near-zero marginal cost.
 
 ## Resources
 

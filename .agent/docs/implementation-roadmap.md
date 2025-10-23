@@ -8,25 +8,27 @@ This roadmap outlines the 24-month path from MVP to market leadership for the Ho
 
 ## ML Architecture Strategy (CRITICAL)
 
-**EDGE-FIRST APPROACH** - Three-tier ML architecture:
+**B2B EDGE-FIRST APPROACH** - Two-tier ML architecture (B2B only, no guest apps):
 
-1. **TIER 1 (90%) - AWS IoT Greengrass** (HIGHEST PRIORITY - B2B PRIMARY)
+1. **TIER 1 (95%) - AWS IoT Greengrass** (PRIMARY - B2B STAFF OPERATIONS)
    - On-premise edge devices at each property (Intel NUC $400 hardware)
    - Full Python ML stack (PyTorch, TensorFlow, Transformers, YOLOv8, Whisper)
    - <50ms latency via local network
    - **Deploy**: Month 1-3 pilot (5 properties), Month 2-3 beta (50 properties)
-   - **Target**: 90% of B2B staff operations at near-$0 marginal cost
+   - **Target**: 95% of ALL B2B operations at near-$0 marginal cost
+   - **Use cases**: Sentiment analysis, room inspection, voice commands, forecasting (all staff-facing)
 
-2. **TIER 2 (9%) - Browser/Mobile ML** (SECONDARY - B2C GUEST APPS)
-   - Transformers.js for guest web apps, TensorFlow Lite for mobile
-   - Guest-facing features (chatbot, voice commands, photo uploads)
-   - **Deploy**: Month 7+ (after Greengrass is proven)
-   - **Target**: 9% of B2C guest interactions at $0 cloud cost
-
-3. **TIER 3 (1%) - Cloud APIs** (TERTIARY - BATCH PROCESSING)
+2. **TIER 2 (5%) - Cloud APIs** (SECONDARY - BATCH PROCESSING)
    - Multi-property analytics, model training, historical batch
    - **Deploy**: Month 6+ (opt-in only)
-   - **Target**: <1% of operations, batch processing only
+   - **Target**: 5% of operations, batch processing only
+   - **Use cases**: Chain-wide benchmarking, quarterly model updates, year-end reports
+
+**NOT NEEDED**: Browser/Mobile ML
+- We're B2B only (property staff operations)
+- No guest-facing apps or kiosks
+- No consumer touchpoints
+- 100% focus on staff operations via Greengrass on-premise
 
 **Cost Savings**: 97% reduction vs. cloud-heavy ($1.7M saved over 3 years)
 
@@ -38,8 +40,8 @@ This roadmap outlines the 24-month path from MVP to market leadership for the Ho
 
 ```
 Month 1-3: Foundation & MVP + IoT Greengrass Pilot/Beta
-Month 4-6: Private Beta & Validation
-Month 7-9: Public Launch & Growth + Browser/Mobile ML (Guest Apps)
+Month 4-6: Private Beta & Validation + Greengrass Scaling
+Month 7-9: Public Launch & Growth (B2B Staff Operations Only)
 Month 10-12: Scale & Partnerships
 Month 13-24: Market Leadership
 ```
@@ -295,13 +297,13 @@ Achieve $100K MRR with 1,000 customers and establish market presence.
 ### Product Development
 
 #### Month 7: Launch Features
-**Week 1-2: Guest-Facing ML (Browser/Mobile - SECONDARY B2C)**
-- [ ] Integrate Transformers.js for guest web apps (sentiment, chatbot)
-- [ ] Add TensorFlow Lite for mobile guest apps (OCR, vision)
-- [ ] Implement offline mode for guest apps (PWA)
-- [ ] Create guest-facing AI features (voice commands, photo uploads)
-- [ ] Add natural language query interface for guest portal
-- [ ] Note: Greengrass already handles 90% of B2B staff operations
+**Week 1-2: Advanced Greengrass Features (B2B STAFF OPERATIONS)**
+- [ ] Add computer vision component (YOLOv8 for room inspection)
+- [ ] Add speech recognition component (Whisper for voice commands)
+- [ ] Implement forecasting component (Prophet for occupancy prediction)
+- [ ] Create unified API gateway (single endpoint for all ML services)
+- [ ] Add natural language query interface for staff dashboards
+- [ ] Note: 100% B2B focus - no guest-facing apps needed
 
 **Week 3-4: Integrations**
 - [ ] Complete 5 PMS integrations
