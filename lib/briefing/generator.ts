@@ -6,7 +6,6 @@
 import { DailyBriefing, BriefingAlert, BriefingSummary } from './types';
 import { forecastHybrid } from '../forecast/hybrid';
 import { predictNoShowCustom } from '../noshow/prediction';
-import { calculateDynamicPrice } from '../pricing/dynamic';
 import { v4 as uuid } from 'uuid';
 
 /**
