@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
-  // NEW: AI-Powered Intelligence Features (PRD Phase 1)
+  // NEW: AI-Powered Intelligence Features (PRD Phase 1-2)
   const intelligenceFeatures = [
     {
       name: '🤖 AI Assistant',
@@ -15,6 +15,34 @@ export default function Home() {
       name: '📋 Daily Briefing',
       description: 'Proactive morning intelligence with priority alerts, insights, and recommended actions',
       href: '/briefing',
+      status: 'NEW',
+      highlight: true,
+    },
+    {
+      name: '📅 Unified Timeline',
+      description: 'All hotel events in chronological order - check-ins, maintenance, reviews, and more',
+      href: '/timeline',
+      status: 'NEW',
+      highlight: true,
+    },
+    {
+      name: '👥 Guest Intelligence',
+      description: 'AI-powered guest segmentation with automatic clustering and personalized recommendations',
+      href: '/guests',
+      status: 'NEW',
+      highlight: true,
+    },
+    {
+      name: '💰 Smart Pricing Engine',
+      description: 'Dynamic pricing with explainable AI recommendations and revenue optimization',
+      href: '/pricing-engine',
+      status: 'NEW',
+      highlight: true,
+    },
+    {
+      name: '🏨 Operations Center',
+      description: 'Real-time housekeeping management with route optimization and predictive scheduling',
+      href: '/operations',
       status: 'NEW',
       highlight: true,
     },
@@ -158,33 +186,33 @@ export default function Home() {
           </p>
         </header>
 
-        {/* NEW: AI Intelligence Features - PRD Phase 1 */}
+        {/* NEW: AI Intelligence Features - PRD Phase 1-2 */}
         <section className="mb-12">
           <div className="text-center mb-6">
             <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">
               🚀 AI-Powered Intelligence
               <span className="ml-3 text-sm bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 px-3 py-1 rounded-full">
-                NEW
+                6 NEW FEATURES
               </span>
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Conversational AI and proactive insights to transform your hotel operations
+              Complete hotel management suite with conversational AI, proactive insights, and intelligent automation
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {intelligenceFeatures.map((feature) => (
               <Link
                 key={feature.name}
                 href={feature.href}
-                className="block p-8 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-xl hover:shadow-2xl transition-all border-2 border-blue-300 dark:border-blue-700 hover:scale-105 transform"
+                className="block p-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl shadow-lg hover:shadow-xl transition-all border-2 border-blue-300 dark:border-blue-700 hover:scale-105 transform"
               >
-                <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-gray-100">
+                <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">
                   {feature.name}
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 text-base leading-relaxed">
+                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-4">
                   {feature.description}
                 </p>
-                <div className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg font-medium">
+                <div className="inline-block px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium">
                   Try Now →
                 </div>
               </Link>
