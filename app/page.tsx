@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function Home() {
-  // NEW: AI-Powered Intelligence Features (PRD Phase 1-2)
+  // NEW: AI-Powered Intelligence Features (PRD Phase 1-3)
   const intelligenceFeatures = [
     {
       name: '🤖 AI Assistant',
@@ -43,6 +43,13 @@ export default function Home() {
       name: '🏨 Operations Center',
       description: 'Real-time housekeeping management with route optimization and predictive scheduling',
       href: '/operations',
+      status: 'NEW',
+      highlight: true,
+    },
+    {
+      name: '⚡ Automation Engine',
+      description: 'Rule-based workflows with intelligent triggers and automated actions',
+      href: '/automation',
       status: 'NEW',
       highlight: true,
     },
@@ -186,17 +193,17 @@ export default function Home() {
           </p>
         </header>
 
-        {/* NEW: AI Intelligence Features - PRD Phase 1-2 */}
+        {/* NEW: AI Intelligence Features - PRD Phase 1-3 */}
         <section className="mb-12">
           <div className="text-center mb-6">
             <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-gray-100">
               🚀 AI-Powered Intelligence
               <span className="ml-3 text-sm bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 px-3 py-1 rounded-full">
-                6 NEW FEATURES
+                7 NEW FEATURES
               </span>
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Complete hotel management suite with conversational AI, proactive insights, and intelligent automation
+              Complete hotel management suite with conversational AI, proactive insights, intelligent automation, and workflow orchestration
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
