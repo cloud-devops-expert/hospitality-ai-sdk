@@ -1,0 +1,83 @@
+---
+RecipeFormatVersion: '2020-01-25'
+ComponentName: com.hospitality.sentiment
+ComponentVersion: '1.0.0'
+ComponentDescription: 'Sentiment analysis service for guest reviews and staff feedback'
+ComponentPublisher: 'Hospitality AI SDK'
+ComponentConfiguration:
+  DefaultConfiguration:
+    Model: 'distilbert-base-uncased-finetuned-sst-2-english'
+    Port: 8001
+    Workers: 2
+    LogLevel: 'info'
+ComponentDependencies:
+  aws.greengrass.Nucleus:
+    VersionRequirement: '>=2.12.0'
+    DependencyType: HARD
+
+Manifests:
+  - Platform:
+      os: linux
+    Lifecycle:
+      Install:
+        RequiresPrivilege: false
+        Script: |
+          set -e
+          echo "Installing sentiment analysis component..."
+
+          # Create virtual environment
+          python3 -m venv {work:path}/venv
+          source {work:path}/venv/bin/activate
+
+          # Install dependencies
+          pip install --upgrade pip
+          pip install -r {artifacts:path}/requirements.txt
+
+          # Pre-download model (runs during install, not at runtime)
+          echo "Downloading sentiment model..."
+          python3 -c "from transformers import pipeline; pipeline('sentiment-analysis', model='{configuration:/Model}')"
+
+          echo "Sentiment component installed successfully"
+
+      Run:
+        RequiresPrivilege: false
+        Script: |
+          set -e
+          echo "Starting sentiment analysis service on port {configuration:/Port}..."
+
+          # Activate virtual environment
+          source {work:path}/venv/bin/activate
+
+          # Set environment variables
+          export MODEL_NAME="{configuration:/Model}"
+          export PORT={configuration:/Port}
+          export WORKERS={configuration:/Workers}
+          export LOG_LEVEL="{configuration:/LogLevel}"
+
+          # Run the service
+          python3 {artifacts:path}/sentiment_service.py
+
+      Shutdown:
+        Script: |
+          echo "Shutting down sentiment analysis service..."
+          # FastAPI/uvicorn will handle graceful shutdown
+
+    Artifacts:
+      - URI: "s3://hospitality-ai-greengrass-{aws:region}/sentiment/1.0.0/sentiment_service.py"
+        Unarchive: NONE
+        Permission:
+          Read: OWNER
+          Execute: NONE
+      - URI: "s3://hospitality-ai-greengrass-{aws:region}/sentiment/1.0.0/requirements.txt"
+        Unarchive: NONE
+        Permission:
+          Read: OWNER
+          Execute: NONE
+
+Lifecycle:
+  Install:
+    Timeout: 600
+  Run:
+    Timeout: 0
+  Shutdown:
+    Timeout: 15
