@@ -172,78 +172,120 @@ The Hospitality AI SDK currently operates with synthetic demo data. To deliver p
 
 ## Technical Requirements
 
-### TR-1: Architecture
+### TR-1: Architecture (AWS-Based)
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                   External Systems                       │
-│  PMS  │  Channel Manager  │  Reviews  │  POS  │  BI    │
-└───────┴───────────────────┴───────────┴───────┴─────────┘
-         │          │              │         │        │
-         ▼          ▼              ▼         ▼        ▼
-┌─────────────────────────────────────────────────────────┐
-│              Integration Gateway (API Layer)             │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │  Authentication  │  Rate Limiting  │  Logging     │  │
-│  └──────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────┐
-│                Data Ingestion Pipeline                   │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │  Validation  │  Transformation  │  Enrichment    │  │
-│  └──────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────────┐
-│                   Event Bus (Kafka/Redis)                │
-│         Real-time event streaming & buffering            │
-└─────────────────────────────────────────────────────────┘
-           │                                    │
-           ▼                                    ▼
-┌──────────────────────┐           ┌──────────────────────┐
-│   Primary Database   │           │   Cache Layer        │
-│   (PostgreSQL)       │           │   (Redis)            │
-│   - Bookings         │           │   - Hot data         │
-│   - Guests           │           │   - Aggregations     │
-│   - Rooms            │           │   - Session data     │
-│   - Reviews          │           │                      │
-└──────────────────────┘           └──────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────────────────────────────┐
-│              AI/ML Processing Modules                    │
-│  Forecast │ Pricing │ NoShow │ Segmentation │ NLU      │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                     External Systems                          │
+│   Opera PMS  │  Cloudbeds  │  Mews  │  Reviews  │  POS      │
+└──────────────┴──────────────┴────────┴──────────┴────────────┘
+        │              │            │         │          │
+        ▼              ▼            ▼         ▼          ▼
+┌──────────────────────────────────────────────────────────────┐
+│          AWS API Gateway + Lambda (Integration Layer)         │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │  WAF │ Cognito Auth │ Rate Limiting │ Request Logging │  │
+│  └────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│                  Amazon S3 (Raw Data Lake)                    │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ s3://hotel-data/raw/{source}/{year}/{month}/{day}/     │  │
+│  │ - Immutable raw payloads (JSON/XML)                     │  │
+│  │ - Versioned for audit trail                             │  │
+│  │ - Lifecycle: Standard → IA → Glacier (90d → 1y → 7y)   │  │
+│  └────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ (S3 Event Notification)
+┌──────────────────────────────────────────────────────────────┐
+│                   AWS Glue (ETL Pipeline)                     │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ 1. Glue Crawler: Discover schema                        │  │
+│  │ 2. Glue Job: Transform & Validate                       │  │
+│  │    - Normalize data to unified schema                   │  │
+│  │    - Deduplicate using composite keys                   │  │
+│  │    - Enrich with external data                          │  │
+│  │    - Mask PII (email, phone)                            │  │
+│  │ 3. Write to RDS + Processed S3                          │  │
+│  └────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘
+                    │                           │
+                    ▼                           ▼
+┌─────────────────────────────┐  ┌───────────────────────────┐
+│  Amazon RDS PostgreSQL      │  │  S3 (Processed Data)      │
+│  - production.bookings      │  │  s3://hotel-data/         │
+│  - production.guests        │  │     processed/parquet/    │
+│  - production.rooms         │  │  - Columnar format        │
+│  - production.reviews       │  │  - Partitioned by date    │
+│  - production.transactions  │  │  - For Athena/Redshift    │
+│  - TimescaleDB hypertables  │  └───────────────────────────┘
+└─────────────────────────────┘
+                    │
+                    ▼ (CDC via DMS or Triggers)
+┌──────────────────────────────────────────────────────────────┐
+│            Amazon EventBridge + Kinesis Data Streams          │
+│  - Real-time event routing for booking changes               │
+│  - Triggers for AI/ML pipeline updates                       │
+└──────────────────────────────────────────────────────────────┘
+                    │                           │
+                    ▼                           ▼
+┌─────────────────────────────┐  ┌───────────────────────────┐
+│  ElastiCache (Redis)        │  │  Lambda + Step Functions  │
+│  - Hot data caching         │  │  - AI/ML Model Inference  │
+│  - Session management       │  │  - Forecast │ Pricing     │
+│  - Rate limiting state      │  │  - NoShow   │ Segment     │
+└─────────────────────────────┘  └───────────────────────────┘
+                                              │
+                                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│                   Application Layer (ECS/Amplify)             │
+│  Next.js API + UI │ Real-time Dashboards │ Alert Engine     │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-### TR-2: Technology Stack
+### TR-2: Technology Stack (AWS-Optimized)
 
 **Integration Layer:**
-- **API Gateway:** Express.js + tRPC for type-safe APIs
-- **Message Queue:** Redis Streams or Apache Kafka for event processing
-- **Job Scheduler:** BullMQ for batch jobs
-- **Webhooks:** Fast, async webhook delivery with retry logic
+- **API Gateway:** AWS API Gateway + Lambda for serverless endpoints
+- **Event Bus:** Amazon EventBridge for event routing
+- **Message Queue:** Amazon SQS for async processing, SNS for pub/sub
+- **Stream Processing:** Amazon Kinesis Data Streams for real-time data
+- **Job Scheduler:** AWS Step Functions + EventBridge Scheduler
 
-**Data Storage:**
-- **Primary DB:** PostgreSQL with TimescaleDB extension for time-series
-- **Cache:** Redis for hot data and rate limiting
-- **Object Storage:** S3-compatible storage for CSV imports/exports
-- **Search:** Elasticsearch for full-text search (optional)
+**Data Storage (Raw → Processed Pipeline):**
+- **Raw Data Lake:** Amazon S3 (landing zone for all incoming data)
+  - Lifecycle policies: Intelligent-Tiering → Glacier for archive
+  - Versioning enabled for audit trail
+  - Event notifications to trigger ETL
+- **ETL Processing:** AWS Glue
+  - Glue Crawlers for schema discovery
+  - Glue Jobs (Python/Spark) for transformations
+  - Glue Data Catalog for metadata management
+- **Primary DB:** Amazon RDS PostgreSQL 15+ or Aurora PostgreSQL
+  - TimescaleDB extension for time-series
+  - Read replicas for analytics queries
+  - Automated backups with PITR
+- **Cache:** Amazon ElastiCache (Redis) for hot data
+- **Data Warehouse:** Amazon Redshift for analytics (optional)
+- **Search:** Amazon OpenSearch for full-text search (optional)
 
 **Backend Services:**
-- **Runtime:** Node.js 20+ with TypeScript
-- **API Framework:** Next.js API routes + tRPC
+- **Runtime:** Node.js 20+ on AWS Lambda (serverless)
+- **API Framework:** Next.js on AWS Amplify or ECS Fargate
 - **Validation:** Zod for schema validation
-- **ORM:** Prisma or Drizzle for type-safe database access
+- **ORM:** Prisma with RDS Data API or Drizzle
 
-**Infrastructure:**
-- **Deployment:** Docker containers, Kubernetes (optional)
-- **Monitoring:** Prometheus + Grafana
-- **Logging:** Structured JSON logs with Winston/Pino
-- **Tracing:** OpenTelemetry for distributed tracing
+**Infrastructure (Managed Services):**
+- **Deployment:** AWS ECS Fargate (containers) or Lambda (serverless)
+- **Networking:** VPC with private subnets, NAT Gateway
+- **Monitoring:** Amazon CloudWatch + X-Ray for tracing
+- **Logging:** CloudWatch Logs with structured JSON
+- **Secrets:** AWS Secrets Manager for API keys/credentials
+- **IAM:** Fine-grained access control with IAM roles
+- **CDN:** Amazon CloudFront for API caching (optional)
 
 ### TR-3: Data Model (Unified Schema)
 
@@ -484,71 +526,676 @@ interface WebhookSubscription {
 
 ---
 
-## Integration Patterns
+## Integration Patterns & Real-World Examples
 
-### Pattern 1: Pull-based Sync (Polling)
-**Use Case:** PMS systems without webhook support
+### Integration Ownership & Responsibility
 
+**Key Question: Who configures the integration?**
+
+The **onus of integration configuration** depends on the integration pattern and vendor capabilities:
+
+#### Scenario 1: Vendor Provides Partner API (OAuth)
+**Examples:** Cloudbeds, Mews, Stayntouch
+**Ownership:** Hotel/Our System (80% effort by us)
+
+```
+1. Hotel admin logs into OUR platform
+2. Clicks "Connect Cloudbeds"
+3. OAuth redirect to Cloudbeds login
+4. Hotel authorizes our app (one-time)
+5. We receive OAuth token, store in Secrets Manager
+6. We configure sync settings (frequency, entities)
+```
+
+**Hotel Responsibility:**
+- Grant OAuth permission (5 minutes)
+- Provide property ID from their PMS
+
+**Our Responsibility:**
+- Build OAuth flow
+- Store credentials securely
+- Configure sync jobs
+- Handle errors and retries
+
+---
+
+#### Scenario 2: Vendor Provides API, No Partner Program
+**Examples:** Opera Cloud (Oracle), RMS Cloud
+**Ownership:** Hotel IT + Our System (50/50 effort)
+
+```
+1. Hotel IT generates API key in their PMS admin
+2. Hotel provides us: API key, endpoint URL, property code
+3. Our admin configures integration via UI
+4. We test connection and validate data
+5. Hotel approves go-live
+```
+
+**Hotel Responsibility:**
+- Generate API credentials from their PMS (15-30 min)
+- Provide correct property identifiers
+- Approve field mappings
+- Verify test data accuracy
+
+**Our Responsibility:**
+- Build API client for vendor
+- Provide configuration UI
+- Map fields to unified schema
+- Monitor sync health
+
+---
+
+#### Scenario 3: Vendor Requires Manual Setup (Legacy Systems)
+**Examples:** Old on-premise PMS, custom databases
+**Ownership:** Hotel IT (70% effort)
+
+```
+1. Hotel IT creates dedicated database user for us
+2. Hotel IT whitelists our IP addresses
+3. Hotel IT provides: DB connection string, credentials, schema docs
+4. Our team builds custom connector (one-time)
+5. Schedule sync jobs with hotel approval
+```
+
+**Hotel Responsibility:**
+- Create read-only database user
+- Configure firewall/VPN access
+- Provide schema documentation
+- Approve data access scope
+
+**Our Responsibility:**
+- Build custom connector (2-4 weeks dev time)
+- Secure credential storage
+- ETL job configuration
+- Ongoing maintenance
+
+---
+
+#### Scenario 4: CSV/SFTP Export (No API)
+**Examples:** Very old PMS, custom Excel workflows
+**Ownership:** Hotel Staff (60% effort)
+
+```
+1. Hotel exports CSV from their PMS daily
+2. Hotel uploads to our SFTP or S3 bucket
+3. Our system detects new file (S3 event)
+4. Glue job parses and validates CSV
+5. Data ingested into RDS
+```
+
+**Hotel Responsibility:**
+- Export CSV daily (can be automated with PMS scheduler)
+- Upload to our SFTP/S3 (or we poll their SFTP)
+- Follow CSV schema template
+
+**Our Responsibility:**
+- Provide CSV template
+- Build robust parser (handles variations)
+- Data validation and error reporting
+- Automated ingestion pipeline
+
+---
+
+### Integration Pattern Examples
+
+### Pattern 1: Pull-based Sync (Polling) - Opera Cloud
+
+**Real-World Example: Oracle Opera Cloud PMS**
+
+**Setup Process:**
+1. Hotel generates API credentials in Opera Cloud admin
+2. Hotel provides: `hotelId`, `interfaceId`, `apiKey`, `username`, `password`
+3. We configure in our system via admin UI
+
+**Implementation (AWS-Based):**
 ```typescript
-async function pollBookings(integration: Integration) {
+// Lambda function triggered every 15 minutes by EventBridge
+export const handler = async (event: EventBridgeEvent) => {
+  const integration = await getIntegration('opera-cloud-hotel123');
+
+  // 1. Fetch data from Opera Cloud API
   const lastSync = await getLastSyncTime(integration.id);
-  const newBookings = await integration.api.getBookings({
-    updatedSince: lastSync
-  });
+  const response = await axios.get(
+    `${integration.baseUrl}/rsv/v1/hotels/${integration.hotelId}/reservations`,
+    {
+      headers: { 'x-app-key': integration.apiKey },
+      params: {
+        modifiedSince: lastSync.toISOString(),
+        limit: 1000
+      }
+    }
+  );
 
-  await processBookings(newBookings);
+  // 2. Save raw data to S3
+  await s3.putObject({
+    Bucket: 'hotel-data-raw',
+    Key: `opera/${integration.hotelId}/${new Date().toISOString()}.json`,
+    Body: JSON.stringify(response.data),
+    Metadata: {
+      source: 'opera-cloud',
+      syncType: 'incremental',
+      recordCount: response.data.reservations.length.toString()
+    }
+  }).promise();
+
+  // 3. Trigger Glue job for ETL
+  await glue.startJobRun({
+    JobName: 'opera-bookings-etl',
+    Arguments: {
+      '--S3_INPUT_PATH': `s3://hotel-data-raw/opera/${integration.hotelId}/`,
+      '--HOTEL_ID': integration.hotelId,
+      '--SYNC_TIMESTAMP': new Date().toISOString()
+    }
+  }).promise();
+
+  // 4. Update sync metadata
   await updateLastSyncTime(integration.id, new Date());
-}
 
-// Schedule: Every 15 minutes for bookings, hourly for static data
+  return { statusCode: 200, recordsFound: response.data.reservations.length };
+};
+
+// EventBridge schedule: rate(15 minutes) for bookings
 ```
 
-### Pattern 2: Push-based Sync (Webhooks)
-**Use Case:** Modern PMS with real-time webhooks
+**Who Owns What:**
+- Hotel: Generates credentials (30 min)
+- Us: Build connector (1-2 weeks), configure sync (1 hour)
 
+---
+
+### Pattern 2: Push-based Sync (Webhooks) - Cloudbeds
+
+**Real-World Example: Cloudbeds PMS**
+
+**Setup Process:**
+1. Hotel clicks "Connect Cloudbeds" in our UI
+2. OAuth redirect → Hotel authorizes our app
+3. We receive OAuth token + webhook URL from Cloudbeds
+4. Cloudbeds automatically sends events to our webhook endpoint
+
+**Implementation (AWS-Based):**
 ```typescript
-app.post('/webhooks/:integrationId/:event', async (req, res) => {
-  // Verify signature
-  const isValid = verifyHmacSignature(req);
-  if (!isValid) return res.status(401).send('Invalid signature');
+// API Gateway → Lambda
+export const handler = async (event: APIGatewayProxyEvent) => {
+  const { integrationId, eventType } = event.pathParameters;
 
-  // Process event
-  await eventBus.publish({
-    type: req.params.event,
-    payload: req.body,
-    source: req.params.integrationId
+  // 1. Verify Cloudbeds HMAC signature
+  const signature = event.headers['X-Cloudbeds-Signature'];
+  const isValid = crypto
+    .createHmac('sha256', await getWebhookSecret(integrationId))
+    .update(event.body)
+    .digest('hex') === signature;
+
+  if (!isValid) {
+    return { statusCode: 401, body: 'Invalid signature' };
+  }
+
+  const payload = JSON.parse(event.body);
+
+  // 2. Save raw webhook payload to S3 immediately
+  await s3.putObject({
+    Bucket: 'hotel-data-raw',
+    Key: `cloudbeds/${integrationId}/${eventType}/${Date.now()}.json`,
+    Body: event.body,
+    Metadata: {
+      source: 'cloudbeds',
+      event: eventType,
+      receivedAt: new Date().toISOString()
+    }
+  }).promise();
+
+  // 3. Publish to EventBridge for async processing
+  await eventBridge.putEvents({
+    Entries: [{
+      Source: 'hospitality.integration',
+      DetailType: `cloudbeds.${eventType}`,
+      Detail: JSON.stringify({
+        integrationId,
+        eventType,
+        s3Path: `s3://hotel-data-raw/cloudbeds/${integrationId}/${eventType}/${Date.now()}.json`,
+        payload
+      })
+    }]
+  }).promise();
+
+  // 4. Respond immediately (Cloudbeds requires <5s response)
+  return { statusCode: 200, body: 'OK' };
+};
+
+// Separate Lambda triggered by EventBridge for processing
+export const processCloudbedsEvent = async (event: any) => {
+  const { s3Path, payload, eventType } = event.detail;
+
+  // Trigger Glue job for transformation
+  await glue.startJobRun({
+    JobName: 'cloudbeds-webhook-etl',
+    Arguments: {
+      '--S3_INPUT_PATH': s3Path,
+      '--EVENT_TYPE': eventType
+    }
+  }).promise();
+};
+```
+
+**Who Owns What:**
+- Hotel: Click "Authorize" button (2 min)
+- Us: Build OAuth integration (1 week), webhook handler (3 days)
+
+---
+
+### Pattern 3: Hybrid Sync - Mews
+
+**Real-World Example: Mews PMS (REST API + Webhooks)**
+
+**Setup Process:**
+1. Hotel generates API access token in Mews
+2. Hotel configures webhook URL in Mews admin panel
+3. We receive critical events via webhook, poll for full reconciliation
+
+**Implementation:**
+```typescript
+// Real-time: Webhook for critical events
+// POST /webhooks/mews/booking.created
+export const handleMewsWebhook = async (event: APIGatewayProxyEvent) => {
+  const payload = JSON.parse(event.body);
+
+  // Save to S3
+  await saveRawDataToS3('mews', 'webhook', payload);
+
+  // Process immediately for critical events
+  if (payload.type === 'Reservation.Created' || payload.type === 'Reservation.Cancelled') {
+    await triggerGlueJob('mews-realtime-etl', payload);
+  }
+
+  return { statusCode: 200, body: 'OK' };
+};
+
+// Batch: Full sync every 6 hours for reconciliation
+// EventBridge: cron(0 */6 * * ? *)
+export const batchSyncMews = async () => {
+  const integration = await getIntegration('mews');
+
+  // Get all reservations modified in last 7 days (safety buffer)
+  const response = await axios.post(
+    `${integration.baseUrl}/reservations/getAll`,
+    {
+      AccessToken: integration.accessToken,
+      StartUtc: subDays(new Date(), 7).toISOString(),
+      EndUtc: new Date().toISOString()
+    }
+  );
+
+  // Save to S3
+  await saveRawDataToS3('mews', 'batch-sync', response.data);
+
+  // Trigger Glue job with deduplication enabled
+  await triggerGlueJob('mews-batch-etl', {
+    deduplicationEnabled: true,
+    s3Path: `s3://hotel-data-raw/mews/batch-sync/...`
   });
-
-  res.status(200).send('OK');
-});
+};
 ```
 
-### Pattern 3: Hybrid Sync
-**Use Case:** Critical events via webhook, full sync via polling
+**Who Owns What:**
+- Hotel: Generate token + configure webhook URL (15 min)
+- Us: Build dual-mode connector (2 weeks)
 
+---
+
+### Pattern 4: CSV/SFTP Import - Legacy PMS
+
+**Real-World Example: Old On-Premise PMS with Scheduled Exports**
+
+**Setup Process:**
+1. Hotel IT configures PMS to export CSV daily at 2 AM
+2. Hotel IT uploads to our S3 bucket OR we poll their SFTP
+3. S3 event triggers Glue job automatically
+
+**Implementation:**
 ```typescript
-// Real-time: booking.created, booking.cancelled
-webhookHandler('booking.created', processBookingCreated);
+// S3 Event Notification → Lambda → Glue
+export const handleCsvUpload = async (event: S3Event) => {
+  const bucket = event.Records[0].s3.bucket.name;
+  const key = event.Records[0].s3.object.key;
 
-// Batch: full reconciliation every 6 hours
-schedule('0 */6 * * *', syncAllBookings);
+  // Validate CSV structure before processing
+  const csvContent = await s3.getObject({ Bucket: bucket, Key: key }).promise();
+  const isValid = await validateCsvSchema(csvContent.Body.toString());
+
+  if (!isValid) {
+    await sendAlert('CSV validation failed', key);
+    return { statusCode: 400, body: 'Invalid CSV' };
+  }
+
+  // Trigger Glue job
+  await glue.startJobRun({
+    JobName: 'csv-bookings-etl',
+    Arguments: {
+      '--S3_INPUT_PATH': `s3://${bucket}/${key}`,
+      '--SOURCE': 'legacy-pms',
+      '--UPLOAD_DATE': new Date().toISOString()
+    }
+  }).promise();
+
+  return { statusCode: 200, body: 'Processing started' };
+};
 ```
 
-### Pattern 4: CSV Import
-**Use Case:** Initial data load or offline systems
+**Who Owns What:**
+- Hotel: Configure daily CSV export (30 min setup, then automated)
+- Us: Build CSV parser + validation (1 week)
 
+---
+
+### TR-6: Deduplication Strategies
+
+**Problem:** Data arrives from multiple sources (webhook + polling) and can create duplicates.
+
+**Solution:** Multi-layer deduplication in Glue ETL jobs:
+
+#### Layer 1: Composite Key Deduplication
+```python
+# AWS Glue Job (PySpark)
+from awsglue.transforms import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+# Read raw data from S3
+raw_bookings = glueContext.create_dynamic_frame.from_catalog(
+    database="hospitality_raw",
+    table_name="bookings_raw"
+).toDF()
+
+# Define composite key: source + externalId + hotelId
+raw_bookings = raw_bookings.withColumn(
+    "composite_key",
+    concat_ws(":", col("source"), col("external_id"), col("hotel_id"))
+)
+
+# Deduplicate: Keep latest version based on sync timestamp
+window_spec = Window.partitionBy("composite_key").orderBy(desc("synced_at"))
+deduplicated = raw_bookings.withColumn("row_num", row_number().over(window_spec)) \
+    .filter(col("row_num") == 1) \
+    .drop("row_num")
+
+# Write to processed S3 + RDS
+deduplicated.write \
+    .mode("overwrite") \
+    .partitionBy("source", "sync_date") \
+    .parquet("s3://hotel-data-processed/bookings/")
+```
+
+#### Layer 2: PostgreSQL Unique Constraints
+```sql
+-- In RDS PostgreSQL
+CREATE TABLE production.bookings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  external_id VARCHAR(255) NOT NULL,
+  source VARCHAR(50) NOT NULL,
+  hotel_id VARCHAR(100) NOT NULL,
+
+  -- ... other fields
+
+  synced_at TIMESTAMPTZ DEFAULT NOW(),
+  version INTEGER DEFAULT 1,
+
+  -- Composite unique constraint prevents duplicates
+  CONSTRAINT unique_booking_per_source UNIQUE (source, external_id, hotel_id)
+);
+
+-- Upsert logic in Glue job uses ON CONFLICT
+INSERT INTO production.bookings (external_id, source, hotel_id, ...)
+VALUES (?, ?, ?, ...)
+ON CONFLICT (source, external_id, hotel_id)
+DO UPDATE SET
+  guest_name = EXCLUDED.guest_name,
+  status = EXCLUDED.status,
+  synced_at = NOW(),
+  version = bookings.version + 1
+WHERE
+  -- Only update if incoming data is newer
+  EXCLUDED.synced_at > bookings.synced_at;
+```
+
+#### Layer 3: Idempotency Keys for Webhooks
 ```typescript
-async function importBookingsFromCSV(file: File) {
-  const stream = createReadStream(file.path);
-  const parser = parse({ columns: true });
+// Lambda webhook handler
+export const handleWebhook = async (event: APIGatewayProxyEvent) => {
+  const idempotencyKey = event.headers['X-Idempotency-Key'] ||
+    crypto.createHash('sha256').update(event.body).digest('hex');
 
-  stream
-    .pipe(parser)
-    .pipe(validateBooking())
-    .pipe(transformToUnifiedSchema())
-    .pipe(batchInsert({ batchSize: 1000 }));
+  // Check if already processed (DynamoDB for fast lookup)
+  const existing = await dynamoDB.getItem({
+    TableName: 'webhook_idempotency',
+    Key: { idempotencyKey }
+  }).promise();
+
+  if (existing.Item) {
+    return { statusCode: 200, body: 'Already processed' };
+  }
+
+  // Process webhook
+  await processWebhook(JSON.parse(event.body));
+
+  // Store idempotency key (TTL 7 days)
+  await dynamoDB.putItem({
+    TableName: 'webhook_idempotency',
+    Item: {
+      idempotencyKey,
+      processedAt: new Date().toISOString(),
+      ttl: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)
+    }
+  }).promise();
+
+  return { statusCode: 200, body: 'Processed' };
+};
+```
+
+---
+
+### TR-7: Storage Optimization for Multi-Year Data
+
+**Challenge:** Hotels need 3-7 years of historical data for forecasting, but storage costs grow linearly.
+
+**Solution:** Tiered storage + compression + aggregation
+
+#### Strategy 1: S3 Lifecycle Policies
+```hcl
+# Terraform configuration
+resource "aws_s3_bucket_lifecycle_configuration" "hotel_data" {
+  bucket = aws_s3_bucket.hotel_data.id
+
+  rule {
+    id     = "raw-data-lifecycle"
+    status = "Enabled"
+
+    # Raw data retention
+    transition {
+      days          = 90
+      storage_class = "STANDARD_IA"  # Infrequent Access (50% cheaper)
+    }
+
+    transition {
+      days          = 365
+      storage_class = "GLACIER_IR"  # Glacier Instant Retrieval (70% cheaper)
+    }
+
+    transition {
+      days          = 1825  # 5 years
+      storage_class = "DEEP_ARCHIVE"  # Deep Archive (95% cheaper)
+    }
+
+    expiration {
+      days = 2555  # 7 years (compliance requirement)
+    }
+  }
+
+  rule {
+    id     = "processed-data-compression"
+    status = "Enabled"
+
+    # Processed data: Keep in Standard, but compress to Parquet
+    filter {
+      prefix = "processed/"
+    }
+  }
 }
 ```
+
+**Cost Savings:**
+- Standard S3: $0.023/GB/month
+- Standard-IA: $0.0125/GB/month (90+ days old)
+- Glacier IR: $0.004/GB/month (1+ years old)
+- Deep Archive: $0.00099/GB/month (5+ years old)
+
+**Example:**
+- 10 GB/month new data
+- After 5 years: 600 GB total
+  - Year 1: 120 GB × $0.023 = $2.76/mo
+  - Year 2-3: 240 GB × $0.0125 = $3.00/mo
+  - Year 4-5: 240 GB × $0.004 = $0.96/mo
+  - **Total: $6.72/mo** (vs $13.80/mo all in Standard)
+
+---
+
+#### Strategy 2: Columnar Format (Parquet) + Compression
+```python
+# Glue job: Convert JSON to Parquet with Snappy compression
+from awsglue.dynamicframe import DynamicFrame
+
+# Read raw JSON
+raw_df = spark.read.json("s3://hotel-data-raw/bookings/2024/01/")
+
+# Write as Parquet with compression
+raw_df.write \
+    .mode("overwrite") \
+    .option("compression", "snappy")  # 70-90% compression ratio
+    .partitionBy("year", "month")  # Partition pruning for queries
+    .parquet("s3://hotel-data-processed/bookings/")
+
+# Query with Athena (only scans relevant partitions)
+# SELECT * FROM bookings WHERE year=2024 AND month=1
+```
+
+**Storage Reduction:**
+- JSON: 1 KB/booking
+- Parquet + Snappy: 100-300 bytes/booking (70-90% reduction)
+- 1M bookings: 1 GB (JSON) → 200 MB (Parquet)
+
+---
+
+#### Strategy 3: Pre-Aggregation for Old Data
+```python
+# Glue job: Aggregate bookings older than 2 years to daily summaries
+from pyspark.sql.functions import *
+
+# Keep detailed records for recent data (2 years)
+recent_bookings = bookings_df.filter(col("check_in_date") >= date_sub(current_date(), 730))
+
+# Aggregate old data to daily summaries
+old_bookings_agg = bookings_df.filter(col("check_in_date") < date_sub(current_date(), 730)) \
+    .groupBy("hotel_id", "date", "room_type") \
+    .agg(
+        count("*").alias("booking_count"),
+        avg("total_amount").alias("avg_rate"),
+        sum("total_amount").alias("total_revenue"),
+        sum("length_of_stay").alias("total_room_nights")
+    )
+
+# Write aggregated data (99% smaller)
+old_bookings_agg.write.parquet("s3://hotel-data-processed/bookings_daily_agg/")
+```
+
+**Storage Reduction:**
+- Individual bookings (>2y old): 1 GB
+- Daily aggregates: 10 MB (99% reduction)
+- **Forecasting models don't need individual bookings from 3+ years ago**
+
+---
+
+#### Strategy 4: TimescaleDB Compression (PostgreSQL)
+```sql
+-- Enable TimescaleDB compression for old partitions
+CREATE TABLE production.bookings (
+  id UUID PRIMARY KEY,
+  check_in_date DATE NOT NULL,
+  -- ... other fields
+);
+
+-- Convert to hypertable (TimescaleDB)
+SELECT create_hypertable('production.bookings', 'check_in_date', chunk_time_interval => INTERVAL '1 month');
+
+-- Enable compression for chunks older than 6 months
+ALTER TABLE production.bookings SET (
+  timescaledb.compress,
+  timescaledb.compress_segmentby = 'hotel_id',
+  timescaledb.compress_orderby = 'check_in_date DESC'
+);
+
+-- Automatically compress old chunks
+SELECT add_compression_policy('production.bookings', INTERVAL '6 months');
+
+-- Result: 90-95% compression for old data
+```
+
+**Storage Reduction:**
+- Uncompressed: 100 GB (5 years of bookings)
+- TimescaleDB compressed: 10 GB (90% reduction)
+- **Queries still work transparently**
+
+---
+
+#### Strategy 5: Data Retention Policies
+```typescript
+// Define retention by entity type
+const RETENTION_POLICIES = {
+  bookings: {
+    detailed: '3 years',  // Individual booking records
+    aggregated: '7 years',  // Daily/monthly summaries
+    compliance: '7 years'  // Required for accounting
+  },
+  guests: {
+    active: '5 years',  // Guests with bookings in last 5y
+    inactive: '2 years',  // Automatically anonymize after 2y of inactivity (GDPR)
+  },
+  reviews: {
+    all: '7 years',  // Keep all reviews for sentiment trends
+  },
+  logs: {
+    application: '90 days',
+    audit: '7 years',
+    integration: '1 year'
+  }
+};
+
+// Glue job: Anonymize inactive guests
+UPDATE production.guests
+SET
+  email = 'anonymized@example.com',
+  phone = NULL,
+  address = NULL,
+  gdpr_anonymized = TRUE
+WHERE
+  last_stay_date < CURRENT_DATE - INTERVAL '2 years'
+  AND gdpr_anonymized = FALSE;
+```
+
+---
+
+#### Cost Optimization Summary
+
+**For a medium hotel (500 rooms, 50K bookings/year):**
+
+| Storage Layer | Initial | Year 1 | Year 3 | Year 5 | Savings |
+|---------------|---------|--------|--------|--------|---------|
+| S3 Raw (JSON) | $23/mo | $276/mo | $828/mo | $1,380/mo | Baseline |
+| S3 Parquet + Lifecycle | $5/mo | $55/mo | $125/mo | $180/mo | **87% saved** |
+| + RDS Compression | +$20/mo | +$25/mo | +$30/mo | +$35/mo | (Minimal growth) |
+| + Pre-Aggregation | -$2/mo | -$10/mo | -$40/mo | -$80/mo | (Offset by agg) |
+| **Total Cost** | **$23/mo** | **$70/mo** | **$115/mo** | **$135/mo** | **90% saved at Y5** |
+
+**vs. Keeping all detailed data in RDS Standard:**
+- Year 5: $1,500+/mo for RDS storage alone
 
 ---
 
