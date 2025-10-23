@@ -219,20 +219,32 @@ When adding new features:
     - Full Python ML stack (PyTorch, TensorFlow, Transformers, Timefold)
     - Real-time inference <50ms via local network
     - **Web/Mobile apps connect to greengrass.local (NOT cloud)**
+    - **SECURITY**: Apps ONLY work on property network (not from outside)
   - **Local Capabilities**:
     - All ML on-premise (sentiment, vision, speech, optimization)
     - Local database cache (PostgreSQL replica)
     - IoT integration (room sensors, thermostats, door locks)
     - **OFFLINE operation** (works without internet - business continuity!)
-  - **Cloud**: Only for cross-property analytics, backups, model training
+  - **Greengrass as Security Proxy**:
+    - **ONLY Greengrass talks to cloud** (staff devices never access cloud directly)
+    - Greengrass proxies: Backups, cross-property analytics, model updates
+    - Staff devices isolated to property network (massive attack surface reduction)
+    - Even if staff device compromised, attacker can't reach cloud data
+  - **Cloud**: Only for cross-property analytics, backups, model training (via Greengrass proxy)
   - **Cost**: $400 hardware + $22/month AWS
   - **Business Continuity**: OFFLINE-CAPABLE (primary requirement)
-  - **Target**: 95% operations on-premise, 5% cloud batch
+  - **Security**: Network isolation, zero direct cloud access from staff devices
+  - **Target**: 95% operations on-premise, 5% cloud batch (via Greengrass proxy)
 
-  **KEY PRINCIPLE**: "Business continuity is the main purpose"
-  - Small hotels: Cloud redundancy (multi-region, Service Workers)
-  - Medium/Large hotels: OFFLINE operation (on-premise server)
-  - **Cloudflare Workers DON'T help** (still cloud-dependent, no offline)
+  **KEY PRINCIPLES**:
+  1. **"Business continuity is the main purpose"**
+     - Small hotels: Cloud redundancy (multi-region, Service Workers)
+     - Medium/Large hotels: OFFLINE operation (on-premise server)
+  2. **Network isolation = Security + Cost savings**
+     - Apps only work on property WiFi (massive attack surface reduction)
+     - 80-95% of workloads run locally (near-zero cloud API costs)
+     - Greengrass as security proxy (only gateway to cloud)
+  3. **Cloudflare Workers DON'T help** (still cloud-dependent, no offline, no cost savings)
 
   **Reference**: `.agent/docs/market-segmented-architecture.md` (MANDATORY reading)
 
