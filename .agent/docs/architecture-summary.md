@@ -71,6 +71,7 @@ Is hotel <50 rooms with no IT department?
 **Stack**:
 - Greengrass server: Intel NUC ($580) in server room
 - Web + mobile apps connect to greengrass.local (NOT cloud)
+- **SECURITY**: Apps ONLY work on property WiFi (network isolation)
 - On-premise ML: Sentiment, vision, speech, optimization (all on Greengrass)
 - Local PostgreSQL replica (syncs with cloud every 15 min)
 - IoT integration: Room sensors, thermostats, door locks (MQTT)
@@ -80,6 +81,10 @@ Is hotel <50 rooms with no IT department?
 **Offline**: 100% (works without internet!)
 
 **Business Continuity**: OFFLINE-CAPABLE, local replica, no cloud dependency
+
+**Security**: Network isolation (apps only work on-site, Greengrass is security proxy)
+
+**Cost Savings**: 80-95% workloads local = $34/year savings vs cloud APIs
 
 ## Technology Comparison
 
