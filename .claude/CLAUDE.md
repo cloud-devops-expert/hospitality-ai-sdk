@@ -95,6 +95,14 @@ When adding new features:
 - Seasonality detection
 - **Goal**: 80%+ trend accuracy
 
+### `lib/database/`
+
+- **AWS Data API adapter** for serverless PostgreSQL
+- **Row-Level Security (RLS)** for multi-tenant isolation
+- **DrizzleRLSClient** for automatic tenant context management
+- **Goal**: Database-level security, 55% cost reduction, SOC2/GDPR compliant
+- **Note**: Hybrid approach - traditional pg for admin, Data API for tenant APIs
+
 ## Common Tasks
 
 ### Adding a New Algorithm
@@ -124,10 +132,20 @@ When adding new features:
 
 ## Environment Variables
 
+### AI/ML Features
 - `OPENAI_API_KEY` - Optional, for AI features
 - `NEXT_PUBLIC_ENABLE_LLM` - Feature flag for AI
 - `NEXT_PUBLIC_APP_ENV` - Environment (dev/prod)
 - `NEXT_PUBLIC_ENABLE_CACHING` - Enable result caching
+
+### Database Configuration
+- `DATABASE_URL` - Traditional PostgreSQL connection string (for admin panel)
+- `DB_CLUSTER_ARN` - AWS Aurora cluster ARN (for Data API)
+- `DB_SECRET_ARN` - AWS Secrets Manager ARN (for Data API credentials)
+- `DATABASE_NAME` - Database name
+- `AWS_REGION` - AWS region (default: us-east-1)
+- `USE_DATA_API` - Feature flag for Data API (true/false)
+- `DEBUG_DATA_API` - Enable debug logging for Data API (true/false)
 
 ## File Naming Conventions
 
@@ -225,11 +243,21 @@ Priority areas:
 
 ## Resources
 
+### General Documentation
 - **Architecture**: `.agent/docs/architecture.md`
 - **Use Cases**: `.agent/docs/use-cases.md`
 - **Experiments**: `.agent/experiments/cost-analysis.md`
 - **Prompts**: `.agent/prompts/sentiment-analysis.md`
 - **Tasks**: `.agent/tasks/current.md`
+
+### AWS Data API + RLS Documentation
+- **Summary**: `.agent/docs/aws-data-api-rls-summary.md` - Executive summary and quick reference
+- **Migration Guide**: `.agent/docs/aws-data-api-migration-guide.md` - Complete 5-phase migration plan
+- **RLS Deep Dive**: `.agent/docs/data-api-rls-session-variables.md` - How RLS works with Data API
+- **Integration Examples**: `.agent/docs/rls-integration-examples.md` - Next.js, Express, PayloadCMS examples
+- **Cost Analysis**: `.agent/docs/aws-data-api-migration-analysis.md` - Detailed cost-benefit analysis
+- **Infrastructure**: `.agent/infrastructure/aurora-data-api.tf` - Terraform configuration
+- **SQL Policies**: `.agent/infrastructure/rls-policies.sql` - PostgreSQL RLS setup
 
 ## Remember
 
