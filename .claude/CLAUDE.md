@@ -195,26 +195,36 @@ When adding new features:
 - **RULE 14**: Demo data goes in `demo/` or `.agent/experiments/` folders
 - **RULE 15**: Keep root folder clean (<30 files, no scattered .sh, .py, .md files)
 
-### Local-First Development
+### Local-First Development (CRITICAL)
 
-- **RULE 16**: Process data locally when possible
-- **RULE 17**: Minimize external API calls
-- **RULE 18**: Implement offline-capable features where feasible
-- **RULE 19**: Cache results to reduce computational resources
+- **RULE 16**: **LOCAL-FIRST ML ARCHITECTURE (HARD RULE)** - ALL ML inference MUST attempt local processing before cloud
+  - 90-95% of operations MUST run on browser/device (Transformers.js, TensorFlow Lite, ML Kit)
+  - 4-9% MAY use edge compute (Cloudflare Workers, Vercel Edge) if browser/device insufficient
+  - <1% MAY use cloud APIs ONLY when technically impossible locally or user explicitly opts-in
+  - **Target**: 95%+ of ML operations at ZERO cloud cost
+  - **Reference**: `.agent/docs/local-first-ml-architecture.md` (MANDATORY reading)
+
+- **RULE 17**: Process data locally when possible (applies to all operations, not just ML)
+- **RULE 18**: Minimize external API calls (cloud APIs are LAST RESORT, not default)
+- **RULE 19**: Implement offline-capable features where feasible (ML MUST work offline)
+- **RULE 20**: Cache results to reduce computational resources
 
 ### Brand Guidelines
 
-- **RULE 20**: Use Rubik font as the primary brand font
-- **RULE 21**: Use navy blue (#1e3a8a) as the primary brand color
-- **RULE 22**: ALWAYS implement both light and dark modes
-- **RULE 23**: Ensure all UI components support theme switching
+- **RULE 21**: Use Rubik font as the primary brand font
+- **RULE 22**: Use navy blue (#1e3a8a) as the primary brand color
+- **RULE 23**: ALWAYS implement both light and dark modes
+- **RULE 24**: Ensure all UI components support theme switching
 
 ## Performance Targets
 
 - Traditional methods: <20ms
-- AI methods: <1000ms
-- Hybrid average: <200ms
-- Cost per operation: <$0.0001
+- Browser ML (Transformers.js): 50-200ms
+- Mobile ML (TensorFlow Lite): 50-150ms
+- Edge ML (Cloudflare Workers): 100-400ms
+- Cloud APIs (LAST RESORT): <1000ms
+- **Target**: 95%+ operations at <200ms and $0 cost
+- Average cost per operation: <$0.0001 (target: $0)
 
 ## Quality Checklist
 
@@ -232,14 +242,17 @@ Before marking a feature complete:
 
 ## Future Roadmap
 
-See `.agent/docs/project-summary.md` for detailed roadmap.
+See `.agent/docs/implementation-roadmap.md` for detailed 24-month plan.
 
-Priority areas:
+**Priority areas (LOCAL-FIRST approach)**:
 
-1. Browser-based AI (Transformers.js)
-2. Result caching layer
-3. ARIMA forecasting
-4. Batch processing API
+1. **Browser ML** (Transformers.js) - Month 1-2 (HIGHEST PRIORITY)
+2. **Mobile ML** (TensorFlow Lite, ML Kit) - Month 1-2 (HIGHEST PRIORITY)
+3. **Edge Functions** (Cloudflare Workers) - Month 3
+4. **Model Optimization** (quantization, pruning) - Month 3-4
+5. **Cloud APIs** (opt-in only) - Month 6+ (LOWEST PRIORITY)
+
+**Hard Rule**: 95%+ of ML operations MUST run locally (browser/device) at zero cloud cost.
 
 ## Resources
 
@@ -249,6 +262,13 @@ Priority areas:
 - **Experiments**: `.agent/experiments/cost-analysis.md`
 - **Prompts**: `.agent/prompts/sentiment-analysis.md`
 - **Tasks**: `.agent/tasks/current.md`
+
+### ML Architecture (CRITICAL - MUST READ)
+- **🔥 Local-First ML Architecture**: `.agent/docs/local-first-ml-architecture.md` (HARD RULE - mandatory reading)
+- **ML Library Integration**: `.agent/docs/ml-library-integration-analysis.md` (cloud microservices as last resort)
+- **On-Device Mobile ML**: `.agent/docs/on-device-ml-mobile-analysis.md` (Expo/React Native strategy)
+- **Implementation Roadmap**: `.agent/docs/implementation-roadmap.md` (24-month strategic plan)
+- **Gap Analysis**: `.agent/docs/implementation-gap-analysis.md` (what to build next)
 
 ### AWS Data API + RLS Documentation
 - **Summary**: `.agent/docs/aws-data-api-rls-summary.md` - Executive summary and quick reference
