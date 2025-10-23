@@ -34,12 +34,16 @@ To verify the instrumented RDS client works with actual AWS services, you need:
 
 **Aurora Serverless v2 Cluster**:
 ```bash
-# See: .agent/infrastructure/aurora-data-api.tf
+# See: infrastructure/ (AWS CDK)
 # Key requirements:
 # - Engine: aurora-postgresql
 # - Version: 15.x or later
-# - Data API enabled: enable_http_endpoint = true
+# - Data API enabled: enableDataApi = true
 # - ACU range: 0.5 - 2.0 (recommended for dev)
+
+# Deploy using CDK:
+cd infrastructure
+cdk deploy -c environment=dev
 ```
 
 **Secrets Manager Secret**:
@@ -373,10 +377,14 @@ SELECT * FROM test_bookings WHERE tenant_id = 'tenant-a';
 - CloudWatch: ~500 metrics = $0.10
 - **Total: ~$0.58/day**
 
-**Pause Aurora when not testing**: Use Terraform to start/stop:
+**Pause Aurora when not testing**: Use CDK to adjust capacity:
 ```bash
-terraform apply -var="aurora_min_capacity=0"  # Pause
-terraform apply -var="aurora_min_capacity=0.5"  # Resume
+# Reduce to minimum capacity
+cd infrastructure
+cdk deploy -c minCapacity=0.5 -c maxCapacity=0.5
+
+# Or destroy when not in use (dev only)
+cdk destroy
 ```
 
 ---
@@ -437,10 +445,12 @@ aws rds describe-db-clusters \
 ⏸️ Performance under real network conditions
 
 **Next Steps**:
-1. Set up Aurora Serverless v2 cluster (via Terraform in `.agent/infrastructure/`)
+1. Set up Aurora Serverless v2 cluster (via CDK in `infrastructure/`)
 2. Configure AWS credentials locally
 3. Run integration tests
 4. Verify CloudWatch metrics
 5. Test RLS isolation with real data
+
+See `infrastructure/README.md` for deployment instructions.
 
 The code is production-ready from a logic perspective, but requires AWS infrastructure to validate end-to-end functionality.
