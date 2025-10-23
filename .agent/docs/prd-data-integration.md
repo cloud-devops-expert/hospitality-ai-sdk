@@ -585,29 +585,114 @@ The **onus of integration configuration** depends on the integration pattern and
 
 ---
 
-#### Scenario 3: Vendor Requires Manual Setup (Legacy Systems)
-**Examples:** Old on-premise PMS, custom databases
+#### Scenario 3: Direct Database Access (On-Premise Legacy Systems ONLY)
+**Examples:** Old on-premise Opera PMS v4/v5, Fidelio, custom SQL databases
 **Ownership:** Hotel IT (70% effort)
 
+**IMPORTANT:** This scenario is **ONLY** for on-premise systems where the hotel physically hosts the database in their server room or datacenter. This is NOT for cloud/SaaS systems like Opera Cloud, Cloudbeds, or Mews.
+
 ```
-1. Hotel IT creates dedicated database user for us
-2. Hotel IT whitelists our IP addresses
-3. Hotel IT provides: DB connection string, credentials, schema docs
-4. Our team builds custom connector (one-time)
+1. Hotel IT creates dedicated read-only database user for us
+2. Hotel IT whitelists our AWS NAT Gateway IP addresses
+3. Hotel IT provides:
+   - Database connection string (host, port, database name)
+   - Read-only credentials (username, password)
+   - VPN config (if database not publicly accessible)
+   - Schema documentation or data dictionary
+4. Our team builds custom SQL connector (one-time)
 5. Schedule sync jobs with hotel approval
 ```
 
+**Example: On-Premise Opera PMS (Not Cloud)**
+```sql
+-- Hotel DBA creates read-only user in Oracle database
+CREATE USER opera_integration IDENTIFIED BY 'securePassword123';
+
+-- Grant SELECT only (no write access)
+GRANT SELECT ON opera_owner.RESERVATION TO opera_integration;
+GRANT SELECT ON opera_owner.GUEST TO opera_integration;
+GRANT SELECT ON opera_owner.ROOM TO opera_integration;
+GRANT SELECT ON opera_owner.ROOM_TYPE TO opera_integration;
+
+-- Connection string hotel provides:
+jdbc:oracle:thin:@hotel-db-server.local:1521/OPERA
+```
+
+**Our Pull Mechanism (Direct SQL):**
+```python
+# AWS Glue Job (PySpark)
+# Runs every 15 minutes to pull data from hotel's on-premise database
+
+from awsglue.context import GlueContext
+from pyspark.sql import SparkSession
+import psycopg2
+
+# Connect to hotel's on-premise Oracle database via VPN
+connection_props = {
+    "user": secret_manager.get_secret("opera-db-user"),
+    "password": secret_manager.get_secret("opera-db-password"),
+    "driver": "oracle.jdbc.driver.OracleDriver"
+}
+
+jdbc_url = "jdbc:oracle:thin:@hotel-db.local:1521/OPERA"
+
+# Pull reservations modified since last sync (incremental)
+query = f"""
+    (SELECT
+        r.RESERVATION_ID,
+        r.HOTEL_CODE,
+        g.GUEST_NAME,
+        r.ROOM_TYPE,
+        r.ARRIVAL_DATE,
+        r.DEPARTURE_DATE,
+        r.STATUS,
+        r.LAST_UPDATE_DATE
+    FROM opera_owner.RESERVATION r
+    JOIN opera_owner.GUEST g ON r.GUEST_ID = g.GUEST_ID
+    WHERE r.LAST_UPDATE_DATE > TIMESTAMP '{last_sync_time}'
+    ORDER BY r.LAST_UPDATE_DATE ASC) AS reservations
+"""
+
+# Spark reads directly from hotel's database
+df = spark.read.jdbc(
+    url=jdbc_url,
+    table=query,
+    properties=connection_props
+)
+
+# Save raw data to S3 (our data lake)
+df.write.json(f"s3://hotel-data-raw/opera-onprem/{hotel_id}/{timestamp}.json")
+
+# Continue with normal ETL pipeline...
+```
+
 **Hotel Responsibility:**
-- Create read-only database user
-- Configure firewall/VPN access
-- Provide schema documentation
-- Approve data access scope
+- Create read-only database user (30 min)
+- Configure firewall/VPN access to allow our AWS IPs (1-2 hours)
+- Provide schema documentation (or we reverse-engineer)
+- Approve data access scope and security review
+- Maintain database uptime (this is their server)
 
 **Our Responsibility:**
-- Build custom connector (2-4 weeks dev time)
-- Secure credential storage
+- Build custom SQL connector for their specific schema (2-4 weeks dev time)
+- Secure credential storage (AWS Secrets Manager)
+- Configure VPN if required (AWS Client VPN)
 - ETL job configuration
+- Handle database downtime/connectivity issues
 - Ongoing maintenance
+
+**Challenges with Direct DB Access:**
+- Hotel's firewall may block external connections
+- VPN setup can be complex
+- Database downtime affects our sync
+- Schema changes can break our queries
+- Security concerns (giving external party DB access)
+
+**Why This is Rare:**
+- Most hotels have moved to cloud PMS (no DB access)
+- High security risk for hotels
+- Maintenance burden (schema changes)
+- We only do this for large enterprise clients
 
 ---
 
@@ -642,64 +727,281 @@ The **onus of integration configuration** depends on the integration pattern and
 
 **Real-World Example: Oracle Opera Cloud PMS**
 
-**Setup Process:**
-1. Hotel generates API credentials in Opera Cloud admin
-2. Hotel provides: `hotelId`, `interfaceId`, `apiKey`, `username`, `password`
-3. We configure in our system via admin UI
+**Important Clarification: Cloud PMS vs On-Premise**
 
-**Implementation (AWS-Based):**
+**Opera Cloud is a SaaS (Cloud) System:**
+- Oracle hosts the database (hotel has NO database access)
+- Hotel only has access via Oracle's web interface
+- Data access for integrations: **REST API only**
+- "Pull" = We call Oracle's API periodically to fetch updates
+
+**This is NOT direct database access** - we use Oracle's published REST API endpoints.
+
+---
+
+**Setup Process:**
+
+**Step 1: Hotel Requests API Access from Oracle**
+- Hotel contacts Oracle support or partner manager
+- Oracle creates API credentials for the hotel's property
+- Oracle provides: `clientId`, `clientSecret`, `hotelId`, `endpoint URL`
+- Timeline: 3-7 business days (Oracle provisioning)
+
+**Step 2: Hotel Shares Credentials with Us**
+- Hotel logs into our platform
+- Enters Opera Cloud credentials in integration form:
+  ```
+  Hotel ID: LAXDT (property code from Opera)
+  Client ID: abc123-xyz789
+  Client Secret: ••••••••••••
+  Environment: production (vs test/staging)
+  Region: us-east-1 (or eu-west-1)
+  ```
+
+**Step 3: We Configure Sync Schedule**
+- We test API connection
+- Configure sync frequency (15min, 1h, etc.)
+- Set which entities to sync (bookings, guests, rooms, etc.)
+
+---
+
+**How the API "Pull" Works:**
+
 ```typescript
 // Lambda function triggered every 15 minutes by EventBridge
 export const handler = async (event: EventBridgeEvent) => {
   const integration = await getIntegration('opera-cloud-hotel123');
 
-  // 1. Fetch data from Opera Cloud API
+  // 1. Get OAuth token from Opera Cloud (tokens expire after 1 hour)
+  const tokenResponse = await axios.post(
+    `${integration.baseUrl}/oauth/v1/tokens`,
+    {
+      grant_type: 'client_credentials',
+      client_id: integration.clientId,
+      client_secret: integration.clientSecret
+    }
+  );
+
+  const accessToken = tokenResponse.data.access_token;
+
+  // 2. Fetch reservations modified since last sync
+  // This calls Oracle's REST API (we do NOT access their database directly)
   const lastSync = await getLastSyncTime(integration.id);
   const response = await axios.get(
     `${integration.baseUrl}/rsv/v1/hotels/${integration.hotelId}/reservations`,
     {
-      headers: { 'x-app-key': integration.apiKey },
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'x-app-key': integration.appKey,
+        'Content-Type': 'application/json'
+      },
       params: {
+        // Opera Cloud filters: only get records modified since last sync
         modifiedSince: lastSync.toISOString(),
-        limit: 1000
+        limit: 1000,  // Max per request
+        offset: 0
       }
     }
   );
 
-  // 2. Save raw data to S3
+  // Response from Opera API looks like:
+  // {
+  //   "reservations": [
+  //     {
+  //       "reservationId": "12345",
+  //       "hotelId": "LAXDT",
+  //       "guestName": { "firstName": "John", "lastName": "Smith" },
+  //       "roomType": "KING",
+  //       "arrival": "2024-03-15",
+  //       "departure": "2024-03-18",
+  //       "status": "RESERVED",
+  //       ...
+  //     },
+  //     ...
+  //   ],
+  //   "hasMore": true,  // Pagination indicator
+  //   "nextOffset": 1000
+  // }
+
+  // 3. Handle pagination (Opera returns max 1000 records per call)
+  let allReservations = response.data.reservations;
+  let nextOffset = response.data.nextOffset;
+
+  while (response.data.hasMore) {
+    const nextPage = await axios.get(
+      `${integration.baseUrl}/rsv/v1/hotels/${integration.hotelId}/reservations`,
+      {
+        headers: { 'Authorization': `Bearer ${accessToken}`, ... },
+        params: {
+          modifiedSince: lastSync.toISOString(),
+          limit: 1000,
+          offset: nextOffset
+        }
+      }
+    );
+
+    allReservations = allReservations.concat(nextPage.data.reservations);
+    nextOffset = nextPage.data.nextOffset;
+
+    if (!nextPage.data.hasMore) break;
+  }
+
+  // 4. Save RAW API response to S3 (immutable audit trail)
   await s3.putObject({
     Bucket: 'hotel-data-raw',
     Key: `opera/${integration.hotelId}/${new Date().toISOString()}.json`,
-    Body: JSON.stringify(response.data),
+    Body: JSON.stringify({
+      source: 'opera-cloud',
+      syncTimestamp: new Date().toISOString(),
+      lastSyncTimestamp: lastSync.toISOString(),
+      recordCount: allReservations.length,
+      rawResponse: response.data  // Original API response
+    }),
     Metadata: {
       source: 'opera-cloud',
       syncType: 'incremental',
-      recordCount: response.data.reservations.length.toString()
+      recordCount: allReservations.length.toString()
     }
   }).promise();
 
-  // 3. Trigger Glue job for ETL
+  // 5. Trigger Glue job for ETL
+  // Glue will read the raw JSON, transform to our unified schema, dedupe, and load to RDS
   await glue.startJobRun({
     JobName: 'opera-bookings-etl',
     Arguments: {
-      '--S3_INPUT_PATH': `s3://hotel-data-raw/opera/${integration.hotelId}/`,
+      '--S3_INPUT_PATH': `s3://hotel-data-raw/opera/${integration.hotelId}/${new Date().toISOString()}.json`,
       '--HOTEL_ID': integration.hotelId,
       '--SYNC_TIMESTAMP': new Date().toISOString()
     }
   }).promise();
 
-  // 4. Update sync metadata
+  // 6. Update sync metadata in DynamoDB
   await updateLastSyncTime(integration.id, new Date());
 
-  return { statusCode: 200, recordsFound: response.data.reservations.length };
+  return {
+    statusCode: 200,
+    recordsFound: allReservations.length,
+    nextSyncIn: '15 minutes'
+  };
 };
 
 // EventBridge schedule: rate(15 minutes) for bookings
+// For static data (room types, rate codes): rate(6 hours)
 ```
 
+---
+
+**Key Points About Pull/Polling:**
+
+1. **We Call Them (Not Vice Versa)**
+   - Our Lambda function initiates the API call every 15 minutes
+   - We're the "client", Opera Cloud is the "server"
+   - We control the sync frequency
+
+2. **Incremental Updates Only**
+   - We pass `modifiedSince` parameter to get only changed records
+   - Opera Cloud's API filters on their side
+   - We don't re-fetch unchanged data (efficient)
+
+3. **No Real-Time Events**
+   - If a booking is created at 2:00 PM, we might not fetch it until 2:15 PM
+   - This is why polling is "near real-time" (not instant)
+   - For true real-time, we'd need webhooks (Pattern 2)
+
+4. **Rate Limits**
+   - Opera Cloud: ~100 requests/minute per hotel
+   - We must respect their limits or get throttled (429 errors)
+   - Our code includes exponential backoff for retries
+
+---
+
+**Why Pull Instead of Push for Opera Cloud?**
+
+Opera Cloud **does support webhooks** for some events (OXI interface), but:
+- Requires enterprise-level contract with Oracle
+- Complex setup (hotel IT must configure in Opera)
+- Webhook reliability issues reported by partners
+- Not all data types support webhooks
+
+**Therefore:** Most partners use polling as the reliable, standard approach.
+
+---
+
+**Data Flow Visualization:**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Oracle Cloud (SaaS)                       │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  Opera Cloud Database (Oracle's Infrastructure)        │ │
+│  │  - Hotel has NO access to this database               │ │
+│  │  - Only Oracle engineers can access                   │ │
+│  └──────────────────┬─────────────────────────────────────┘ │
+│                     │                                         │
+│                     ▼                                         │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  Opera Cloud REST API (Public Interface)              │ │
+│  │  - /rsv/v1/hotels/{id}/reservations                   │ │
+│  │  - /fof/v1/hotels/{id}/folios                         │ │
+│  │  - /crm/v1/hotels/{id}/profiles                       │ │
+│  └──────────────────┬─────────────────────────────────────┘ │
+└─────────────────────┼─────────────────────────────────────────┘
+                      │ HTTPS GET (OAuth 2.0)
+                      │ Every 15 minutes
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│              Our AWS Infrastructure                          │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  Lambda Function (Polling Job)                         │ │
+│  │  - Triggered by EventBridge (cron schedule)           │ │
+│  │  - Calls Opera API with OAuth token                   │ │
+│  │  - Fetches records modified since last sync           │ │
+│  └──────────────────┬─────────────────────────────────────┘ │
+│                     │                                         │
+│                     ▼                                         │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  S3 Raw Data Lake                                      │ │
+│  │  s3://hotel-data/raw/opera/LAXDT/2024-03-15T14:30.json│ │
+│  │  - Immutable raw API responses                        │ │
+│  └──────────────────┬─────────────────────────────────────┘ │
+│                     │                                         │
+│                     ▼                                         │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  Glue ETL Job                                          │ │
+│  │  - Transform Opera schema → Unified schema            │ │
+│  │  - Deduplicate using composite keys                   │ │
+│  │  - Enrich data                                         │ │
+│  └──────────────────┬─────────────────────────────────────┘ │
+│                     │                                         │
+│                     ▼                                         │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  RDS PostgreSQL                                        │ │
+│  │  production.bookings table                             │ │
+│  │  - Clean, unified data ready for AI/ML                │ │
+│  └────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+**Comparison: Cloud PMS vs On-Premise PMS**
+
+| Aspect | Cloud (Opera Cloud) | On-Premise (Old Opera) |
+|--------|---------------------|------------------------|
+| **Database Location** | Oracle's datacenter | Hotel's server room |
+| **Hotel DB Access** | ❌ None | ✅ Full access (if granted) |
+| **Integration Method** | REST API only | API or direct DB |
+| **Credentials** | API key from Oracle | DB credentials or API key |
+| **Setup Time** | 3-7 days (Oracle provisioning) | 1-2 hours (hotel IT creates user) |
+| **Data Access Speed** | API rate limits (~100/min) | Direct DB (faster) |
+| **Pattern** | Pull (polling) or Push (webhooks) | Pull (DB query) or Push (triggers) |
+
+---
+
 **Who Owns What:**
-- Hotel: Generates credentials (30 min)
-- Us: Build connector (1-2 weeks), configure sync (1 hour)
+- **Hotel:** Requests API access from Oracle (3-7 days), shares credentials with us (15 min)
+- **Us:** Build connector (1-2 weeks), configure sync (1 hour), maintain sync jobs
 
 ---
 
