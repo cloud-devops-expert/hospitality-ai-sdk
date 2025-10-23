@@ -278,6 +278,16 @@ export class DrizzleRLSClient {
   private async setSessionVariables(tx: any, context: RLSContext): Promise<void> {
     metrics.totalContextSets++;
 
+    // Set application_name for visibility in pg_stat_activity and Performance Insights
+    const appName = `tenant-${context.tenantId}${context.userId ? `-user-${context.userId}` : ''}`;
+    await tx.execute(
+      `SET LOCAL application_name = '${this.escapeSQL(appName)}'`
+    );
+
+    if (this.config.debug) {
+      console.log('[Drizzle RLS] Set application_name:', appName);
+    }
+
     // Set tenant ID (required)
     await tx.execute(
       `SET LOCAL app.current_tenant_id = '${this.escapeSQL(context.tenantId)}'`
