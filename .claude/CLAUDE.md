@@ -195,19 +195,29 @@ When adding new features:
 - **RULE 14**: Demo data goes in `demo/` or `.agent/experiments/` folders
 - **RULE 15**: Keep root folder clean (<30 files, no scattered .sh, .py, .md files)
 
-### Local-First Development (CRITICAL)
+### Edge-First Development (CRITICAL)
 
-- **RULE 16**: **LOCAL-FIRST ML ARCHITECTURE (HARD RULE)** - ALL ML inference MUST attempt local processing before cloud
-  - 90-95% of operations MUST run on browser/device (Transformers.js, TensorFlow Lite, ML Kit)
-  - 4-9% MAY use edge compute (Cloudflare Workers, Vercel Edge) if browser/device insufficient
-  - <1% MAY use cloud APIs ONLY when technically impossible locally or user explicitly opts-in
-  - **Target**: 95%+ of ML operations at ZERO cloud cost
-  - **Reference**: `.agent/docs/local-first-ml-architecture.md` (MANDATORY reading)
+- **RULE 16**: **EDGE-FIRST ML ARCHITECTURE (HARD RULE)** - ALL ML inference MUST attempt edge/local processing before cloud
+  - **90% MUST run on AWS IoT Greengrass** - On-premise edge devices at each property (TIER 1 - PRIMARY)
+    - Full Python ML stack (PyTorch, TensorFlow, Transformers, scikit-learn)
+    - Real-time inference <50ms via local network
+    - On-premise PMS integration, no cloud latency
+    - One Greengrass Core device per property ($400 hardware, $204/year AWS)
+    - **Target**: 90%+ of B2B operations on-premise at near-zero marginal cost
+  - **9% MAY run on browser/mobile** - Guest-facing apps, kiosks, fallback (TIER 2 - SECONDARY)
+    - Transformers.js, TensorFlow Lite, ML Kit for consumer touchpoints
+    - Use when guest has mobile device but no property network access
+    - Offline-capable for degraded network scenarios
+  - **1% MAY use cloud APIs** - Batch processing, multi-property analytics (TIER 3 - TERTIARY)
+    - ONLY when technically impossible on-premise or user explicitly opts-in
+    - Model training, cross-property benchmarking, historical aggregation
+  - **Cost Savings**: 97% reduction vs. cloud-heavy ($1.7M saved over 3 years)
+  - **Reference**: `.agent/docs/iot-greengrass-architecture.md` (MANDATORY reading)
 
-- **RULE 17**: Process data locally when possible (applies to all operations, not just ML)
+- **RULE 17**: Process data on-premise when possible (applies to all B2B operations, not just ML)
 - **RULE 18**: Minimize external API calls (cloud APIs are LAST RESORT, not default)
-- **RULE 19**: Implement offline-capable features where feasible (ML MUST work offline)
-- **RULE 20**: Cache results to reduce computational resources
+- **RULE 19**: Implement offline-capable features where feasible (ML MUST work without internet)
+- **RULE 20**: Cache results to reduce computational resources and network calls
 
 ### Brand Guidelines
 
@@ -219,12 +229,14 @@ When adding new features:
 ## Performance Targets
 
 - Traditional methods: <20ms
-- Browser ML (Transformers.js): 50-200ms
-- Mobile ML (TensorFlow Lite): 50-150ms
-- Edge ML (Cloudflare Workers): 100-400ms
-- Cloud APIs (LAST RESORT): <1000ms
-- **Target**: 95%+ operations at <200ms and $0 cost
-- Average cost per operation: <$0.0001 (target: $0)
+- **IoT Greengrass (PRIMARY)**: <50ms - On-premise edge inference
+- Browser ML (Transformers.js): 50-200ms - Guest apps, kiosks
+- Mobile ML (TensorFlow Lite): 50-150ms - Mobile guest apps
+- Edge ML (Cloudflare Workers): 100-400ms - Global edge functions (rare)
+- Cloud APIs (LAST RESORT): <1000ms - Batch processing only
+- **Target (B2B)**: 90%+ operations at <50ms and near-$0 marginal cost (Greengrass)
+- **Target (B2C)**: 95%+ operations at <200ms and $0 cloud cost (browser/mobile)
+- Average cost per operation: <$0.00001 (target: $0 after initial hardware)
 
 ## Quality Checklist
 
@@ -244,15 +256,27 @@ Before marking a feature complete:
 
 See `.agent/docs/implementation-roadmap.md` for detailed 24-month plan.
 
-**Priority areas (LOCAL-FIRST approach)**:
+**Priority areas (EDGE-FIRST approach)**:
 
-1. **Browser ML** (Transformers.js) - Month 1-2 (HIGHEST PRIORITY)
-2. **Mobile ML** (TensorFlow Lite, ML Kit) - Month 1-2 (HIGHEST PRIORITY)
-3. **Edge Functions** (Cloudflare Workers) - Month 3
-4. **Model Optimization** (quantization, pruning) - Month 3-4
-5. **Cloud APIs** (opt-in only) - Month 6+ (LOWEST PRIORITY)
+1. **AWS IoT Greengrass** - Month 1-3 (HIGHEST PRIORITY - B2B PRIMARY)
+   - One device per property, full Python ML stack
+   - On-premise sentiment, vision, speech, forecasting
+   - <50ms latency, 90% of B2B workloads
+   - $40K Year 1 hardware, $204/year AWS cost
+2. **Browser/Mobile ML** - Month 2-4 (HIGH PRIORITY - B2C SECONDARY)
+   - Transformers.js for guest web apps
+   - TensorFlow Lite/ML Kit for mobile guest apps
+   - Kiosk applications, offline guest experiences
+3. **Edge Functions** - Month 4-5 (MEDIUM PRIORITY - GLOBAL FALLBACK)
+   - Cloudflare Workers for global edge inference
+   - Use when Greengrass unreachable or multi-property aggregation
+4. **Model Optimization** - Month 3-6 (ONGOING)
+   - Quantization for faster Greengrass inference
+   - Model pruning for browser/mobile deployment
+5. **Cloud APIs** - Month 6+ (LOWEST PRIORITY - BATCH ONLY)
+   - Multi-property analytics, model training, historical batch processing
 
-**Hard Rule**: 95%+ of ML operations MUST run locally (browser/device) at zero cloud cost.
+**Hard Rule**: 90%+ of B2B ML operations MUST run on-premise (Greengrass) at near-zero marginal cost.
 
 ## Resources
 
@@ -264,9 +288,13 @@ See `.agent/docs/implementation-roadmap.md` for detailed 24-month plan.
 - **Tasks**: `.agent/tasks/current.md`
 
 ### ML Architecture (CRITICAL - MUST READ)
-- **🔥 Local-First ML Architecture**: `.agent/docs/local-first-ml-architecture.md` (HARD RULE - mandatory reading)
-- **ML Library Integration**: `.agent/docs/ml-library-integration-analysis.md` (cloud microservices as last resort)
-- **On-Device Mobile ML**: `.agent/docs/on-device-ml-mobile-analysis.md` (Expo/React Native strategy)
+- **🔥 IoT Greengrass Architecture**: `.agent/docs/iot-greengrass-architecture.md` (HARD RULE - mandatory reading)
+- **Local-First vs. IoT Greengrass**: `.agent/docs/local-first-vs-iot-greengrass.md` (why Greengrass for B2B hospitality)
+- **Edge Compute Comparison**: `.agent/docs/edge-compute-comparison.md` (Cloudflare vs. Lambda@Edge vs. CloudFront)
+- **Cloudflare Workers**: `.agent/docs/cloudflare-workers-business-value.md`, `.agent/docs/cloudflare-workers-tech-stack.md`
+- **Browser ML (Secondary)**: `.agent/docs/local-first-ml-architecture.md` (browser/mobile for guest apps)
+- **Mobile ML (Secondary)**: `.agent/docs/on-device-ml-mobile-analysis.md` (Expo/React Native for guest apps)
+- **ML Library Integration**: `.agent/docs/ml-library-integration-analysis.md` (Python ML microservices)
 - **Implementation Roadmap**: `.agent/docs/implementation-roadmap.md` (24-month strategic plan)
 - **Gap Analysis**: `.agent/docs/implementation-gap-analysis.md` (what to build next)
 

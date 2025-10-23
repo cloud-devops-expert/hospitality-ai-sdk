@@ -6,12 +6,40 @@ This roadmap outlines the 24-month path from MVP to market leadership for the Ho
 
 **Core Principle**: Ship fast, validate early, scale intelligently.
 
+## ML Architecture Strategy (CRITICAL)
+
+**EDGE-FIRST APPROACH** - Three-tier ML architecture:
+
+1. **TIER 1 (90%) - AWS IoT Greengrass** (HIGHEST PRIORITY - B2B PRIMARY)
+   - On-premise edge devices at each property (Intel NUC $400 hardware)
+   - Full Python ML stack (PyTorch, TensorFlow, Transformers, YOLOv8, Whisper)
+   - <50ms latency via local network
+   - **Deploy**: Month 1-3 pilot (5 properties), Month 2-3 beta (50 properties)
+   - **Target**: 90% of B2B staff operations at near-$0 marginal cost
+
+2. **TIER 2 (9%) - Browser/Mobile ML** (SECONDARY - B2C GUEST APPS)
+   - Transformers.js for guest web apps, TensorFlow Lite for mobile
+   - Guest-facing features (chatbot, voice commands, photo uploads)
+   - **Deploy**: Month 7+ (after Greengrass is proven)
+   - **Target**: 9% of B2C guest interactions at $0 cloud cost
+
+3. **TIER 3 (1%) - Cloud APIs** (TERTIARY - BATCH PROCESSING)
+   - Multi-property analytics, model training, historical batch
+   - **Deploy**: Month 6+ (opt-in only)
+   - **Target**: <1% of operations, batch processing only
+
+**Cost Savings**: 97% reduction vs. cloud-heavy ($1.7M saved over 3 years)
+
+**Reference**: `.agent/docs/iot-greengrass-architecture.md` (MANDATORY reading)
+
+---
+
 ## Timeline Overview
 
 ```
-Month 1-3: Foundation & MVP
+Month 1-3: Foundation & MVP + IoT Greengrass Pilot/Beta
 Month 4-6: Private Beta & Validation
-Month 7-9: Public Launch & Growth
+Month 7-9: Public Launch & Growth + Browser/Mobile ML (Guest Apps)
 Month 10-12: Scale & Partnerships
 Month 13-24: Market Leadership
 ```
@@ -48,6 +76,18 @@ Build and validate core technical foundation with first paying customers.
 
 **Deliverable**: Working multi-tenant infrastructure with API access
 
+**Week 3-4 (parallel): Edge ML Infrastructure (IoT Greengrass Pilot)**
+- [ ] Develop Greengrass components (sentiment, vision, speech)
+- [ ] Create Python ML services (FastAPI, Transformers, YOLOv8, Whisper)
+- [ ] Package components for IoT Greengrass Core v2
+- [ ] Deploy to AWS IoT Core (S3 artifacts, recipes)
+- [ ] Procure pilot hardware (3x Intel NUC, 1x Jetson, 1x Pi)
+- [ ] Pre-configure devices (Ubuntu 22.04, Greengrass Core)
+- [ ] Ship to 5 pilot properties for validation
+- [ ] Set up remote monitoring (CloudWatch, alarms)
+
+**Deliverable**: IoT Greengrass pilot deployed to 5 properties (HIGHEST PRIORITY - B2B PRIMARY)
+
 #### Month 2: MVP Feature Set
 **Week 1: Dynamic Pricing Module**
 - [ ] Implement traditional algorithmic pricing (multi-factor)
@@ -78,6 +118,18 @@ Build and validate core technical foundation with first paying customers.
 - [ ] Write integration tests
 
 **Deliverable**: 4 core modules working end-to-end
+
+**Week 3-4 (parallel): Greengrass Beta Expansion**
+- [ ] Monitor pilot performance (<50ms latency, 99% uptime)
+- [ ] Collect CIO feedback (security, compliance, ease of use)
+- [ ] Iterate on components based on pilot learnings
+- [ ] Bulk hardware order (50x Intel NUC 13 Pro)
+- [ ] Automated provisioning script (50 devices)
+- [ ] Ship and install at 50 beta properties
+- [ ] Create self-service installation guide for IT staff
+- [ ] Implement OTA component updates via Greengrass
+
+**Deliverable**: IoT Greengrass scaled to 50 beta properties (B2B PRIMARY)
 
 #### Month 3: User Experience & Documentation
 **Week 1-2: Dashboard & Onboarding**
@@ -243,12 +295,13 @@ Achieve $100K MRR with 1,000 customers and establish market presence.
 ### Product Development
 
 #### Month 7: Launch Features
-**Week 1-2: AI Enhancements**
-- [ ] Integrate local ML models (Transformers.js)
-- [ ] Add browser-based sentiment analysis
-- [ ] Implement offline mode (PWA)
-- [ ] Create AI-powered insights dashboard
-- [ ] Add natural language query interface
+**Week 1-2: Guest-Facing ML (Browser/Mobile - SECONDARY B2C)**
+- [ ] Integrate Transformers.js for guest web apps (sentiment, chatbot)
+- [ ] Add TensorFlow Lite for mobile guest apps (OCR, vision)
+- [ ] Implement offline mode for guest apps (PWA)
+- [ ] Create guest-facing AI features (voice commands, photo uploads)
+- [ ] Add natural language query interface for guest portal
+- [ ] Note: Greengrass already handles 90% of B2B staff operations
 
 **Week 3-4: Integrations**
 - [ ] Complete 5 PMS integrations
