@@ -195,26 +195,46 @@ When adding new features:
 - **RULE 14**: Demo data goes in `demo/` or `.agent/experiments/` folders
 - **RULE 15**: Keep root folder clean (<30 files, no scattered .sh, .py, .md files)
 
-### Edge-First Development (CRITICAL)
+### Market-Segmented Architecture (CRITICAL)
 
-- **RULE 16**: **EDGE-FIRST ML ARCHITECTURE (HARD RULE)** - B2B-only, on-premise first
-  - **95% MUST run on AWS IoT Greengrass** - On-premise edge devices at each property (PRIMARY)
-    - **B2B Focus**: Staff operations only (no guest-facing apps)
-    - Full Python ML stack (PyTorch, TensorFlow, Transformers, scikit-learn)
+- **RULE 16**: **MARKET-SEGMENTED ML ARCHITECTURE (HARD RULE)** - Different architectures for different hotel sizes
+
+  **SEGMENT 1 (60% of market): Small Hotels (<50 rooms, no IT department) - CLOUD-FIRST**
+  - **Primary**: Web app + Mobile app (cloud-hosted SaaS)
+  - **Edge ML**: Browser (Transformers.js) + Mobile (TensorFlow Lite) for simple operations
+    - Sentiment analysis, basic OCR, photo processing
+    - Runs on user devices for speed (<200ms)
+    - Reduces cloud API costs by 70%
+  - **Cloud APIs**: Complex operations (Timefold, advanced ML, database)
+    - Room allocation optimization (Timefold on AWS ECS)
+    - Advanced ML (vision, speech) when needed
+    - Aurora Serverless with RLS (multi-tenant database)
+  - **Cost**: $50-150/month per property
+  - **Business Continuity**: Service Workers, IndexedDB caching, multi-region cloud
+  - **Target**: 70% operations on browser/mobile, 30% cloud APIs
+
+  **SEGMENT 2 (40% of market): Medium/Large Hotels (50+ rooms, have IT) - ON-PREMISE-FIRST**
+  - **Primary**: AWS IoT Greengrass (on-premise server at property)
+    - Intel NUC ($400-580 hardware) in server room
+    - Full Python ML stack (PyTorch, TensorFlow, Transformers, Timefold)
     - Real-time inference <50ms via local network
-    - On-premise PMS integration, no cloud latency
-    - One Greengrass Core device per property ($400 hardware, $204/year AWS)
-    - **Target**: 95%+ of B2B operations on-premise at near-zero marginal cost
-  - **5% MAY use cloud APIs** - Batch processing, multi-property analytics (SECONDARY)
-    - ONLY when technically impossible on-premise or requires cross-property data
-    - Model training, chain-wide benchmarking, historical aggregation
-    - Year-end reporting, regulatory compliance
-  - **NOT NEEDED**: Browser/Mobile ML (we're B2B only, not B2C)
-    - No guest-facing apps
-    - No kiosks or consumer touchpoints
-    - Focus 100% on property staff operations
-  - **Cost Savings**: 97% reduction vs. cloud-heavy ($1.7M saved over 3 years)
-  - **Reference**: `.agent/docs/iot-greengrass-architecture.md` (MANDATORY reading)
+    - **Web/Mobile apps connect to greengrass.local (NOT cloud)**
+  - **Local Capabilities**:
+    - All ML on-premise (sentiment, vision, speech, optimization)
+    - Local database cache (PostgreSQL replica)
+    - IoT integration (room sensors, thermostats, door locks)
+    - **OFFLINE operation** (works without internet - business continuity!)
+  - **Cloud**: Only for cross-property analytics, backups, model training
+  - **Cost**: $400 hardware + $22/month AWS
+  - **Business Continuity**: OFFLINE-CAPABLE (primary requirement)
+  - **Target**: 95% operations on-premise, 5% cloud batch
+
+  **KEY PRINCIPLE**: "Business continuity is the main purpose"
+  - Small hotels: Cloud redundancy (multi-region, Service Workers)
+  - Medium/Large hotels: OFFLINE operation (on-premise server)
+  - **Cloudflare Workers DON'T help** (still cloud-dependent, no offline)
+
+  **Reference**: `.agent/docs/market-segmented-architecture.md` (MANDATORY reading)
 
 - **RULE 17**: Process data on-premise when possible (applies to all B2B operations, not just ML)
 - **RULE 18**: Minimize external API calls (cloud APIs are LAST RESORT, not default)
@@ -228,14 +248,22 @@ When adding new features:
 - **RULE 23**: ALWAYS implement both light and dark modes
 - **RULE 24**: Ensure all UI components support theme switching
 
-## Performance Targets (B2B Only)
+## Performance Targets (Market-Segmented)
 
+**Small Hotels (60% of market) - Cloud-First:**
 - Traditional methods: <20ms (rules-based, zero ML cost)
-- **IoT Greengrass (PRIMARY - 95%)**: <50ms - On-premise edge inference for ALL staff operations
-- Cloud APIs (SECONDARY - 5%): <1000ms - Batch processing, multi-property analytics only
-- **Target**: 95%+ operations at <50ms and near-$0 marginal cost (Greengrass on-premise)
-- Average cost per operation: $0 (after initial $400 hardware per property)
-- **No Browser/Mobile ML needed** (B2B staff only, not consumer guests)
+- Browser/Mobile ML: 50-200ms (Transformers.js, TensorFlow Lite)
+- Cloud APIs: 200-1000ms (Timefold, advanced ML, database)
+- **Target**: 70% operations <200ms (browser/mobile), 30% <1000ms (cloud)
+- Average cost: $50-150/month per property
+
+**Medium/Large Hotels (40% of market) - On-Premise-First:**
+- Traditional methods: <20ms (rules-based, zero ML cost)
+- **Greengrass (PRIMARY)**: <50ms - On-premise ML inference
+- Web/Mobile apps: <100ms (connect to greengrass.local, not cloud)
+- Cloud APIs: <1000ms (cross-property analytics, batch only)
+- **Target**: 95% operations <50ms (on-premise), 5% <1000ms (cloud batch)
+- Average cost: $400 hardware + $22/month AWS (near-$0 marginal cost)
 
 ## Quality Checklist
 
@@ -255,27 +283,40 @@ Before marking a feature complete:
 
 See `.agent/docs/implementation-roadmap.md` for detailed 24-month plan.
 
-**Priority areas (B2B EDGE-FIRST approach)**:
+**Priority areas (MARKET-SEGMENTED approach)**:
 
-1. **AWS IoT Greengrass** - Month 1-3 (HIGHEST PRIORITY - B2B ONLY)
-   - One device per property, full Python ML stack
-   - On-premise sentiment, vision, speech, forecasting
-   - <50ms latency, 95% of ALL B2B workloads
-   - $40K Year 1 hardware, $204/year AWS cost
-2. **Model Optimization** - Month 3-6 (HIGH PRIORITY - ONGOING)
-   - Quantization for faster Greengrass inference on CPU
-   - Model compression for Intel NUC deployment
-   - GPU acceleration for Jetson devices (high-volume properties)
-3. **Cloud APIs** - Month 6+ (LOW PRIORITY - BATCH ONLY)
-   - Multi-property analytics (chain-wide benchmarking)
-   - Model training (quarterly model updates)
-   - Historical batch processing (year-end reports)
-4. **~~Browser/Mobile ML~~** - NOT NEEDED (we're B2B only, not B2C)
-   - No guest-facing apps
-   - No kiosks or consumer touchpoints
-   - Focus 100% on staff operations via Greengrass
+1. **Web + Mobile SaaS** - Month 1-3 (HIGHEST PRIORITY - Small Hotels, 60% of market)
+   - Next.js web app with Service Workers (offline caching)
+   - React Native/Expo mobile app
+   - Browser ML (Transformers.js for sentiment, OCR)
+   - Mobile ML (TensorFlow Lite for photo processing)
+   - Cloud APIs (Timefold on ECS, Aurora Serverless)
+   - **Target**: 70% operations on browser/mobile, 30% cloud
+   - **Cost**: $50-150/month per property
 
-**Hard Rule**: 95%+ of B2B ML operations MUST run on-premise (Greengrass) at near-zero marginal cost.
+2. **AWS IoT Greengrass** - Month 2-4 (HIGH PRIORITY - Medium/Large Hotels, 40% of market)
+   - On-premise server (Intel NUC), full Python ML stack
+   - Web/Mobile apps connect to greengrass.local (NOT cloud)
+   - OFFLINE operation (business continuity!)
+   - IoT integration (room sensors, thermostats)
+   - Local database cache (PostgreSQL replica)
+   - **Target**: 95% operations on-premise, 5% cloud batch
+   - **Cost**: $400 hardware + $22/month AWS
+
+3. **Model Optimization** - Month 3-6 (ONGOING - Both segments)
+   - Quantization for browser (ONNX <50MB models)
+   - Model compression for Greengrass (Intel NUC CPU)
+   - GPU acceleration for Jetson (large hotels)
+
+4. **Cloud APIs** - Month 1-6 (PARALLEL - Both segments)
+   - Timefold optimization (Docker on AWS ECS) - small hotels need this
+   - Advanced ML (vision, speech) - fallback for small hotels
+   - Multi-property analytics - both segments
+   - Model training - both segments
+
+**Hard Rules**:
+- Small hotels: 70%+ operations on browser/mobile ML, rest cloud APIs
+- Medium/Large hotels: 95%+ operations on-premise (Greengrass), OFFLINE-CAPABLE
 
 ## Resources
 
