@@ -29,6 +29,7 @@ interface UniFiConfig {
   localUrl?: string; // https://192.168.1.93:8443
   localUsername?: string;
   localPassword?: string;
+  localApiToken?: string; // Local API token (for MFA-enabled accounts)
 
   // Site name (default: 'default')
   site?: string;
@@ -77,6 +78,7 @@ export class UnifiedUniFiClient {
   private mode: UniFiMode = 'unknown';
   private cloudCookie: string | null = null;
   private localCookie: string | null = null;
+  private isUniFiOS: boolean = false; // Track if using UniFi OS vs legacy
 
   constructor(config: UniFiConfig) {
     this.config = {
@@ -84,6 +86,7 @@ export class UnifiedUniFiClient {
       localUrl: config.localUrl || '',
       localUsername: config.localUsername || '',
       localPassword: config.localPassword || '',
+      localApiToken: config.localApiToken || '',
       site: config.site || 'default',
       debug: config.debug || false,
     };
@@ -270,7 +273,48 @@ export class UnifiedUniFiClient {
   // ============================================================================
 
   private async connectToLocal(): Promise<boolean> {
+    // If API token provided, use token-based auth (for MFA-enabled accounts)
+    if (this.config.localApiToken) {
+      this.log('Using API token authentication...');
+      this.localCookie = `TOKEN=${this.config.localApiToken}`;
+
+      // Test the token by making a simple API call
+      try {
+        this.isUniFiOS = true; // API tokens are UniFi OS only
+        const response = await this.localRequest('/proxy/network/api/self');
+        if (response && response.data) {
+          this.log('✅ Connected via API token');
+          return true;
+        }
+      } catch (error) {
+        this.log('API token authentication failed:', error);
+        return false;
+      }
+    }
+
+    // Try UniFi OS path first (new Cloud Keys)
     try {
+      this.log('Trying UniFi OS API path with username/password...');
+      const response = await this.localRequest('/proxy/network/api/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          username: this.config.localUsername,
+          password: this.config.localPassword,
+        }),
+      });
+
+      if (response && response.meta && response.meta.rc === 'ok') {
+        this.isUniFiOS = true;
+        this.log('✅ Connected via UniFi OS API');
+        return true;
+      }
+    } catch (error) {
+      this.log('UniFi OS path failed, trying legacy path:', error);
+    }
+
+    // Fallback to legacy path (older controllers)
+    try {
+      this.log('Trying legacy API path...');
       const response = await this.localRequest('/api/login', {
         method: 'POST',
         body: JSON.stringify({
@@ -280,6 +324,8 @@ export class UnifiedUniFiClient {
       });
 
       if (response && response.meta && response.meta.rc === 'ok') {
+        this.isUniFiOS = false;
+        this.log('✅ Connected via legacy API');
         return true;
       }
 
@@ -296,9 +342,14 @@ export class UnifiedUniFiClient {
       const isHttps = url.protocol === 'https:';
       const client = isHttps ? https : http;
 
+      // Extract port from URL or use defaults
+      // url.port is empty string for default ports (80, 443), so parse from localUrl instead
+      const baseUrl = new URL(this.config.localUrl);
+      const port = baseUrl.port || (isHttps ? '443' : '80');
+
       const requestOptions = {
         hostname: url.hostname,
-        port: url.port || (isHttps ? 8443 : 80),
+        port: parseInt(port),
         path: url.pathname + url.search,
         method: options.method || 'GET',
         headers: {
@@ -308,6 +359,8 @@ export class UnifiedUniFiClient {
         },
         rejectUnauthorized: false, // Accept self-signed cert
       };
+
+      this.log(`Request: ${requestOptions.method} ${url.protocol}//${requestOptions.hostname}:${requestOptions.port}${requestOptions.path}`);
 
       const req = client.request(requestOptions, (res) => {
         let data = '';
@@ -343,7 +396,11 @@ export class UnifiedUniFiClient {
   }
 
   private async getAccessPointsLocal(): Promise<UniFiAccessPoint[]> {
-    const response = await this.localRequest(`/api/s/${this.config.site}/stat/device`);
+    const apiPath = this.isUniFiOS
+      ? `/proxy/network/api/s/${this.config.site}/stat/device`
+      : `/api/s/${this.config.site}/stat/device`;
+
+    const response = await this.localRequest(apiPath);
     const devices = response.data || [];
 
     return devices
@@ -352,7 +409,11 @@ export class UnifiedUniFiClient {
   }
 
   private async getClientsLocal(): Promise<UniFiClient[]> {
-    const response = await this.localRequest(`/api/s/${this.config.site}/stat/sta`);
+    const apiPath = this.isUniFiOS
+      ? `/proxy/network/api/s/${this.config.site}/stat/sta`
+      : `/api/s/${this.config.site}/stat/sta`;
+
+    const response = await this.localRequest(apiPath);
     const clients = response.data || [];
 
     return clients.map((c: any) => this.mapClientData(c));

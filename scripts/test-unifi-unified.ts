@@ -5,17 +5,24 @@
  * Tries UniFi Cloud API first, falls back to local controller.
  *
  * Usage:
- *   # Option 1: Cloud API (preferred)
+ *   # Option 1: Using .env.local file (recommended)
+ *   npm run unifi:test
+ *
+ *   # Option 2: Cloud API (preferred)
  *   UNIFI_CLOUD_KEY=your-api-key tsx scripts/test-unifi-unified.ts
  *
- *   # Option 2: Local controller (fallback)
+ *   # Option 3: Local controller (fallback)
  *   UNIFI_IP=192.168.1.93 UNIFI_USER=admin UNIFI_PASS=yourpass tsx scripts/test-unifi-unified.ts
  *
- *   # Option 3: Both (tries cloud first, falls back to local)
+ *   # Option 4: Both (tries cloud first, falls back to local)
  *   UNIFI_CLOUD_KEY=your-api-key UNIFI_IP=192.168.1.93 UNIFI_USER=admin UNIFI_PASS=yourpass tsx scripts/test-unifi-unified.ts
  */
 
+import dotenv from 'dotenv';
 import { UnifiedUniFiClient } from '../lib/integrations/unifi/unified-client';
+
+// Load environment variables from .env.local
+dotenv.config({ path: '.env.local' });
 
 async function main() {
   console.log('╔════════════════════════════════════════════════════╗');
@@ -24,14 +31,23 @@ async function main() {
   console.log('╚════════════════════════════════════════════════════╝\n');
 
   // Initialize client with both cloud and local config
+  const localUrl = process.env.UNIFI_IP
+    ? (process.env.UNIFI_PORT
+        ? `https://${process.env.UNIFI_IP}:${process.env.UNIFI_PORT}`
+        : `https://${process.env.UNIFI_IP}:8443`)
+    : undefined;
+
+  console.log(`Local URL: ${localUrl}\n`);
+
   const client = new UnifiedUniFiClient({
     // Cloud API (preferred)
     cloudApiKey: process.env.UNIFI_CLOUD_KEY,
 
     // Local controller (fallback)
-    localUrl: process.env.UNIFI_IP ? `https://${process.env.UNIFI_IP}:8443` : undefined,
+    localUrl,
     localUsername: process.env.UNIFI_USER,
     localPassword: process.env.UNIFI_PASS,
+    localApiToken: process.env.UNIFI_LOCAL_TOKEN, // For MFA-enabled accounts
 
     // Options
     site: 'default',

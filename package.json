@@ -45,6 +45,7 @@
     "@types/pg": "^8.15.5",
     "@types/ws": "^8.18.1",
     "brain.js": "^2.0.0-beta.24",
+    "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.6",
     "graphql": "^16.11.0",
     "ml": "^8.0.0",
