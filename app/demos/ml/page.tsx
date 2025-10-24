@@ -29,7 +29,7 @@ export default function MLDemosPage() {
       technology: 'Compromise (Rule-based)',
       cost: '$0/month',
       accuracy: '75-85%',
-      implemented: false,
+      implemented: true,
       category: 'traditional-ml',
     },
     {
@@ -41,7 +41,7 @@ export default function MLDemosPage() {
       technology: 'Isolation Forest',
       cost: '$100-200/month',
       accuracy: '75-85%',
-      implemented: false,
+      implemented: true,
       category: 'traditional-ml',
     },
     {
@@ -53,19 +53,19 @@ export default function MLDemosPage() {
       technology: 'LightGBM/XGBoost',
       cost: '$100-300/month',
       accuracy: '87-90%',
-      implemented: false,
+      implemented: true,
       category: 'traditional-ml',
     },
     {
       title: 'Housekeeping Optimization',
       description:
         'Optimal staff assignments and routes. Constraint solving, not ML. 100% satisfaction.',
-      path: '/demos/housekeeping',
+      path: '/demos/housekeeping-optimization',
       icon: '🧹',
       technology: 'Constraint Solver',
       cost: '$0/month',
       accuracy: '100% optimal',
-      implemented: false,
+      implemented: true,
       category: 'operations-research',
     },
     {
@@ -77,7 +77,7 @@ export default function MLDemosPage() {
       technology: 'GPT-4o-mini / Claude',
       cost: '$50-200/month',
       accuracy: '95%+',
-      implemented: false,
+      implemented: true,
       category: 'generative-ai',
     },
   ];
