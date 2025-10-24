@@ -142,6 +142,43 @@ export default function MLDemosPage() {
       implemented: true,
       category: 'computer-vision',
     },
+    // Phase 4: Advanced ML
+    {
+      title: 'Time Series Forecasting (TimesFM)',
+      description:
+        '87-90% accuracy demand forecasting. Revenue optimization, inventory planning, staffing.',
+      path: '/demos/timeseries-forecasting',
+      icon: '📊',
+      technology: 'Google TimesFM',
+      cost: '$0-$200/month',
+      accuracy: '87-90%',
+      implemented: true,
+      category: 'advanced-ml',
+    },
+    {
+      title: 'Image Generation (SDXL)',
+      description:
+        'Professional marketing visuals. Social media, property listings, menu design.',
+      path: '/demos/image-generation',
+      icon: '🎨',
+      technology: 'Stable Diffusion XL',
+      cost: '$0-$300/month',
+      accuracy: 'Professional quality',
+      implemented: true,
+      category: 'advanced-ml',
+    },
+    {
+      title: 'Recommendation System',
+      description:
+        '75-85% relevance. Personalized room upgrades, menu recommendations, spa upsells.',
+      path: '/demos/recommendation-system',
+      icon: '🎯',
+      technology: 'Hybrid (Collab + Content)',
+      cost: '$0-$100/month',
+      accuracy: '75-85%',
+      implemented: true,
+      category: 'advanced-ml',
+    },
   ];
 
   const categoryInfo = {
@@ -172,6 +209,12 @@ export default function MLDemosPage() {
       description: 'Use LLMs HERE - text generation and conversation',
       color: 'green',
     },
+    'advanced-ml': {
+      title: 'Phase 4: Advanced ML (Forecasting, Generation, Recommendations)',
+      description:
+        'FREE advanced models for demand forecasting, image generation, and personalization',
+      color: 'purple',
+    },
   };
 
   return (
@@ -189,8 +232,8 @@ export default function MLDemosPage() {
             🤖 Battle-Tested ML Demos
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl">
-            10 production-ready implementations showing when to use free Hugging Face models,
-            traditional ML, operations research, and generative AI
+            15 production-ready implementations showing when to use free Hugging Face models,
+            traditional ML, computer vision, advanced ML, and generative AI
           </p>
         </div>
 
