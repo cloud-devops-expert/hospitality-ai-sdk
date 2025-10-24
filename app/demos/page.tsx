@@ -7,6 +7,17 @@
 import Link from 'next/link';
 
 export default function DemosPage() {
+  const featuredDemo = {
+    title: 'Battle-Tested ML Demos',
+    description:
+      '7 production-ready ML implementations: sentiment analysis, fraud detection, forecasting, and more. $76K-$197K/year savings.',
+    path: '/demos/ml',
+    icon: '🤖',
+    savings: '$76K-$197K/year',
+    implemented: true,
+    featured: true,
+  };
+
   const demos = [
     {
       title: 'Operations ROI Calculator',
@@ -123,6 +134,34 @@ export default function DemosPage() {
               <p className="text-slate-600 dark:text-slate-300">
                 No internet required. 99.99% reliability with zero dependencies.
               </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Featured Demo - ML Suite */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-navy-900 dark:text-white mb-6">
+            ⭐ Featured: Complete ML Stack
+          </h2>
+          <div className="bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-800 dark:to-blue-800 rounded-xl shadow-2xl overflow-hidden">
+            <div className="p-8 text-white">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-6xl">{featuredDemo.icon}</div>
+                <span className="px-4 py-2 bg-white/20 backdrop-blur text-white text-sm font-semibold rounded-full">
+                  ⭐ NEW: 7 Demos Live!
+                </span>
+              </div>
+              <h3 className="text-3xl font-bold mb-3">{featuredDemo.title}</h3>
+              <p className="text-xl text-blue-100 mb-6">{featuredDemo.description}</p>
+              <div className="flex items-center justify-between">
+                <div className="text-3xl font-bold">{featuredDemo.savings}</div>
+                <Link
+                  href={featuredDemo.path}
+                  className="px-6 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg"
+                >
+                  Explore ML Demos →
+                </Link>
+              </div>
             </div>
           </div>
         </div>
