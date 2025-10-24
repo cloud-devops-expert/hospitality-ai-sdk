@@ -59,11 +59,13 @@ When adding new features:
 
 ### Documentation Standards
 
-- Keep `.agent/docs/` up to date
+- **HARD RULE 25**: Update `.agent/` docs and `CLAUDE.md` for EVERY change
+- Keep `.agent/docs/` up to date (architecture, use cases, experiments)
 - Document cost analysis for new features
 - Provide examples in use case documentation
 - Update README.md for major changes
 - Maintain QUICKSTART.md accuracy
+- Documentation updates are MANDATORY, not optional
 
 ## Module Responsibilities
 
@@ -260,6 +262,14 @@ When adding new features:
 - **RULE 23**: ALWAYS implement both light and dark modes
 - **RULE 24**: Ensure all UI components support theme switching
 
+### Documentation Requirements
+
+- **RULE 25**: **MUST update documentation in `.agent/` and `CLAUDE.md` for EVERY change**
+  - Code changes MUST be accompanied by documentation updates
+  - Update relevant files in `.agent/docs/` to reflect new features, changes, or decisions
+  - Update `CLAUDE.md` if the change affects development guidelines, hard rules, or workflows
+  - NO exceptions - documentation is part of the change, not an afterthought
+
 ## Performance Targets (Market-Segmented)
 
 **Small Hotels (60% of market) - Cloud-First:**
@@ -286,6 +296,8 @@ Before marking a feature complete:
 - [ ] Hybrid logic implemented
 - [ ] Demo page created
 - [ ] Cost analysis documented
+- [ ] **Documentation updated in `.agent/` (RULE 25)**
+- [ ] **`CLAUDE.md` updated if needed (RULE 25)**
 - [ ] README updated
 - [ ] Types defined
 - [ ] Error handling added
