@@ -471,6 +471,12 @@ export class UnifiedUniFiClient {
   private mapAPToZone(apName: string): string {
     const name = apName.toLowerCase();
 
+    if (name.includes('bedroom')) {
+      return 'room';
+    }
+    if (name.includes('office') || name.includes('workspace') || name.includes('business')) {
+      return 'office';
+    }
     if (name.includes('restaurant') || name.includes('dining') || name.includes('kitchen')) {
       return 'restaurant';
     }
@@ -480,7 +486,10 @@ export class UnifiedUniFiClient {
     if (name.includes('lobby') || name.includes('reception') || name.includes('front')) {
       return 'lobby';
     }
-    if (name.includes('room') || name.includes('floor') || name.includes('bedroom')) {
+    if (name.includes('outside') || name.includes('outdoor') || name.includes('patio') || name.includes('garden')) {
+      return 'unknown';
+    }
+    if (name.includes('room') || name.includes('floor')) {
       return 'room';
     }
 
