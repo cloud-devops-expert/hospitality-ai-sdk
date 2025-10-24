@@ -117,6 +117,31 @@ export default function MLDemosPage() {
       implemented: true,
       category: 'generative-ai',
     },
+    // Phase 2-3: Computer Vision & Safety
+    {
+      title: 'Food Recognition',
+      description:
+        'Recognize food items, reduce waste 25-40%. For restaurants, hotels, healthcare.',
+      path: '/demos/food-recognition',
+      icon: '🍕',
+      technology: 'Kaludi/Food-Classification',
+      cost: '$0/month',
+      accuracy: '85-93%',
+      implemented: true,
+      category: 'computer-vision',
+    },
+    {
+      title: 'PPE Detection (Safety)',
+      description:
+        'Real-time PPE compliance monitoring. Reduce injuries, lower insurance premiums.',
+      path: '/demos/ppe-detection',
+      icon: '🦺',
+      technology: 'YOLOv8 PPE Detection',
+      cost: '$0/month',
+      accuracy: '85-92%',
+      implemented: true,
+      category: 'computer-vision',
+    },
   ];
 
   const categoryInfo = {
@@ -130,6 +155,12 @@ export default function MLDemosPage() {
       title: 'Traditional ML',
       description: 'Use these instead of generative AI for structured data tasks',
       color: 'blue',
+    },
+    'computer-vision': {
+      title: 'Phase 2-3: Computer Vision (Food, Safety, Inventory)',
+      description:
+        'FREE computer vision models for food recognition, PPE detection, and inventory monitoring',
+      color: 'orange',
     },
     'operations-research': {
       title: 'Operations Research',
