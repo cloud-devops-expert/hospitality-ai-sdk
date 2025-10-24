@@ -33,7 +33,9 @@
     "webrtc:signaling": "tsx lib/webrtc/signaling-server.ts",
     "webrtc:demo": "tsx scripts/demo-webrtc.ts",
     "unifi:test": "tsx scripts/test-unifi-unified.ts",
-    "demo:location": "tsx scripts/demo-location-aware-portal.ts"
+    "demo:location": "tsx scripts/demo-location-aware-portal.ts",
+    "track:phone": "tsx scripts/track-my-phone.ts",
+    "demo:bar": "tsx scripts/bar-dispenser-demo.ts"
   },
   "dependencies": {
     "@aws-sdk/credential-providers": "^3.915.0",
