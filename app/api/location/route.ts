@@ -3,15 +3,27 @@ import { UnifiedUniFiClient } from '@/lib/integrations/unifi/unified-client';
 
 const TARGET_MAC = '62:45:20:94:e6:42'; // A52s-de-Miguel
 
-// Create client instance
-const getClient = () => {
+// Singleton client instance - reuse connection across requests
+let cachedClient: UnifiedUniFiClient | null = null;
+let lastConnectTime = 0;
+const RECONNECT_INTERVAL = 5 * 60 * 1000; // Reconnect every 5 minutes
+
+// Create or reuse client instance
+const getClient = async () => {
+  const now = Date.now();
+
+  // Reuse existing client if connected recently
+  if (cachedClient && (now - lastConnectTime) < RECONNECT_INTERVAL) {
+    return cachedClient;
+  }
+
   const localUrl = process.env.UNIFI_IP
     ? (process.env.UNIFI_PORT
         ? `https://${process.env.UNIFI_IP}:${process.env.UNIFI_PORT}`
-        : `https://${process.env.UNIFI_IP}:8443`)
+        : `https://${process.env.UNIFI_IP}:443`)
     : undefined;
 
-  return new UnifiedUniFiClient({
+  const client = new UnifiedUniFiClient({
     cloudApiKey: process.env.UNIFI_CLOUD_KEY,
     localUrl,
     localUsername: process.env.UNIFI_USER,
@@ -20,14 +32,19 @@ const getClient = () => {
     site: 'default',
     debug: false,
   });
+
+  // Connect to UniFi
+  await client.connect();
+
+  cachedClient = client;
+  lastConnectTime = now;
+
+  return client;
 };
 
 export async function GET() {
   try {
-    const client = getClient();
-
-    // Connect to UniFi
-    await client.connect();
+    const client = await getClient();
 
     // Get all access points
     const aps = await client.getAccessPoints();
