@@ -3,20 +3,30 @@
  * Routes parsed intents to appropriate ML modules and generates responses
  */
 
-import { QueryIntent, AssistantResponse, Message, QuickAction } from './types';
+import { QueryIntent, AssistantResponse, Message, QuickAction, ConversationContext } from './types';
 import { parseIntent, generateSuggestions, formatResponse } from './nlu';
 import { forecastHybrid } from '../forecast/hybrid';
 import { calculateDynamicPrice } from '../pricing/dynamic';
 import { predictNoShowRuleBased } from '../no-show/traditional';
 import { segmentGuests, calculateSegmentStats } from '../guests/segmentation';
 import { v4 as uuid } from 'uuid';
+import type { ForecastResult } from '../forecast/statistical';
+import type { NoShowPrediction } from '../no-show/types';
+
+// Response data types from different handlers
+type QueryResponseData =
+  | ForecastResult[]
+  | { price: number; breakdown: unknown[] }
+  | NoShowPrediction[]
+  | { segments: unknown[]; stats: unknown }
+  | { result: string; data: unknown };
 
 /**
  * Handle user query and generate assistant response
  */
 export async function handleQuery(
   query: string,
-  context?: any
+  context?: ConversationContext
 ): Promise<AssistantResponse> {
   const startTime = Date.now();
 
@@ -24,7 +34,7 @@ export async function handleQuery(
   const intent = parseIntent(query);
 
   // Route to appropriate handler
-  let responseData: any;
+  let responseData: QueryResponseData;
   let responseText: string;
   let actions: QuickAction[] = [];
 
@@ -163,7 +173,7 @@ export async function handleQuery(
 /**
  * Handle forecast-related queries
  */
-async function handleForecastQuery(intent: QueryIntent, context: any) {
+async function handleForecastQuery(intent: QueryIntent, context?: ConversationContext): Promise<ForecastResult[]> {
   // Generate synthetic historical data (in production, use real data)
   const historicalData = generateSyntheticHistory(30);
 
@@ -208,7 +218,7 @@ async function handleForecastQuery(intent: QueryIntent, context: any) {
 /**
  * Handle pricing-related queries
  */
-async function handlePricingQuery(intent: QueryIntent, context: any) {
+async function handlePricingQuery(intent: QueryIntent, context?: ConversationContext): Promise<{ price: number; breakdown: unknown[] }> {
   const historicalData = generateSyntheticHistory(30);
   const occupancyRate = historicalData[historicalData.length - 1].value / 100;
 
@@ -232,7 +242,7 @@ async function handlePricingQuery(intent: QueryIntent, context: any) {
 /**
  * Handle no-show related queries
  */
-async function handleNoShowQuery(intent: QueryIntent, context: any) {
+async function handleNoShowQuery(intent: QueryIntent, context?: ConversationContext): Promise<NoShowPrediction[]> {
   // Generate synthetic bookings
   const bookings = generateSyntheticBookings(20);
 
@@ -253,7 +263,7 @@ async function handleNoShowQuery(intent: QueryIntent, context: any) {
 /**
  * Handle segmentation queries
  */
-async function handleSegmentationQuery(intent: QueryIntent, context: any) {
+async function handleSegmentationQuery(intent: QueryIntent, context?: ConversationContext): Promise<{ segments: unknown[]; stats: unknown }> {
   // Generate synthetic guest data
   const guests = generateSyntheticGuests(100);
 

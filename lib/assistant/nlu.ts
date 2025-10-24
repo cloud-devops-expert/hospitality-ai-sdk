@@ -3,7 +3,7 @@
  * Parse user queries and route to appropriate ML modules
  */
 
-import { QueryIntent } from './types';
+import { QueryIntent, ConversationContext } from './types';
 
 /**
  * Parse user query and determine intent
@@ -201,8 +201,8 @@ export function generateSuggestions(intent: QueryIntent): string[] {
  */
 export function formatResponse(
   intent: QueryIntent,
-  data: any,
-  context?: any
+  data: Record<string, unknown>,
+  context?: ConversationContext
 ): string {
   switch (intent.type) {
     case 'forecast':

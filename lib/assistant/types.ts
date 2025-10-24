@@ -3,6 +3,14 @@
  * Natural language interface for hotel operations
  */
 
+// Visualization data types
+export type ChartData = Array<{ label: string; value: number; [key: string]: unknown }>;
+export type TableData = Array<Record<string, unknown>>;
+export type TimelineData = Array<{ date: Date; event: string; [key: string]: unknown }>;
+export type CardData = Record<string, unknown>;
+export type ListData = Array<string | Record<string, unknown>>;
+export type VisualizationData = ChartData | TableData | TimelineData | CardData | ListData;
+
 export interface Message {
   id: string;
   role: 'user' | 'assistant' | 'system';
@@ -10,7 +18,7 @@ export interface Message {
   timestamp: Date;
   actions?: QuickAction[];
   visualization?: Visualization;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface QuickAction {
@@ -18,25 +26,25 @@ export interface QuickAction {
   label: string;
   icon?: string;
   action: string; // Action identifier
-  params?: Record<string, any>;
+  params?: Record<string, unknown>;
   primary?: boolean;
 }
 
 export interface Visualization {
   type: 'chart' | 'table' | 'timeline' | 'card' | 'list';
-  data: any;
-  config?: Record<string, any>;
+  data: VisualizationData;
+  config?: Record<string, unknown>;
 }
 
 export interface QueryIntent {
   type: 'forecast' | 'pricing' | 'noshow' | 'segmentation' | 'sentiment' | 'operations' | 'general';
   confidence: number;
-  entities?: Record<string, any>;
+  entities?: Record<string, unknown>;
   timeframe?: {
     start?: Date;
     end?: Date;
   };
-  params?: Record<string, any>;
+  params?: Record<string, unknown>;
 }
 
 export interface AssistantResponse {
