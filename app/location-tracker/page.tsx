@@ -33,7 +33,11 @@ export default function LocationTrackerPage() {
     const fetchData = async () => {
       try {
         const response = await fetch('/api/location');
-        if (!response.ok) throw new Error('Failed to fetch location');
+        if (!response.ok) {
+          // Silently ignore errors and keep showing last known location
+          setLoading(false);
+          return;
+        }
 
         const data = await response.json();
 
@@ -48,7 +52,7 @@ export default function LocationTrackerPage() {
         setLoading(false);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        // Silently ignore errors and keep showing last known location
         setLoading(false);
       }
     };
