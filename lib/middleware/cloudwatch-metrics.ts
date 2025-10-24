@@ -9,6 +9,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getCloudWatchPublisher } from '@/lib/metrics/cloudwatch-publisher';
 import { extractRLSContext } from '@/lib/database/drizzle-rls-client';
 
+// Next.js route handler types
+type NextRouteContext = { params?: Record<string, string | string[]> };
+type NextRouteHandler = (
+  req: NextRequest,
+  context?: NextRouteContext
+) => Promise<NextResponse> | NextResponse;
+
 /**
  * Wrap API handler with CloudWatch metrics tracking
  *
@@ -20,31 +27,31 @@ import { extractRLSContext } from '@/lib/database/drizzle-rls-client';
  * });
  * ```
  */
-export function withCloudWatchMetrics(handler: Function) {
-  return async (req: NextRequest, ...args: any[]) => {
+export function withCloudWatchMetrics(handler: NextRouteHandler): NextRouteHandler {
+  return async (req: NextRequest, routeContext?: NextRouteContext) => {
     const startTime = Date.now();
-    let context: { tenantId: string; userId?: string } | null = null;
+    let tenantContext: { tenantId: string; userId?: string } | null = null;
 
     // Extract tenant context
     try {
-      context = extractRLSContext(req);
+      tenantContext = extractRLSContext(req);
     } catch {
       // Skip tracking for public endpoints
     }
 
     try {
       // Execute handler
-      const response = await handler(req, ...args);
+      const response = await handler(req, routeContext);
       const durationMs = Date.now() - startTime;
 
       // Publish to CloudWatch (fire and forget - don't await)
-      if (context) {
+      if (tenantContext) {
         const publisher = getCloudWatchPublisher();
         const url = new URL(req.url);
 
         publisher
           .publish({
-            tenantId: context.tenantId,
+            tenantId: tenantContext.tenantId,
             endpoint: url.pathname,
             method: req.method,
             durationMs,
@@ -60,13 +67,13 @@ export function withCloudWatchMetrics(handler: Function) {
       return response;
     } catch (error) {
       // Track error metric
-      if (context) {
+      if (tenantContext) {
         const publisher = getCloudWatchPublisher();
         const url = new URL(req.url);
 
         publisher
           .publish({
-            tenantId: context.tenantId,
+            tenantId: tenantContext.tenantId,
             endpoint: url.pathname,
             method: req.method,
             durationMs: Date.now() - startTime,
@@ -87,6 +94,7 @@ export function withCloudWatchMetrics(handler: Function) {
  * Express.js middleware variant
  */
 export function expressCloudWatchMetrics() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return async (req: any, res: any, next: any) => {
     const startTime = Date.now();
 

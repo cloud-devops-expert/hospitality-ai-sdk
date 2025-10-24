@@ -9,6 +9,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { trackRequest } from '@/lib/metrics/usage-tracker';
 import { extractRLSContext } from '@/lib/database/drizzle-rls-client';
 
+// Next.js route handler types
+type NextRouteContext = { params?: Record<string, string | string[]> };
+type NextRouteHandler = (
+  req: NextRequest,
+  context?: NextRouteContext
+) => Promise<NextResponse> | NextResponse;
+
 /**
  * Wrap API handler with usage tracking
  *
@@ -20,31 +27,31 @@ import { extractRLSContext } from '@/lib/database/drizzle-rls-client';
  * });
  * ```
  */
-export function withUsageTracking(handler: Function) {
-  return async (req: NextRequest, ...args: any[]) => {
+export function withUsageTracking(handler: NextRouteHandler): NextRouteHandler {
+  return async (req: NextRequest, routeContext?: NextRouteContext) => {
     const startTime = Date.now();
-    let context: { tenantId: string; userId?: string } | null = null;
+    let tenantContext: { tenantId: string; userId?: string } | null = null;
 
     // Extract tenant context (if available)
     try {
-      context = extractRLSContext(req);
+      tenantContext = extractRLSContext(req);
     } catch {
       // If extraction fails, skip tracking (e.g., public endpoints)
     }
 
     try {
       // Execute handler
-      const response = await handler(req, ...args);
+      const response = await handler(req, routeContext);
       const durationMs = Date.now() - startTime;
 
       // Track usage (fire and forget - don't await)
-      if (context) {
+      if (tenantContext) {
         const responseSize =
           parseInt(response.headers.get('content-length') || '0') || 0;
 
         trackRequest(
-          context.tenantId,
-          context.userId,
+          tenantContext.tenantId,
+          tenantContext.userId,
           { url: req.url, method: req.method },
           durationMs,
           responseSize
@@ -56,11 +63,11 @@ export function withUsageTracking(handler: Function) {
       return response;
     } catch (error) {
       // Track error (optional)
-      if (context) {
+      if (tenantContext) {
         const durationMs = Date.now() - startTime;
         trackRequest(
-          context.tenantId,
-          context.userId,
+          tenantContext.tenantId,
+          tenantContext.userId,
           { url: req.url, method: req.method },
           durationMs,
           0
@@ -78,6 +85,7 @@ export function withUsageTracking(handler: Function) {
  * Express.js middleware variant
  */
 export function expressUsageTracking() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return async (req: any, res: any, next: any) => {
     const startTime = Date.now();
 
@@ -89,6 +97,7 @@ export function expressUsageTracking() {
     const originalSend = res.send;
     let responseSize = 0;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     res.send = function (data: any) {
       responseSize = Buffer.byteLength(data || '');
       return originalSend.call(this, data);
