@@ -29,7 +29,9 @@
     "train": "tsx scripts/train-all.ts",
     "train:noshow": "tsx scripts/train-noshow.ts",
     "train:segmentation": "tsx scripts/train-segmentation.ts",
-    "train:scheduler": "tsx scripts/training-scheduler.ts"
+    "train:scheduler": "tsx scripts/training-scheduler.ts",
+    "webrtc:signaling": "tsx lib/webrtc/signaling-server.ts",
+    "webrtc:demo": "tsx scripts/demo-webrtc.ts"
   },
   "dependencies": {
     "@aws-sdk/credential-providers": "^3.915.0",
@@ -40,6 +42,7 @@
     "@tensorflow/tfjs": "^4.22.0",
     "@tensorflow/tfjs-node": "^4.22.0",
     "@types/pg": "^8.15.5",
+    "@types/ws": "^8.18.1",
     "brain.js": "^2.0.0-beta.24",
     "drizzle-orm": "^0.44.6",
     "graphql": "^16.11.0",
@@ -58,7 +61,8 @@
     "regression": "^2.0.1",
     "sharp": "^0.34.4",
     "simple-statistics": "^7.8.8",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@aws-sdk/client-cloudwatch": "^3.914.0",
