@@ -31,7 +31,8 @@
     "train:segmentation": "tsx scripts/train-segmentation.ts",
     "train:scheduler": "tsx scripts/training-scheduler.ts",
     "webrtc:signaling": "tsx lib/webrtc/signaling-server.ts",
-    "webrtc:demo": "tsx scripts/demo-webrtc.ts"
+    "webrtc:demo": "tsx scripts/demo-webrtc.ts",
+    "unifi:test": "tsx scripts/test-unifi-unified.ts"
   },
   "dependencies": {
     "@aws-sdk/credential-providers": "^3.915.0",
