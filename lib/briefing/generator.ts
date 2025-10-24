@@ -5,7 +5,7 @@
 
 import { DailyBriefing, BriefingAlert, BriefingSummary } from './types';
 import { forecastHybrid } from '../forecast/hybrid';
-import { predictNoShowCustom } from '../noshow/prediction';
+import { predictNoShowRuleBased } from '../no-show/traditional';
 import { v4 as uuid } from 'uuid';
 
 /**
@@ -78,7 +78,7 @@ async function analyzeNoShows(bookings: any[]): Promise<BriefingAlert[]> {
   const todayBookings = bookings.filter((b) => isToday(b.checkInDate));
 
   for (const booking of todayBookings) {
-    const prediction = predictNoShowCustom(booking);
+    const prediction = predictNoShowRuleBased(booking);
 
     if (prediction.risk === 'high') {
       alerts.push({

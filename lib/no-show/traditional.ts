@@ -85,22 +85,22 @@ export function predictNoShowRuleBased(booking: Booking): NoShowPrediction {
   const probability = Math.max(0, Math.min(1, riskScore / 100));
 
   // Determine risk level
-  let riskLevel: NoShowPrediction['riskLevel'];
+  let risk: NoShowPrediction['risk'];
   if (probability < 0.3) {
-    riskLevel = 'low';
+    risk = 'low';
   } else if (probability < 0.6) {
-    riskLevel = 'medium';
+    risk = 'medium';
   } else {
-    riskLevel = 'high';
+    risk = 'high';
   }
 
   // Recommended actions
   const recommendedActions: string[] = [];
-  if (riskLevel === 'high') {
+  if (risk === 'high') {
     recommendedActions.push('Send confirmation SMS/email');
     recommendedActions.push('Require deposit or prepayment');
     recommendedActions.push('Consider overbooking buffer');
-  } else if (riskLevel === 'medium') {
+  } else if (risk === 'medium') {
     recommendedActions.push('Send reminder 24h before arrival');
     recommendedActions.push('Confirm via phone call');
   } else {
@@ -112,7 +112,7 @@ export function predictNoShowRuleBased(booking: Booking): NoShowPrediction {
   return {
     bookingId: booking.id,
     probability,
-    riskLevel,
+    risk,
     confidence,
     reasons,
     recommendedActions,

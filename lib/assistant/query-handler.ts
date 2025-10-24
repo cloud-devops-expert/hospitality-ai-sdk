@@ -7,7 +7,7 @@ import { QueryIntent, AssistantResponse, Message, QuickAction } from './types';
 import { parseIntent, generateSuggestions, formatResponse } from './nlu';
 import { forecastHybrid } from '../forecast/hybrid';
 import { calculateDynamicPrice } from '../pricing/dynamic';
-import { predictNoShowCustom } from '../noshow/prediction';
+import { predictNoShowRuleBased } from '../no-show/traditional';
 import { segmentGuests, calculateSegmentStats } from '../guests/segmentation';
 import { v4 as uuid } from 'uuid';
 
@@ -237,7 +237,7 @@ async function handleNoShowQuery(intent: QueryIntent, context: any) {
   const bookings = generateSyntheticBookings(20);
 
   const predictions = bookings.map((booking) =>
-    predictNoShowCustom(booking)
+    predictNoShowRuleBased(booking)
   );
 
   const highRisk = predictions.filter((p) => p.risk === 'high');

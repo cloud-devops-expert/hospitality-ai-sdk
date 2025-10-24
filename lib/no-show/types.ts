@@ -23,7 +23,7 @@ export interface Booking {
 export interface NoShowPrediction {
   bookingId: string;
   probability: number; // 0-1
-  riskLevel: 'low' | 'medium' | 'high';
+  risk: 'low' | 'medium' | 'high';
   confidence: number; // 0-1
   reasons: string[];
   recommendedActions: string[];

@@ -5,7 +5,7 @@
  */
 
 import { MLjsTrainer } from '../lib/training/mljs-trainer';
-import { Booking } from '../lib/noshow/types';
+import { Booking } from '../lib/no-show/types';
 
 // Generate synthetic training data
 function generateTrainingData(count: number): {

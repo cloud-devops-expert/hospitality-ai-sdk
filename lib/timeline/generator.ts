@@ -11,7 +11,7 @@ import {
   TimelineFilter,
   TimelineResponse,
 } from './types';
-import { predictNoShowCustom } from '../noshow/prediction';
+import { predictNoShowRuleBased } from '../no-show/traditional';
 import { forecastHybrid } from '../forecast/hybrid';
 
 /**
@@ -62,7 +62,7 @@ export async function generateTimeline(
       booking.checkInDate <= endDate &&
       (!filter?.types || filter.types.includes('checkin'))
     ) {
-      const noShowPrediction = predictNoShowCustom(booking);
+      const noShowPrediction = predictNoShowRuleBased(booking);
       const isHighRisk = noShowPrediction.risk === 'high';
 
       events.push({
