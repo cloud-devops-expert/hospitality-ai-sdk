@@ -151,17 +151,19 @@
 
 ### We're NOT competing with Oracle/Mews on PMS features.
 
-### We're creating a NEW CATEGORY:
-**"Location-Aware IoT Platform for Hospitality"**
+### We're an ISV/SI (HARD RULE):
+**"Middleware for Hospitality - Connect Your Existing Systems"**
 
 **Category Characteristics**:
-1. Real-time guest location tracking (WiFi-based)
-2. Hardware automation (dispensers, sensors, IoT devices)
+1. Real-time guest location tracking (WiFi-based) - using client's existing WiFi
+2. Hardware integration (IF client already has dispensers, sensors, IoT devices)
 3. Zone-based contextual services
 4. Local-first architecture with offline capability
 5. Cost-effective ($50-150/month, not per-room)
 
-**Category Tagline**: **"The First Location-Aware IoT Platform for Hotels"**
+**Category Tagline**: **"Middleware for Hospitality - Connect Your Existing Systems"**
+
+**IMPORTANT**: We integrate what clients ALREADY HAVE, we don't sell or promote hardware.
 
 ---
 
@@ -204,116 +206,127 @@
 
 ---
 
-## Marketing Messages by Segment
+## Marketing Messages by Segment (ISV/SI Model)
 
 ### For Boutique Hotels with Bars:
-**Headline**: "24/7 Rooftop Bar Without Hiring Night Bartenders"
-**Subhead**: "Self-serve beer walls and cocktail kiosks that charge directly to guest rooms"
-**CTA**: "See a live demo of our location-aware bar system"
+**Headline**: "Already Have Bar Equipment? We'll Integrate It With Your PMS"
+**Subhead**: "If you have iPourIt, Berg, or Barpay, we'll connect it to your PMS for automatic room billing. No more double-entry."
+**CTA**: "See our integration capabilities"
 
 ### For Brewpub Hotels:
-**Headline**: "Finally: Self-Pour Beer Integrated with Your PMS"
-**Subhead**: "iPourIt meets room billing. Guest pours, you charge their room automatically."
-**CTA**: "Connect your beer wall to guest rooms in 30 minutes"
+**Headline**: "Your iPourIt Not Charging Rooms Automatically?"
+**Subhead**: "We integrate your existing self-pour system with your PMS. Guest pours, room charges automatically."
+**CTA**: "Connect your existing beer wall to your PMS"
 
 ### For Business Hotels:
-**Headline**: "Coffee Ready When Your Guest Arrives"
-**Subhead**: "WiFi tracking knows they're coming. Coffee machine starts brewing automatically."
-**CTA**: "Watch our Franke coffee automation demo"
+**Headline**: "Have Franke Coffee Machines? We'll Automate Them"
+**Subhead**: "If you have Franke equipment with APIs, we'll connect it to your WiFi for location-aware brewing."
+**CTA**: "Integrate your existing coffee equipment"
 
 ### For Large Resorts:
-**Headline**: "Know Where Your Guests Are, Serve Them Better"
-**Subhead**: "WiFi-based location tracking changes menus, services, and recommendations in real-time"
-**CTA**: "See location-aware services in action"
+**Headline**: "Connect Your Existing WiFi, PMS, and POS Systems"
+**Subhead**: "Reduce double-entry across your property. WiFi-based location tracking syncs data between all your systems."
+**CTA**: "See how middleware reduces manual entry"
 
 ### For Cost-Conscious Hotels:
-**Headline**: "$50/Month vs $8,000/Year for Oracle"
-**Subhead**: "Same automation, 99% less cost. Bar integration Oracle doesn't have."
-**CTA**: "Calculate your savings in 60 seconds"
+**Headline**: "Stop Double-Entering Data Between Your PMS and POS"
+**Subhead**: "Middleware integration at $50-150/month. We connect what you already have."
+**CTA**: "Calculate time savings from automation"
 
 ---
 
-## Sales Conversation Scripts
+## Sales Conversation Scripts (ISV/SI Model)
 
 ### Discovery Questions:
 
-1. **"Do you have a bar or restaurant on property?"**
-   - If yes: "How many bartenders do you employ?"
-   - Lead-in: "What if you could automate 50% of those shifts?"
+1. **"What systems do you currently have on property?"**
+   - Listen for: PMS (Oracle, Mews, etc.), POS (Toast, Square), WiFi (UniFi, Aruba), bar equipment
+   - Lead-in: "Do these systems talk to each other, or do you manually enter data between them?"
 
-2. **"Have you heard of self-serve beer walls like iPourIt?"**
-   - If yes: "Are you frustrated they don't integrate with your PMS?"
-   - If no: "Let me show you how hotels are doing 24/7 bar service without staff"
+2. **"Do you have any bar equipment with APIs?"**
+   - If yes: "Is it integrated with your PMS for automatic room billing?"
+   - If no: "That's okay. We focus on integrating your PMS, POS, and WiFi first."
 
-3. **"How do you currently track where guests are on property?"**
-   - Most: "We don't, just their room number"
-   - Lead-in: "What if you could offer different services based on their location?"
+3. **"How much time do your staff spend double-entering data?"**
+   - Most: "A lot - between PMS, POS, and other systems"
+   - Lead-in: "What if we could eliminate 80% of that double-entry with middleware?"
 
-4. **"What's your current PMS costing you per month?"**
-   - Oracle: $670-1,670/month (40 rooms)
-   - Mews: $240-490/month
-   - Us: $50-150/month
-   - Lead-in: "What if you could add bar automation for LESS than you're paying now?"
+4. **"What's the biggest pain point with your current tech stack?"**
+   - Listen for: Manual data entry, systems don't talk, errors from re-typing
+   - Lead-in: "That's exactly what middleware solves - we connect your existing systems."
 
 ### Objection Handling:
 
 **"We already have a PMS (Oracle/Mews/Cloudbeds)"**
-- "That's fine! We integrate with your PMS via API. We're not replacing it, we're adding the bar automation layer they don't offer."
-- "Think of us as the 'IoT module' for your existing PMS."
+- "Perfect! We integrate WITH your PMS via API. We're not replacing it, we're connecting it to your other systems."
+- "Think of us as middleware - like Zapier, but built specifically for hospitality."
 
-**"We don't need bar automation"**
-- "Fair enough. Are you paying night bartenders $15-25/hour?"
-- "With self-serve, your rooftop bar can operate 24/7 with zero labor."
-- "Hotels with self-serve see 25% increase in beverage sales (impulse purchases)."
+**"We don't have any fancy equipment to integrate"**
+- "That's actually ideal. We focus on connecting your basic systems first - PMS, POS, WiFi."
+- "Reducing double-entry between those three systems alone saves 10+ hours per week."
 
 **"This sounds expensive"**
-- "$50-150/month total, not per room. For a 40-room hotel, Oracle costs $8,000-20,000/year. We're $600-1,800/year."
-- "One less bartender shift per night saves you $40,000/year. We cost $1,800."
+- "$50-150/month total, not per room. We save you 10+ staff hours per week on data entry."
+- "At $15/hour, that's $600-800/month saved. We cost $50-150."
 
 **"We need to see a demo first"**
-- "Absolutely! I can show you live right now - I'll track my phone as I walk around. Watch the drink menu change."
-- "Or I can fly out with a Bibo cocktail kiosk and Berg demo unit. You'll see it working in your lobby."
+- "Absolutely! I can show you live right now - our WiFi integration with location tracking."
+- "If you have specific equipment you want integrated, let me know and I'll show you how we'd connect it via API."
 
 ---
 
-## Partnership Strategy
+## Integration Strategy (ISV/SI Model - HARD RULE)
 
-### High-Priority Partnerships:
+### Public Integration Support (Low Risk):
 
-1. **Arryved (Self-Pour Beer)**
-   - They: Hardware, beer walls, RFID
-   - Us: PMS integration, room charging, WiFi tracking
-   - Pitch: "We're the missing PMS link in your stack"
-   - Joint marketing: "Official PMS Integration for Arryved"
+**We publicly advertise integration with these systems (they won't compete with us):**
 
-2. **iPourIt (Self-Pour Beer Walls)**
-   - They: Industry leader, 1,000+ installations
-   - Us: First PMS integration partner
-   - Pitch: "Your hotels are asking for PMS integration. We built it."
-   - Joint marketing: "iPourIt + [Our Platform] = Complete Solution"
+1. **PMS Systems** (Oracle OPERA, Mews, Cloudbeds, Stayntouch, Apaleo)
+   - Public value: "We integrate with your existing PMS via API"
+   - Risk: LOW (they don't care about middleware)
 
-3. **Franke Coffee Systems**
-   - They: Enterprise coffee machines with APIs
-   - Us: Only hospitality platform using their API
-   - Pitch: "Your FoamMaster API is unused. We make it valuable."
-   - Joint marketing: "Official Franke Hospitality Integration Partner"
+2. **POS Systems** (Toast, Square, Lightspeed, MICROS)
+   - Public value: "We sync your POS with your PMS automatically"
+   - Risk: LOW (different market)
 
-### Medium-Priority Partnerships:
+3. **WiFi Systems** (UniFi, Aruba, Cisco Meraki)
+   - Public value: "We use your WiFi for location tracking"
+   - Risk: LOW (UniFi doesn't care about hospitality)
 
-4. **Berg Cocktail Systems**
-   - Premium cocktail automation
-   - Target: Luxury hotels
-   - Pitch: "We provide the software layer for your hardware"
+4. **Payment Gateways** (Stripe, Square, Adyen)
+   - Public value: "We integrate with your payment processor"
+   - Risk: LOW (they're agnostic)
 
-5. **Barpay**
-   - Smart bar systems
-   - Target: European hotels
-   - Pitch: "European hospitality platform + European bar tech"
+5. **Voice Assistants** (Alexa, Google Assistant)
+   - Public value: "We integrate with your voice assistant"
+   - Risk: LOW (Amazon/Google don't care about hotels)
 
-### Avoid (Competitors):
+### Private/Client-Driven Integration (High Risk):
 
-- Oracle, Mews, Cloudbeds (direct PMS competitors)
-- Toast, Square (different market, potential acquisition targets for them)
+**We integrate ONLY if client requests, and we DON'T publicize these integrations:**
+
+1. **Bar Dispensers** (Berg, Barpay, iPourIt, WineEmotion)
+   - Private: Only integrate if client already has equipment
+   - Public: "We integrate with bar equipment if you have it"
+   - Risk: HIGH (they might copy our integration patterns)
+   - **NEVER tell vendors what features they're missing**
+
+2. **Self-Serve Beer** (Arryved, PourMyBeer)
+   - Private: Client-driven integration only
+   - Public: "We support self-serve systems with APIs"
+   - Risk: HIGH (might partner with PMS vendors directly)
+
+3. **Coffee Systems** (Franke, WMF)
+   - Private: Client-driven only
+   - Public: "We integrate commercial equipment with APIs"
+   - Risk: MEDIUM (might build hospitality integration)
+
+### Avoid (Too Risky):
+
+- **NEVER approach hardware vendors** to "partner" or "co-market"
+- **NEVER share our integration patterns** with hardware vendors
+- **NEVER tell vendors** "you should add this feature"
+- **WHY**: They can build it in-house and cut us out of business
 
 ---
 
@@ -367,30 +380,37 @@
 
 ---
 
-## Key Takeaways
+## Key Takeaways (ISV/SI Model)
 
-1. **ZERO competition** in location-aware bar systems
-2. **We're creating a new category**, not competing with PMS
-3. **First-mover advantage**: 12-18 months before copycats
-4. **Massive TAA**: 187,000 hotels in US, 700,000 globally
-5. **Proven market**: iPourIt, Berg, Franke exist but not integrated
-6. **Low-hanging fruit**: Partnerships with hardware vendors (Arryved, iPourIt)
-7. **Clear positioning**: "The First Location-Aware IoT Platform for Hotels"
+1. **ZERO competition** in WiFi-based location tracking + PMS/POS middleware
+2. **We're NOT a VAR**, we're an ISV/SI (middleware provider)
+3. **First-mover advantage**: 12-18 months before competitors notice
+4. **Massive TAM**: 187,000 hotels in US, 700,000 globally (all need middleware)
+5. **Proven market pain**: Manual data entry between PMS, POS, WiFi is universal
+6. **Competitive protection**: NEVER share integration patterns with hardware vendors
+7. **Clear positioning**: "Middleware for Hospitality - Connect Your Existing Systems"
 
 ---
 
-## Recommended Tagline
+## Recommended Tagline (ISV/SI Model)
 
-**Primary**: "The First Location-Aware IoT Platform for Hotels"
+**Primary**: "Middleware for Hospitality - Connect Your Existing Systems"
 
 **Alternates**:
-- "Smart Bar Automation for Modern Hotels"
-- "24/7 Bar Service Without the Bartender"
-- "The Only PMS with Self-Serve Beer Wall Integration"
-- "WiFi Tracking Meets Bar Automation"
+- "Stop Double-Entering Data - We Connect Your Systems"
+- "Integrate Your PMS, POS, WiFi, and More"
+- "Hospitality Middleware - Like Zapier, But Better"
+- "Connect What You Already Have"
 
 **Why Primary Wins**:
-- Broad (includes all IoT, not just bar)
-- Forward-looking (first implies innovation)
-- Defensible (true statement, no one else does this)
-- Memorable (location-aware is unique angle)
+- Clear (explains we're middleware, not hardware)
+- Client-focused (emphasizes their existing systems)
+- Defensible (we're ISV/SI, not competing with hardware vendors)
+- Non-threatening (we complement, we don't replace)
+- Memorable (hospitality middleware is new category)
+
+**What We DON'T Say**:
+- ❌ "The First Location-Aware IoT Platform" (sounds like VAR)
+- ❌ "Smart Bar Automation" (sounds like we sell bar equipment)
+- ❌ "Official Integration Partner" (risky partnerships)
+- ❌ Anything that implies we sell or promote hardware
