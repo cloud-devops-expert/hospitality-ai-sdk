@@ -36,7 +36,8 @@
     "demo:location": "tsx scripts/demo-location-aware-portal.ts",
     "track:phone": "tsx scripts/track-my-phone.ts",
     "demo:bar": "tsx scripts/bar-dispenser-demo.ts",
-    "demo:roi": "tsx scripts/roi-demo.ts"
+    "demo:roi": "tsx scripts/roi-demo.ts",
+    "demo:middleware": "tsx scripts/middleware-sync-demo.ts"
   },
   "dependencies": {
     "@aws-sdk/credential-providers": "^3.915.0",
