@@ -8,6 +8,43 @@ import Link from 'next/link';
 
 export default function MLDemosPage() {
   const mlDemos = [
+    // Phase 1: Universal Free Models (All 21 Industries)
+    {
+      title: 'Document Extraction (LayoutLMv3)',
+      description:
+        '90-95% accuracy. Extract data from invoices, receipts, forms. HIPAA-compliant.',
+      path: '/demos/document-extraction',
+      icon: '📄',
+      technology: 'Microsoft LayoutLMv3',
+      cost: '$0/month',
+      accuracy: '90-95%',
+      implemented: true,
+      category: 'universal-free',
+    },
+    {
+      title: 'Speech Transcription (Whisper)',
+      description:
+        '95-98% accuracy, 99 languages. Call centers, voice notes, medical transcription.',
+      path: '/demos/speech-transcription',
+      icon: '🎙️',
+      technology: 'OpenAI Whisper (6 sizes)',
+      cost: '$0/month',
+      accuracy: '95-98%',
+      implemented: true,
+      category: 'universal-free',
+    },
+    {
+      title: 'Translation (NLLB-200)',
+      description:
+        '200 languages supported. Guest communications, reviews, safety instructions.',
+      path: '/demos/translation',
+      icon: '🌍',
+      technology: 'Meta NLLB-200',
+      cost: '$0/month',
+      accuracy: '85-95%',
+      implemented: true,
+      category: 'universal-free',
+    },
     {
       title: 'BERT Sentiment Analysis',
       description:
@@ -83,6 +120,12 @@ export default function MLDemosPage() {
   ];
 
   const categoryInfo = {
+    'universal-free': {
+      title: 'Phase 1: Universal Free Models (Hugging Face)',
+      description:
+        'FREE models from our research that work across ALL 21 industries. Deploy these first!',
+      color: 'emerald',
+    },
     'traditional-ml': {
       title: 'Traditional ML',
       description: 'Use these instead of generative AI for structured data tasks',
@@ -115,8 +158,8 @@ export default function MLDemosPage() {
             🤖 Battle-Tested ML Demos
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl">
-            7 production-ready implementations showing when to use traditional ML, operations
-            research, and generative AI
+            10 production-ready implementations showing when to use free Hugging Face models,
+            traditional ML, operations research, and generative AI
           </p>
         </div>
 
