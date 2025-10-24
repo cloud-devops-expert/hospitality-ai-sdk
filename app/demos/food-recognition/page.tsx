@@ -2,22 +2,16 @@
  * Food Recognition Demo (Computer Vision)
  *
  * Recognize food items using Hugging Face vision models (FREE!)
+ * Now with REAL ML: Transformers.js + ViT model
  */
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { recognizeFood as recognizeFoodML, FoodRecognitionResult } from '@/lib/vision/food-recognition';
 
-interface RecognitionResult {
-  foodItem: string;
-  category: string;
-  confidence: number;
-  calories: number;
-  portionSize: string;
-  executionTime: number;
-  modelUsed: string;
-  wasteDetected: boolean;
-}
+// Use the real ML result type
+type RecognitionResult = Omit<FoodRecognitionResult, 'alternativeLabels'>;
 
 export default function FoodRecognitionDemo() {
   const [selectedImage, setSelectedImage] = useState<string>('pizza');
@@ -121,18 +115,39 @@ export default function FoodRecognitionDemo() {
 
   const recognizeFood = async () => {
     setIsRecognizing(true);
-    const startTime = performance.now();
 
-    // Simulate computer vision processing
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    try {
+      // Use real ML model or uploaded image
+      const imageData = uploadedImage || `data:image/png;base64,${selectedImage}`;
 
-    const data = recognitionData[selectedImage];
-    const endTime = performance.now();
+      const mlResult = await recognizeFoodML({
+        imageData,
+        imageId: `demo-${Date.now()}`,
+        location: 'Restaurant Kitchen',
+        timestamp: new Date(),
+      });
 
-    setResult({
-      ...data,
-      executionTime: endTime - startTime,
-    });
+      setResult({
+        foodItem: mlResult.foodItem,
+        category: mlResult.category,
+        confidence: mlResult.confidence,
+        calories: mlResult.calories,
+        portionSize: mlResult.portionSize,
+        executionTime: mlResult.executionTime,
+        modelUsed: mlResult.modelUsed,
+        wasteDetected: mlResult.wasteDetected,
+        method: mlResult.method,
+      });
+    } catch (error) {
+      console.error('Recognition failed:', error);
+      // Fallback to mock data on error
+      const data = recognitionData[selectedImage];
+      setResult({
+        ...data,
+        executionTime: 0,
+        method: 'mock',
+      });
+    }
 
     setIsRecognizing(false);
   };
@@ -140,8 +155,11 @@ export default function FoodRecognitionDemo() {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setUploadedImage(file.name);
-      // In production, would process the actual image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUploadedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -373,6 +391,12 @@ export default function FoodRecognitionDemo() {
                     <span className="text-slate-600 dark:text-slate-400">Model:</span>
                     <span className="font-semibold text-navy-900 dark:text-white text-sm">
                       {result.modelUsed}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 dark:text-slate-400">Method:</span>
+                    <span className={`font-semibold text-sm ${result.method === 'transformers.js' ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}`}>
+                      {result.method === 'transformers.js' ? '🚀 Real ML (Transformers.js)' : '📋 Mock Data'}
                     </span>
                   </div>
                   <div className="flex justify-between">
