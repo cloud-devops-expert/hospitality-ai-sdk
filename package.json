@@ -43,7 +43,9 @@
     "demo:bert-sentiment": "tsx scripts/demo-bert-sentiment.ts",
     "demo:entity-extraction": "tsx scripts/demo-entity-extraction.ts",
     "demo:fraud-detection": "tsx scripts/demo-fraud-detection.ts",
-    "demo:gradient-boosting": "tsx scripts/demo-gradient-boosting-forecast.ts"
+    "demo:gradient-boosting": "tsx scripts/demo-gradient-boosting-forecast.ts",
+    "demo:review-response": "tsx scripts/demo-review-response-llm.ts",
+    "demo:housekeeping": "tsx scripts/demo-housekeeping-optimization.ts"
   },
   "dependencies": {
     "@aws-sdk/credential-providers": "^3.915.0",
