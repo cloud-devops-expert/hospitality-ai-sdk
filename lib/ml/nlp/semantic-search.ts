@@ -19,6 +19,7 @@
  */
 
 import { pipeline, cos_sim } from '@xenova/transformers';
+import '../transformers-config'; // Configure for browser environment
 
 export interface SemanticSearchResult {
   text: string;

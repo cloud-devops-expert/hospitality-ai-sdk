@@ -18,6 +18,7 @@
  */
 
 import { pipeline } from '@xenova/transformers';
+import '../transformers-config'; // Configure for browser environment
 
 export interface TranslationResult {
   sourceText: string;

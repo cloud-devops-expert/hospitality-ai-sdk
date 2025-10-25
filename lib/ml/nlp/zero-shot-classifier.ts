@@ -19,6 +19,7 @@
  */
 
 import { pipeline } from '@xenova/transformers';
+import '../transformers-config'; // Configure for browser environment
 
 export interface ZeroShotClassificationResult {
   text: string;
