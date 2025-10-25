@@ -27,9 +27,25 @@
  */
 
 import { drizzle } from 'drizzle-orm/aws-data-api/pg';
+import type { AwsDataApiPgDatabase } from 'drizzle-orm/aws-data-api/pg';
 import { RDSDataClient } from '@aws-sdk/client-rds-data';
 import { fromEnv, fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import type { SQL } from 'drizzle-orm';
+
+// Type for Drizzle transaction callback
+type TransactionCallback<T> = (tx: AwsDataApiPgDatabase<Record<string, never>>) => Promise<T>;
+
+// Type for request objects (supports both Next.js Request and Express req)
+type RequestLike = {
+  headers?: {
+    get?(name: string): string | null;
+    [key: string]: unknown;
+  };
+  user?: {
+    tenantId?: string;
+    id?: string;
+  };
+};
 
 /**
  * RLS context for tenant isolation
@@ -191,7 +207,7 @@ export class DrizzleRLSClient {
    * );
    * ```
    */
-  async withRLS<T>(context: RLSContext, callback: (tx: any) => Promise<T>): Promise<T> {
+  async withRLS<T>(context: RLSContext, callback: TransactionCallback<T>): Promise<T> {
     this.validateContext(context);
 
     const startTime = Date.now();
@@ -236,7 +252,7 @@ export class DrizzleRLSClient {
    */
   async batchWithRLS<T>(
     context: RLSContext,
-    operations: Array<(tx: any) => Promise<T>>
+    operations: Array<TransactionCallback<T>>
   ): Promise<T[]> {
     this.validateContext(context);
 
@@ -275,7 +291,7 @@ export class DrizzleRLSClient {
   /**
    * Set PostgreSQL session variables for RLS
    */
-  private async setSessionVariables(tx: any, context: RLSContext): Promise<void> {
+  private async setSessionVariables(tx: AwsDataApiPgDatabase<Record<string, never>>, context: RLSContext): Promise<void> {
     metrics.totalContextSets++;
 
     // Set application_name for visibility in pg_stat_activity and Performance Insights
@@ -418,14 +434,17 @@ export function createRLSClient(config: DrizzleRLSConfig): DrizzleRLSClient {
  * }
  * ```
  */
-export function extractRLSContext(req: any): RLSContext {
+export function extractRLSContext(req: RequestLike): RLSContext {
   // Extract from headers (preferred for API calls)
   const tenantId =
     req.headers?.get?.('x-tenant-id') ||
-    req.headers?.['x-tenant-id'] ||
+    (req.headers?.['x-tenant-id'] as string) ||
     req.user?.tenantId;
 
-  const userId = req.headers?.get?.('x-user-id') || req.headers?.['x-user-id'] || req.user?.id;
+  const userId =
+    req.headers?.get?.('x-user-id') ||
+    (req.headers?.['x-user-id'] as string) ||
+    req.user?.id;
 
   if (!tenantId) {
     throw new Error('Tenant context required: x-tenant-id header or req.user.tenantId missing');

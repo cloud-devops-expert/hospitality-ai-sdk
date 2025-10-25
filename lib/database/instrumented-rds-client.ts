@@ -24,9 +24,14 @@
  */
 
 import { RDSDataClient, ExecuteStatementCommand, BatchExecuteStatementCommand, BeginTransactionCommand, CommitTransactionCommand, RollbackTransactionCommand } from '@aws-sdk/client-rds-data';
+import type { Command } from '@smithy/smithy-client';
 import { drizzle } from 'drizzle-orm/aws-data-api/pg';
+import type { AwsDataApiPgDatabase } from 'drizzle-orm/aws-data-api/pg';
 import { fromEnv, fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { getCloudWatchPublisher } from '@/lib/metrics/cloudwatch-publisher';
+
+// Type for Drizzle transaction callback
+type TransactionCallback<T> = (tx: AwsDataApiPgDatabase<Record<string, never>>) => Promise<T>;
 
 /**
  * Configuration for instrumented client
@@ -128,8 +133,9 @@ export class InstrumentedRDSClient {
   private wrapClientWithMetrics(client: RDSDataClient): RDSDataClient {
     const originalSend = client.send.bind(client);
 
-    // Override send method
-    (client as any).send = async (command: any) => {
+    // Override send method (must use any cast as we're intercepting internal SDK method)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (client as any).send = async (command: Command<any, any, any, any, any>) => {
       const startTime = Date.now();
       const commandName = command.constructor.name;
 
@@ -153,8 +159,9 @@ export class InstrumentedRDSClient {
         }
 
         return result;
-      } catch (error: any) {
+      } catch (error) {
         const durationMs = Date.now() - startTime;
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
         // Track error metrics
         if (this.config.enableMetrics) {
@@ -166,7 +173,7 @@ export class InstrumentedRDSClient {
               durationMs,
               statusCode: 500,
               bytesTransferred: 0,
-              errorMessage: error.message,
+              errorMessage,
             });
           }
         }
@@ -181,7 +188,7 @@ export class InstrumentedRDSClient {
   /**
    * Extract tenant ID from SQL command
    */
-  private extractTenantId(command: any): string | null {
+  private extractTenantId(command: Command<any, any, any, any, any>): string | null {
     try {
       // Check current context first
       if (this.currentTenantId) {
@@ -189,8 +196,10 @@ export class InstrumentedRDSClient {
       }
 
       // Try to extract from SQL (for ExecuteStatement)
-      if (command.input?.sql) {
-        const sql = command.input.sql;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const commandInput = command.input as any;
+      if (commandInput?.sql && typeof commandInput.sql === 'string') {
+        const sql = commandInput.sql;
 
         // Match: SET LOCAL application_name = 'tenant-123'
         const appNameMatch = sql.match(/application_name\s*=\s*'tenant-([^']+)'/);
@@ -214,7 +223,7 @@ export class InstrumentedRDSClient {
   /**
    * Estimate response size
    */
-  private estimateResponseSize(result: any): number {
+  private estimateResponseSize(result: unknown): number {
     try {
       return JSON.stringify(result).length;
     } catch {
@@ -269,7 +278,7 @@ export class InstrumentedRDSClient {
    */
   async withRLS<T>(
     context: RLSContext,
-    callback: (tx: any) => Promise<T>
+    callback: TransactionCallback<T>
   ): Promise<T> {
     this.validateContext(context);
 
@@ -297,7 +306,7 @@ export class InstrumentedRDSClient {
    */
   async batchWithRLS<T>(
     context: RLSContext,
-    operations: Array<(tx: any) => Promise<T>>
+    operations: Array<TransactionCallback<T>>
   ): Promise<T[]> {
     this.validateContext(context);
     this.currentTenantId = context.tenantId;
@@ -320,7 +329,7 @@ export class InstrumentedRDSClient {
   /**
    * Set PostgreSQL session variables for RLS
    */
-  private async setSessionVariables(tx: any, context: RLSContext): Promise<void> {
+  private async setSessionVariables(tx: AwsDataApiPgDatabase<Record<string, never>>, context: RLSContext): Promise<void> {
     // Set application_name for visibility in pg_stat_activity
     const appName = `tenant-${context.tenantId}${context.userId ? `-user-${context.userId}` : ''}`;
     await tx.execute(`SET LOCAL application_name = '${this.escapeSQL(appName)}'`);

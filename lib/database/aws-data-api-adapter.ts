@@ -102,7 +102,7 @@ function createRDSClient(config: DataApiConfig): RDSDataClient {
 /**
  * Logging wrapper for debugging
  */
-function logDataApiQuery(sql: string, params: any[], duration: number) {
+function logDataApiQuery(sql: string, params: unknown[], duration: number) {
   if (process.env.DEBUG_DATA_API === 'true') {
     console.log('[AWS Data API]', {
       sql: sql.substring(0, 200),
@@ -149,7 +149,7 @@ export function createDataApiAdapter(config: DataApiConfig) {
       ? {
           logQuery(sql: string, params: unknown[]) {
             const start = Date.now();
-            logDataApiQuery(sql, params as any[], Date.now() - start);
+            logDataApiQuery(sql, params, Date.now() - start);
           },
         }
       : undefined,
@@ -157,6 +157,7 @@ export function createDataApiAdapter(config: DataApiConfig) {
 
   // Wrap execute method for performance tracking
   const originalExecute = db.execute.bind(db);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   db.execute = async function (query: any) {
     const startTime = Date.now();
     metrics.totalQueries++;
@@ -169,7 +170,7 @@ export function createDataApiAdapter(config: DataApiConfig) {
 
       if (config.debug) {
         logDataApiQuery(
-          typeof query === 'string' ? query : query.sql,
+          typeof query === 'string' ? query : (query as { sql: string }).sql,
           [],
           duration
         );
@@ -269,7 +270,7 @@ export async function checkDataApiHealth(db: ReturnType<typeof createDataApiAdap
 export function createConditionalAdapter(options: {
   useDataApi: boolean;
   dataApiConfig: DataApiConfig;
-  fallbackConfig: any;
+  fallbackConfig: Record<string, unknown>;
 }) {
   if (options.useDataApi) {
     console.log('[Database] Using AWS Data API adapter');
