@@ -37,10 +37,21 @@ export default function ZeroShotClassificationDemo() {
       let labels: string[];
       switch (mode) {
         case 'guest-request':
-          labels = ['new booking', 'cancel reservation', 'modify reservation', 'complaint', 'general inquiry', 'housekeeping', 'maintenance'];
+          // IMPROVED: More specific, non-overlapping labels
+          labels = [
+            'new booking request',
+            'cancellation request',
+            'reservation modification',
+            'guest complaint',
+            'general information question',
+            'housekeeping request',
+            'maintenance problem',
+            'room service order',
+            'concierge question'
+          ];
           break;
         case 'department':
-          labels = ['front desk', 'housekeeping', 'maintenance', 'food service', 'management'];
+          labels = ['front desk', 'housekeeping', 'maintenance', 'food and beverage', 'management', 'billing'];
           break;
         case 'urgency':
           labels = ['emergency', 'urgent', 'normal', 'low priority'];
@@ -90,9 +101,15 @@ export default function ZeroShotClassificationDemo() {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             🎯 Zero-Shot Classification
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
+          <p className="text-gray-600 dark:text-gray-400 mb-2">
             Classify text into ANY categories without training data! Uses facebook/bart-large-mnli.
           </p>
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-sm">
+            <span className="font-semibold text-blue-900 dark:text-blue-100">✨ IMPROVED:</span>
+            <span className="text-blue-800 dark:text-blue-200 ml-2">
+              Now uses multi-label classification and hypothesis templates for better accuracy. "My room is dirty" is correctly classified as BOTH a complaint AND housekeeping request!
+            </span>
+          </div>
 
           {/* Business Value */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">

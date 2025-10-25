@@ -61,6 +61,8 @@ async function initializeClassifier() {
 /**
  * Classify text into one of the provided labels (no training needed!)
  *
+ * IMPROVED: Uses hypothesis templates for better accuracy
+ *
  * @example
  * ```typescript
  * const result = await classifyText(
@@ -74,15 +76,26 @@ async function initializeClassifier() {
 export async function classifyText(
   text: string,
   candidateLabels: string[],
-  multiLabel: boolean = false
+  multiLabel: boolean = false,
+  hypothesisTemplate?: string
 ): Promise<ZeroShotClassificationResult> {
   const startTime = performance.now();
 
   // Initialize classifier
   const model = await initializeClassifier();
 
+  // Prepare options with hypothesis template if provided
+  const options: any = { multi_label: multiLabel };
+
+  // Use custom hypothesis template for better accuracy
+  // Default: "This example is {label}."
+  // Better: "This is a {label} request." or "This guest needs {label}."
+  if (hypothesisTemplate) {
+    options.hypothesis_template = hypothesisTemplate;
+  }
+
   // Run classification
-  const result = await model(text, candidateLabels, { multi_label: multiLabel });
+  const result = await model(text, candidateLabels, options);
 
   const executionTimeMs = Math.round(performance.now() - startTime);
 
@@ -114,21 +127,30 @@ export async function classifyBatch(
 
 /**
  * Classify guest request intent
+ * IMPROVED: Uses multi-label classification and better hypothesis template
  */
 export async function classifyGuestRequest(text: string) {
+  // More specific labels that don't overlap
   const labels = [
-    'new booking',
-    'modify reservation',
-    'cancel reservation',
-    'room service',
-    'housekeeping',
-    'maintenance issue',
-    'concierge service',
-    'complaint',
-    'general inquiry',
+    'new booking request',
+    'reservation modification',
+    'cancellation request',
+    'room service order',
+    'housekeeping request',
+    'maintenance problem',
+    'concierge question',
+    'guest complaint',
+    'general information question',
   ];
 
-  return classifyText(text, labels);
+  // Use multi-label because requests can have multiple categories
+  // e.g., "My room is dirty" is BOTH a complaint AND housekeeping
+  return classifyText(
+    text,
+    labels,
+    true, // multi-label = true
+    "This guest message is a {}." // hypothesis template
+  );
 }
 
 /**
