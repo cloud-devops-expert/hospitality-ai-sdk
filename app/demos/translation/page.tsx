@@ -101,7 +101,7 @@ Your safety is our priority.`,
     },
   ];
 
-  const sampleTranslations: Record<string, Record<string, string>> = {
+  const sampleTranslations: Record<string, string> = {
     eng_spa: `Estimados Sr. y Sra. Chen,
 
 ¡Bienvenidos al Grand Hotel! Estamos encantados de tenerlos como nuestros huéspedes y esperamos hacer que su estadía sea memorable.

@@ -163,15 +163,15 @@ export const vipOceanViewEvaluator: ConstraintDefinition = {
   evaluator: (booking, _allBookings, _allRooms, parameters) => {
     if (!booking.assignedRoom) return null;
 
-    const minLoyaltyTier = parameters.minLoyaltyTier || 1;
-    const viewTypes = parameters.viewTypes || [View.OCEAN, View.BEACH];
+    const minLoyaltyTier = ((parameters.minLoyaltyTier as number) as number) || 1;
+    const viewTypes = (parameters.viewTypes as View[]) || [View.OCEAN, View.BEACH];
 
     if (
       booking.guest.vip &&
       booking.guest.loyaltyTier >= minLoyaltyTier &&
       viewTypes.includes(booking.assignedRoom.view)
     ) {
-      const weight = parameters.weight || 100;
+      const weight = ((parameters.weight as number) as number) || 100;
       return createMatch(
         'VIP_OCEAN_VIEW',
         'VIP Ocean View Priority',
@@ -193,15 +193,15 @@ export const vipHighFloorEvaluator: ConstraintDefinition = {
   evaluator: (booking, _allBookings, _allRooms, parameters) => {
     if (!booking.assignedRoom) return null;
 
-    const minFloor = parameters.minFloor || 5;
-    const minLoyaltyTier = parameters.minLoyaltyTier || 1;
+    const minFloor = (parameters.minFloor as number) || 5;
+    const minLoyaltyTier = (parameters.minLoyaltyTier as number) || 1;
 
     if (
       booking.guest.vip &&
       booking.guest.loyaltyTier >= minLoyaltyTier &&
       booking.assignedRoom.floor >= minFloor
     ) {
-      const weight = parameters.weight || 80;
+      const weight = (parameters.weight as number) || 80;
       return createMatch(
         'VIP_HIGH_FLOOR',
         'VIP High Floor Priority',
@@ -227,7 +227,7 @@ export const viewPreferenceEvaluator: ConstraintDefinition = {
       booking.guest.preferences.view &&
       booking.assignedRoom.view === booking.guest.preferences.view
     ) {
-      const weight = parameters.weight || 50;
+      const weight = (parameters.weight as number) || 50;
       return createMatch(
         'VIEW_PREFERENCE',
         'View Preference',
@@ -249,8 +249,8 @@ export const floorPreferenceEvaluator: ConstraintDefinition = {
   evaluator: (booking, _allBookings, _allRooms, parameters) => {
     if (!booking.assignedRoom) return null;
 
-    const highFloorBonus = parameters.highFloorBonus || 40;
-    const lowFloorBonus = parameters.lowFloorBonus || 20;
+    const highFloorBonus = (parameters.highFloorBonus as number) || 40;
+    const lowFloorBonus = (parameters.lowFloorBonus as number) || 20;
 
     if (booking.guest.preferences.highFloor && booking.assignedRoom.floor >= 5) {
       return createMatch(
@@ -285,13 +285,13 @@ export const quietLocationEvaluator: ConstraintDefinition = {
   evaluator: (booking, _allBookings, _allRooms, parameters) => {
     if (!booking.assignedRoom) return null;
 
-    const minDistance = parameters.minDistanceFromElevator || 3;
+    const minDistance = (parameters.minDistanceFromElevator as number) || 3;
 
     if (
       booking.guest.preferences.quiet &&
       booking.assignedRoom.distanceFromElevator >= minDistance
     ) {
-      const weight = parameters.weight || 60;
+      const weight = (parameters.weight as number) || 60;
       return createMatch(
         'QUIET_LOCATION',
         'Quiet Location',
@@ -313,11 +313,11 @@ export const budgetConstraintEvaluator: ConstraintDefinition = {
   evaluator: (booking, _allBookings, _allRooms, parameters) => {
     if (!booking.assignedRoom || !booking.guest.budget) return null;
 
-    const budgetBufferPercent = parameters.budgetBufferPercent || 10;
+    const budgetBufferPercent = (parameters.budgetBufferPercent as number) || 10;
     const maxAllowable = booking.guest.budget * (1 + budgetBufferPercent / 100);
 
     if (booking.assignedRoom.pricePerNight > maxAllowable) {
-      const weight = parameters.weight || -50;
+      const weight = (parameters.weight as number) || -50;
       const overage = booking.assignedRoom.pricePerNight - maxAllowable;
       return createMatch(
         'BUDGET_CONSTRAINT',
@@ -344,7 +344,7 @@ export const earlyCheckinEvaluator: ConstraintDefinition = {
   evaluator: (booking, _allBookings, _allRooms, parameters) => {
     if (!booking.assignedRoom || !booking.earlyCheckin) return null;
 
-    const weight = parameters.weight || 30;
+    const weight = (parameters.weight as number) || 30;
     return createMatch(
       'EARLY_CHECKIN',
       'Early Check-in',
@@ -361,7 +361,7 @@ export const lateCheckoutEvaluator: ConstraintDefinition = {
   evaluator: (booking, _allBookings, _allRooms, parameters) => {
     if (!booking.assignedRoom || !booking.lateCheckout) return null;
 
-    const weight = parameters.weight || 30;
+    const weight = (parameters.weight as number) || 30;
     return createMatch(
       'LATE_CHECKOUT',
       'Late Checkout',

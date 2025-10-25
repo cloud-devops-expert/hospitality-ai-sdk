@@ -6,8 +6,8 @@ import { forecastHybrid } from '@/lib/forecast/hybrid';
 
 interface PriceRecommendation {
   date: Date;
-  basePrice: number;
-  recommendedPrice: number;
+  baseRate: number;
+  suggestedPrice: number;
   confidence: number;
   factors: {
     occupancy: number;
@@ -24,7 +24,7 @@ export default function PricingEnginePage() {
     []
   );
   const [loading, setLoading] = useState(true);
-  const [basePrice, setBasePrice] = useState(150);
+  const [baseRate, setBasePrice] = useState(150);
   const [selectedDate, setSelectedDate] = useState<PriceRecommendation | null>(
     null
   );
@@ -32,7 +32,7 @@ export default function PricingEnginePage() {
 
   useEffect(() => {
     generateRecommendations();
-  }, [basePrice]);
+  }, [baseRate]);
 
   const generateRecommendations = async () => {
     setLoading(true);
@@ -51,11 +51,10 @@ export default function PricingEnginePage() {
         const occupancy = forecast?.predicted || 60 + Math.random() * 30;
 
         const pricing = calculateDynamicPrice({
-          basePrice,
-          occupancy,
+          baseRate,
+          occupancyRate: occupancy / 100,
           daysUntilArrival: i,
           seasonalMultiplier: 1 + Math.sin(i / 7) * 0.2,
-          competitorPrice: basePrice + (Math.random() - 0.5) * 40,
           dayOfWeek: date.getDay(),
         });
 
@@ -76,13 +75,13 @@ export default function PricingEnginePage() {
         if (date.getDay() === 5 || date.getDay() === 6) {
           reasoning.push('Weekend premium applied');
         }
-        if (pricing.recommendedPrice > basePrice) {
+        if (pricing.suggestedPrice > baseRate) {
           reasoning.push(
-            `${Math.round(((pricing.recommendedPrice - basePrice) / basePrice) * 100)}% increase recommended`
+            `${Math.round(((pricing.suggestedPrice - baseRate) / baseRate) * 100)}% increase recommended`
           );
-        } else if (pricing.recommendedPrice < basePrice) {
+        } else if (pricing.suggestedPrice < baseRate) {
           reasoning.push(
-            `${Math.round(((basePrice - pricing.recommendedPrice) / basePrice) * 100)}% discount to boost occupancy`
+            `${Math.round(((baseRate - pricing.suggestedPrice) / baseRate) * 100)}% discount to boost occupancy`
           );
         }
         if (i < 3) {
@@ -91,8 +90,8 @@ export default function PricingEnginePage() {
 
         recs.push({
           date,
-          basePrice,
-          recommendedPrice: pricing.recommendedPrice,
+          baseRate,
+          suggestedPrice: pricing.suggestedPrice,
           confidence: pricing.confidence,
           factors: {
             occupancy,
@@ -101,7 +100,7 @@ export default function PricingEnginePage() {
             demand: occupancy > 80 ? 'High' : occupancy > 60 ? 'Medium' : 'Low',
           },
           reasoning,
-          potentialRevenue: pricing.recommendedPrice * 50, // Assuming 50 rooms
+          potentialRevenue: pricing.suggestedPrice * 50, // Assuming 50 rooms
         });
       }
 
@@ -114,15 +113,15 @@ export default function PricingEnginePage() {
   };
 
   const getRecommendationColor = (rec: PriceRecommendation) => {
-    const change = rec.recommendedPrice - rec.basePrice;
+    const change = rec.suggestedPrice - rec.baseRate;
     if (change > 20) return 'bg-green-50 dark:bg-green-900/20 border-green-500';
     if (change < -20) return 'bg-red-50 dark:bg-red-900/20 border-red-500';
     return 'bg-blue-50 dark:bg-blue-900/20 border-blue-500';
   };
 
   const getPriceChange = (rec: PriceRecommendation) => {
-    const change = rec.recommendedPrice - rec.basePrice;
-    const percent = (change / rec.basePrice) * 100;
+    const change = rec.suggestedPrice - rec.baseRate;
+    const percent = (change / rec.baseRate) * 100;
     return {
       amount: change,
       percent,
@@ -135,7 +134,7 @@ export default function PricingEnginePage() {
     0
   );
   const currentRevenue = recommendations.reduce(
-    (sum, rec) => sum + rec.basePrice * 50,
+    (sum, rec) => sum + rec.baseRate * 50,
     0
   );
   const potentialGain = totalPotentialRevenue - currentRevenue;
@@ -209,12 +208,12 @@ export default function PricingEnginePage() {
                   type="range"
                   min="80"
                   max="300"
-                  value={basePrice}
+                  value={baseRate}
                   onChange={(e) => setBasePrice(Number(e.target.value))}
                   className="flex-1"
                 />
                 <span className="font-bold text-lg text-gray-900 dark:text-gray-100 w-16">
-                  ${basePrice}
+                  ${baseRate}
                 </span>
               </div>
             </div>
@@ -288,10 +287,10 @@ export default function PricingEnginePage() {
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                      ${rec.recommendedPrice.toFixed(0)}
+                      ${rec.suggestedPrice.toFixed(0)}
                     </span>
                     <span className="text-sm line-through text-gray-500 dark:text-gray-400">
-                      ${rec.basePrice}
+                      ${rec.baseRate}
                     </span>
                   </div>
                   <div
@@ -408,7 +407,7 @@ export default function PricingEnginePage() {
                     Current Price
                   </div>
                   <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                    ${selectedDate.basePrice}
+                    ${selectedDate.baseRate}
                   </div>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4">
@@ -416,7 +415,7 @@ export default function PricingEnginePage() {
                     Recommended Price
                   </div>
                   <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-                    ${selectedDate.recommendedPrice.toFixed(0)}
+                    ${selectedDate.suggestedPrice.toFixed(0)}
                   </div>
                 </div>
               </div>
@@ -497,7 +496,7 @@ export default function PricingEnginePage() {
                   ${selectedDate.potentialRevenue.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  vs ${(selectedDate.basePrice * 50).toLocaleString()} at base
+                  vs ${(selectedDate.baseRate * 50).toLocaleString()} at base
                   price
                 </div>
               </div>
