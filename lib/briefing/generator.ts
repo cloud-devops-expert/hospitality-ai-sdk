@@ -116,7 +116,7 @@ async function analyzeNoShows(bookings: any[]): Promise<BriefingAlert[]> {
         metadata: {
           bookingId: booking.id,
           probability: prediction.probability,
-          factors: prediction.factors,
+          factors: prediction.reasons,
         },
       });
     }

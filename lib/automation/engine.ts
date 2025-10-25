@@ -319,9 +319,9 @@ export async function executeRule(
       const action = rule.actions[i];
 
       // Apply delay if specified
-      if (action.delay && action.delay > 0) {
+      if (action.delay ?? 0 && action.delay ?? 0 > 0) {
         await new Promise((resolve) =>
-          setTimeout(resolve, action.delay * 60 * 1000)
+          setTimeout(resolve, action.delay ?? 0 * 60 * 1000)
         );
       }
 

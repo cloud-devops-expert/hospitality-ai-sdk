@@ -12,8 +12,14 @@
  * Cost: ~$0.50 per 1M requests
  */
 
-import { getRawDataApiClient } from '@/lib/database/instrumented-rds-client';
+// TODO: Import from correct database module when implemented
+// import { getRawDataApiClient } from '@/lib/database/instrumented-rds-client';
 import { sql } from 'drizzle-orm';
+
+// Temporary stub until getRawDataApiClient is exported
+const getRawDataApiClient = (): any => {
+  throw new Error('getRawDataApiClient not implemented yet');
+};
 
 export interface UsageEvent {
   tenantId: string;

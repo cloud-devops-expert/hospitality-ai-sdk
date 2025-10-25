@@ -219,7 +219,7 @@ export function classifyComplaint(
 
   // Check for complaint keywords
   const complaintScore = complaintKeywords.filter(word => text.includes(word)).length;
-  const isComplaint = complaintScore > 0 || (sentiment?.overall === 'negative' && sentiment.intensity > 60);
+  const isComplaint = complaintScore > 0 || (sentiment?.overall === 'negative' && sentiment.intensity ?? 0 > 60);
 
   // Determine category
   let category = 'general';
