@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  classifyText,
-  classifyGuestRequest,
-  classifyComplaintDepartment,
-  classifyUrgency,
-  type ZeroShotClassificationResult,
-} from '@/lib/ml/nlp/zero-shot-classifier';
+
+interface ZeroShotClassificationResult {
+  text: string;
+  labels: string[];
+  scores: number[];
+  topLabel: string;
+  topScore: number;
+  executionTimeMs: number;
+}
 
 export default function ZeroShotClassificationDemo() {
   const [text, setText] = useState('');
@@ -31,23 +33,35 @@ export default function ZeroShotClassificationDemo() {
 
     setLoading(true);
     try {
-      let classificationResult: ZeroShotClassificationResult;
-
+      // Determine labels based on mode
+      let labels: string[];
       switch (mode) {
         case 'guest-request':
-          classificationResult = await classifyGuestRequest(text);
+          labels = ['new booking', 'cancel reservation', 'modify reservation', 'complaint', 'general inquiry', 'housekeeping', 'maintenance'];
           break;
         case 'department':
-          classificationResult = await classifyComplaintDepartment(text);
+          labels = ['front desk', 'housekeeping', 'maintenance', 'food service', 'management'];
           break;
         case 'urgency':
-          classificationResult = await classifyUrgency(text);
+          labels = ['emergency', 'urgent', 'normal', 'low priority'];
           break;
         default:
-          const labels = customLabels.split(',').map((l) => l.trim()).filter(Boolean);
-          classificationResult = await classifyText(text, labels);
+          labels = customLabels.split(',').map((l) => l.trim()).filter(Boolean);
       }
 
+      // Call server-side API
+      const response = await fetch('/api/ml/classify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, labels }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Classification failed');
+      }
+
+      const classificationResult = await response.json();
       setResult(classificationResult);
     } catch (error: any) {
       console.error('Classification error:', error);
