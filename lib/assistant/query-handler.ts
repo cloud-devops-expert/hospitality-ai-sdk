@@ -14,12 +14,49 @@ import type { ForecastResult } from '../forecast/statistical';
 import type { NoShowPrediction } from '../no-show/types';
 
 // Response data types from different handlers
+type ForecastResponseData = {
+  occupancy: number;
+  confidence: number;
+  trend: string;
+  vsLastYear: number;
+  forecasts: ForecastResult[];
+  visualization?: { type: string; data: any };
+  metadata?: any;
+};
+
+type PricingResponseData = {
+  recommendedPrice: number;
+  currentPrice: number;
+  confidence: number;
+  explanation: string;
+  factors: any[];
+  visualization?: { type: string; data: any };
+  metadata?: any;
+};
+
+type NoShowResponseData = {
+  totalGuests: number;
+  highRisk: number;
+  mediumRisk: number;
+  lowRisk: number;
+  predictions: NoShowPrediction[];
+  visualization?: { type: string; data: any };
+  metadata?: any;
+};
+
+type SegmentationResponseData = {
+  segments: unknown[];
+  stats: unknown;
+  visualization?: { type: string; data: any };
+  metadata?: any;
+};
+
 type QueryResponseData =
-  | ForecastResult[]
-  | { price: number; breakdown: unknown[] }
-  | NoShowPrediction[]
-  | { segments: unknown[]; stats: unknown }
-  | { result: string; data: unknown };
+  | ForecastResponseData
+  | PricingResponseData
+  | NoShowResponseData
+  | SegmentationResponseData
+  | { result: string; data: unknown; visualization?: any; metadata?: any };
 
 /**
  * Handle user query and generate assistant response
@@ -34,7 +71,7 @@ export async function handleQuery(
   const intent = parseIntent(query);
 
   // Route to appropriate handler
-  let responseData: QueryResponseData;
+  let responseData: QueryResponseData | undefined;
   let responseText: string;
   let actions: QuickAction[] = [];
 
@@ -60,16 +97,17 @@ export async function handleQuery(
         ];
         break;
 
-      case 'pricing':
-        responseData = await handlePricingQuery(intent, context);
+      case 'pricing': {
+        const pricingData = await handlePricingQuery(intent, context);
+        responseData = pricingData;
         responseText = formatResponse(intent, responseData, context);
         actions = [
           {
             id: 'apply-price',
-            label: `Set $${responseData.recommendedPrice}`,
+            label: `Set $${pricingData.recommendedPrice}`,
             icon: '✓',
             action: 'apply-pricing',
-            params: { price: responseData.recommendedPrice },
+            params: { price: pricingData.recommendedPrice },
             primary: true,
           },
           {
@@ -80,6 +118,7 @@ export async function handleQuery(
           },
         ];
         break;
+      }
 
       case 'noshow':
         responseData = await handleNoShowQuery(intent, context);
@@ -173,7 +212,7 @@ export async function handleQuery(
 /**
  * Handle forecast-related queries
  */
-async function handleForecastQuery(intent: QueryIntent, context?: ConversationContext): Promise<ForecastResult[]> {
+async function handleForecastQuery(intent: QueryIntent, context?: ConversationContext): Promise<ForecastResponseData> {
   // Generate synthetic historical data (in production, use real data)
   const historicalData = generateSyntheticHistory(30);
 
@@ -218,7 +257,7 @@ async function handleForecastQuery(intent: QueryIntent, context?: ConversationCo
 /**
  * Handle pricing-related queries
  */
-async function handlePricingQuery(intent: QueryIntent, context?: ConversationContext): Promise<{ price: number; breakdown: unknown[] }> {
+async function handlePricingQuery(intent: QueryIntent, context?: ConversationContext): Promise<PricingResponseData> {
   const historicalData = generateSyntheticHistory(30);
   const occupancyRate = historicalData[historicalData.length - 1].value / 100;
 
@@ -242,7 +281,7 @@ async function handlePricingQuery(intent: QueryIntent, context?: ConversationCon
 /**
  * Handle no-show related queries
  */
-async function handleNoShowQuery(intent: QueryIntent, context?: ConversationContext): Promise<NoShowPrediction[]> {
+async function handleNoShowQuery(intent: QueryIntent, context?: ConversationContext): Promise<NoShowResponseData> {
   // Generate synthetic bookings
   const bookings = generateSyntheticBookings(20);
 
@@ -251,19 +290,29 @@ async function handleNoShowQuery(intent: QueryIntent, context?: ConversationCont
   );
 
   const highRisk = predictions.filter((p) => p.risk === 'high');
+  const mediumRisk = predictions.filter((p) => p.risk === 'medium');
+  const lowRisk = predictions.filter((p) => p.risk === 'low');
 
-  return predictions.map((p, i) => ({
+  const enrichedPredictions = predictions.map((p, i) => ({
     ...p,
     guestName: bookings[i].guestName,
     roomType: bookings[i].roomType,
     checkInDate: bookings[i].checkInDate,
   }));
+
+  return {
+    totalGuests: predictions.length,
+    highRisk: highRisk.length,
+    mediumRisk: mediumRisk.length,
+    lowRisk: lowRisk.length,
+    predictions: enrichedPredictions,
+  };
 }
 
 /**
  * Handle segmentation queries
  */
-async function handleSegmentationQuery(intent: QueryIntent, context?: ConversationContext): Promise<{ segments: unknown[]; stats: unknown }> {
+async function handleSegmentationQuery(intent: QueryIntent, context?: ConversationContext): Promise<SegmentationResponseData> {
   // Generate synthetic guest data
   const guests = generateSyntheticGuests(100);
 
@@ -272,7 +321,7 @@ async function handleSegmentationQuery(intent: QueryIntent, context?: Conversati
 
   return {
     segments: stats.segments,
-    totalGuests: stats.totalGuests,
+    stats: stats,
   };
 }
 
@@ -310,9 +359,9 @@ function generateSyntheticHistory(days: number) {
 
 function generateSyntheticBookings(count: number) {
   const names = ['John Smith', 'Emily Johnson', 'Michael Brown', 'Sarah Davis', 'James Wilson'];
-  const roomTypes = ['Standard', 'Deluxe', 'Suite'];
-  const sources = ['direct', 'ota', 'agent'] as const;
-  const payments = ['credit_card', 'cash', 'invoice'] as const;
+  const roomTypes = ['single', 'double', 'suite', 'deluxe'] as const;
+  const bookingChannels = ['direct', 'ota', 'phone', 'email', 'corporate'] as const;
+  const paymentMethods = ['prepaid', 'pay-at-property', 'corporate-billing'] as const;
 
   return Array.from({ length: count }, (_, i) => ({
     id: `BOOK-${i + 1}`,
@@ -320,14 +369,16 @@ function generateSyntheticBookings(count: number) {
     roomType: roomTypes[Math.floor(Math.random() * roomTypes.length)],
     checkInDate: new Date(Date.now() + Math.random() * 7 * 24 * 60 * 60 * 1000),
     checkOutDate: new Date(Date.now() + Math.random() * 14 * 24 * 60 * 60 * 1000),
-    roomRate: 100 + Math.random() * 200,
-    daysBeforeArrival: Math.random() * 30,
-    leadTime: Math.random() * 90,
-    previousNoShows: Math.floor(Math.random() * 3),
-    hasDeposit: Math.random() > 0.3,
-    source: sources[Math.floor(Math.random() * sources.length)],
-    paymentMethod: payments[Math.floor(Math.random() * payments.length)],
-    seasonalIndex: 0.5 + Math.random() * 0.5,
+    totalAmount: 100 + Math.random() * 200,
+    bookingChannel: bookingChannels[Math.floor(Math.random() * bookingChannels.length)],
+    leadTimeDays: Math.floor(Math.random() * 90),
+    paymentMethod: paymentMethods[Math.floor(Math.random() * paymentMethods.length)],
+    hasSpecialRequests: Math.random() > 0.7,
+    guestHistory: Math.random() > 0.5 ? {
+      totalStays: Math.floor(Math.random() * 10) + 1,
+      noShowCount: Math.floor(Math.random() * 3),
+      cancellationCount: Math.floor(Math.random() * 2),
+    } : undefined,
   }));
 }
 

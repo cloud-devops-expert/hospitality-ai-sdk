@@ -207,18 +207,24 @@ export function formatResponse(
   switch (intent.type) {
     case 'forecast':
       if (data.occupancy !== undefined) {
-        const trend = data.trend || 'stable';
-        const vs = data.vsLastYear ? ` (${data.vsLastYear > 0 ? '+' : ''}${data.vsLastYear}% vs last year)` : '';
-        return `📊 **${Math.round(data.occupancy)}% occupancy** (±${data.confidence || 3}%)${vs}\n\nTrend: ${trend === 'increasing' ? '📈 Increasing' : trend === 'decreasing' ? '📉 Decreasing' : '➡️ Stable'}`;
+        const occupancy = data.occupancy as number;
+        const confidence = (data.confidence as number) || 3;
+        const trend = (data.trend as string) || 'stable';
+        const vsLastYear = data.vsLastYear as number | undefined;
+        const vs = vsLastYear ? ` (${vsLastYear > 0 ? '+' : ''}${vsLastYear}% vs last year)` : '';
+        return `📊 **${Math.round(occupancy)}% occupancy** (±${confidence}%)${vs}\n\nTrend: ${trend === 'increasing' ? '📈 Increasing' : trend === 'decreasing' ? '📉 Decreasing' : '➡️ Stable'}`;
       }
       break;
 
     case 'pricing':
       if (data.recommendedPrice !== undefined) {
-        const change = data.currentPrice
-          ? ` (${data.recommendedPrice > data.currentPrice ? '+' : ''}$${Math.abs(data.recommendedPrice - data.currentPrice)})`
+        const recommendedPrice = data.recommendedPrice as number;
+        const currentPrice = data.currentPrice as number | undefined;
+        const explanation = (data.explanation as string) || 'Optimized based on demand forecast';
+        const change = currentPrice
+          ? ` (${recommendedPrice > currentPrice ? '+' : ''}$${Math.abs(recommendedPrice - currentPrice)})`
           : '';
-        return `💰 **$${data.recommendedPrice}${change}**\n\n${data.explanation || 'Optimized based on demand forecast'}`;
+        return `💰 **$${recommendedPrice}${change}**\n\n${explanation}`;
       }
       break;
 
@@ -231,7 +237,8 @@ export function formatResponse(
 
     case 'segmentation':
       if (data.segments) {
-        const top = data.segments[0];
+        const segments = data.segments as any[];
+        const top = segments[0];
         return `👥 **${top?.name || 'Segment'}** is your largest (${top?.percentage?.toFixed(0) || 0}%)\n\nAverage spend: $${top?.avgSpend?.toFixed(0) || 0}`;
       }
       break;
