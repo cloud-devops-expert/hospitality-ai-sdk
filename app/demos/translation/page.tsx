@@ -10,7 +10,7 @@ import Link from 'next/link';
 import {
   popularLanguages as languages,
   calculateTranslationSavings,
-} from '@/lib/ml/nlp/universal-translator';
+} from '@/lib/ml/nlp/translation-constants';
 
 interface TranslationResult {
   translatedText: string;
