@@ -665,7 +665,7 @@ function generateRecommendations(
   if (profile?.guestType === 'business') {
     recommendations.push('Optimize for speed and efficiency for business travelers');
   }
-  if (profile?.previousStays > 5) {
+  if ((profile?.previousStays ?? 0) > 5) {
     recommendations.push('Implement loyalty recognition throughout journey');
   }
 

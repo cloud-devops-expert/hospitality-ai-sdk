@@ -219,7 +219,7 @@ export function classifyComplaint(
 
   // Check for complaint keywords
   const complaintScore = complaintKeywords.filter(word => text.includes(word)).length;
-  const isComplaint = complaintScore > 0 || (sentiment?.overall === 'negative' && sentiment.intensity ?? 0 > 60);
+  const isComplaint = complaintScore > 0 || (sentiment?.overall === 'negative' && (sentiment.intensity ?? 0) > 60);
 
   // Determine category
   let category = 'general';
@@ -257,7 +257,7 @@ export function classifyComplaint(
 
   if (criticalWords.some(word => text.includes(word))) {
     severity = 'critical';
-  } else if (urgentWords.some(word => text.includes(word)) || sentiment?.intensity > 80) {
+  } else if (urgentWords.some(word => text.includes(word)) || (sentiment?.intensity ?? 0) > 80) {
     severity = 'high';
   } else if (complaintScore >= 2 || detectedIssues.length >= 2) {
     severity = 'medium';
