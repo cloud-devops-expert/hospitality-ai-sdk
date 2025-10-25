@@ -51,7 +51,7 @@ export interface NutritionInfo {
 // ============================================================================
 
 const USE_TRANSFORMERS = process.env.NEXT_PUBLIC_USE_FOOD_RECOGNITION === 'true';
-const TRANSFORMERS_TIMEOUT = 3000; // 3 seconds for image models
+const TRANSFORMERS_TIMEOUT = 60000; // 60 seconds for first-time model download
 const DEFAULT_MODEL = 'Xenova/vit-base-patch16-224'; // ViT model (smaller, faster)
 
 // ============================================================================

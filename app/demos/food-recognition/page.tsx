@@ -168,14 +168,23 @@ export default function FoodRecognitionDemo() {
       });
     } catch (error: any) {
       console.error('Recognition failed:', error);
-      alert(`Error: ${error.message}`);
-      // Fallback to mock data on error
-      const data = recognitionData[selectedImage];
-      setResult({
-        ...data,
-        executionTime: 0,
-        method: 'mock',
-      });
+
+      // Show proper error message
+      const errorMsg = error.message.includes('Timeout')
+        ? 'Model is downloading (first time only). Please wait 30 seconds and try again.'
+        : `Recognition failed: ${error.message}`;
+
+      alert(errorMsg);
+
+      // Only fall back to mock data if using preset food buttons (not uploaded image)
+      if (!uploadedImage && recognitionData[selectedImage]) {
+        const data = recognitionData[selectedImage];
+        setResult({
+          ...data,
+          executionTime: 0,
+          method: 'mock',
+        });
+      }
     } finally {
       setIsRecognizing(false);
     }
@@ -318,7 +327,7 @@ export default function FoodRecognitionDemo() {
               disabled={isRecognizing}
               className="w-full py-3 bg-blue-600 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-700 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
             >
-              {isRecognizing ? 'Recognizing...' : 'Recognize Food'}
+              {isRecognizing ? '⏳ Recognizing (first use may take 30s)...' : '🔍 Recognize Food'}
             </button>
 
             <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
