@@ -8,7 +8,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  translateText as translate,
   popularLanguages as languages,
   calculateTranslationSavings,
 } from '@/lib/ml/nlp/universal-translator';
@@ -145,8 +144,23 @@ Nous sommes impatients de vous accueillir!`,
     setIsTranslating(true);
 
     try {
-      // Actual NLLB-200 translation
-      const translationResult = await translate(sourceText, sourceLang, targetLang);
+      // Call server-side translation API
+      const response = await fetch('/api/ml/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: sourceText,
+          sourceLang,
+          targetLang,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Translation failed');
+      }
+
+      const translationResult = await response.json();
 
       setResult({
         translatedText: translationResult.translatedText,
@@ -296,7 +310,7 @@ Nous sommes impatients de vous accueillir!`,
               disabled={!sourceText.trim() || isTranslating}
               className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors mb-4"
             >
-              {isTranslating ? 'Translating...' : 'Translate'}
+              {isTranslating ? '⏳ Translating (first use may take 30s)...' : '🌍 Translate'}
             </button>
 
             <div>
