@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import { withPayload } from '@payloadcms/next/withPayload';
+import webpack from 'webpack';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -26,11 +27,14 @@ const nextConfig: NextConfig = {
         sharp: false,
       };
 
-      // Add sharp as an external to prevent webpack from trying to bundle it
-      config.externals = config.externals || [];
-      config.externals.push({
-        sharp: 'commonjs sharp',
-      });
+      // Use IgnorePlugin to completely exclude sharp from the bundle
+      // This is more aggressive than externals and prevents webpack from even trying to resolve it
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^sharp$/,
+          contextRegExp: /./,
+        })
+      );
     }
 
     return config;
