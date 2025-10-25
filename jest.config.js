@@ -11,6 +11,8 @@ const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    // Mock @xenova/transformers for fast testing without loading 1GB+ models
+    '^@xenova/transformers$': '<rootDir>/lib/ml/nlp/__tests__/__mocks__/transformers.ts',
   },
   transformIgnorePatterns: [
     'node_modules/(?!(uuid)/)',
