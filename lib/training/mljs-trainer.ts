@@ -32,8 +32,7 @@ export class MLjsTrainer {
 
     const classifier = new RFClassifier({
       nEstimators: config.nEstimators,
-      maxDepth: config.maxDepth,
-      minSamplesSplit: config.minSamplesSplit,
+      // maxDepth and minSamplesSplit are not valid options for ml-random-forest
       replacement: config.replacement !== false,
     });
 

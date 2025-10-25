@@ -8,6 +8,7 @@ import { executeWithFallback, LIBRARY_FLAGS, LibraryLoader } from '../utils/fall
 
 // Lazy loader for regression library
 const regressionLoader = new LibraryLoader(async () => {
+  // @ts-ignore - regression library doesn't have TypeScript definitions
   const regression = await import('regression');
   return regression.default || regression;
 });

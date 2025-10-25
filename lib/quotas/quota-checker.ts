@@ -12,8 +12,14 @@
  * Cost: ~$0.08 per 1M checks (due to caching)
  */
 
-import { getRawDataApiClient } from '@/lib/database/instance';
+// TODO: Import from correct database module when implemented
+// import { getRawDataApiClient } from '@/lib/database/instance';
 import { sql } from 'drizzle-orm';
+
+// Temporary stub until database instance module is created
+const getRawDataApiClient = (): any => {
+  throw new Error('Database instance not implemented yet');
+};
 
 export interface QuotaCheckResult {
   allowed: boolean;

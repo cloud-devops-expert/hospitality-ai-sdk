@@ -76,6 +76,7 @@ const DEFAULT_MODEL = 'coco-ssd'; // TensorFlow.js COCO-SSD for object detection
 // ============================================================================
 
 const tensorflowLoader = new LibraryLoader(async () => {
+  // @ts-ignore - @tensorflow-models/coco-ssd is optional dependency
   const cocoSsd = await import('@tensorflow-models/coco-ssd');
   return cocoSsd;
 });
