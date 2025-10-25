@@ -1,7 +1,7 @@
 /**
  * Kitchen Operations Demo Page
  *
- * Interactive demo for kitchen prep forecasting, waste reduction, and staff scheduling
+ * Chef-focused interface with prep sheets, historical tracking, and ROI analysis
  */
 'use client';
 
@@ -15,7 +15,8 @@ interface MenuItem {
   avgDailyDemand: number;
   prepTimeMinutes: number;
   wastageRate: number;
-  ingredients: string[];
+  costPerServing: number;
+  ingredients: { item: string; qty: string }[];
 }
 
 interface ForecastResult {
@@ -26,6 +27,9 @@ interface ForecastResult {
   prepStartTime: string;
   staffRequired: number;
   costSavings: number;
+  ingredients: { item: string; qty: string }[];
+  confidence: number;
+  historicalNote: string;
 }
 
 interface OptimizationResult {
@@ -34,7 +38,22 @@ interface OptimizationResult {
   totalCostSavings: number;
   staffEfficiency: number;
   executionTime: number;
+  systemAccuracy: number;
 }
+
+interface HistoricalRecord {
+  date: string;
+  dayType: string;
+  occupancy: number;
+  hasEvent: boolean;
+  predicted: number;
+  prepped: number;
+  actual: number;
+  wasted: number;
+  accuracy: number;
+}
+
+type ViewMode = 'chef' | 'manager' | 'historical';
 
 export default function KitchenOperationsDemo() {
   const [menuItems] = useState<MenuItem[]>([
@@ -45,7 +64,13 @@ export default function KitchenOperationsDemo() {
       avgDailyDemand: 85,
       prepTimeMinutes: 120,
       wastageRate: 0.15,
-      ingredients: ['eggs', 'bread', 'bacon', 'fruits'],
+      costPerServing: 8,
+      ingredients: [
+        { item: 'Eggs', qty: '7 dozen' },
+        { item: 'Bacon', qty: '6 lbs' },
+        { item: 'Bread', qty: '4 loaves' },
+        { item: 'Fresh fruit', qty: '5 lbs' },
+      ],
     },
     {
       id: 'B002',
@@ -54,7 +79,12 @@ export default function KitchenOperationsDemo() {
       avgDailyDemand: 45,
       prepTimeMinutes: 30,
       wastageRate: 0.08,
-      ingredients: ['eggs', 'vegetables', 'cheese'],
+      costPerServing: 6,
+      ingredients: [
+        { item: 'Eggs', qty: '4 dozen' },
+        { item: 'Vegetables', qty: '2 lbs' },
+        { item: 'Cheese', qty: '1 lb' },
+      ],
     },
     {
       id: 'L001',
@@ -63,16 +93,12 @@ export default function KitchenOperationsDemo() {
       avgDailyDemand: 120,
       prepTimeMinutes: 180,
       wastageRate: 0.12,
-      ingredients: ['meat', 'vegetables', 'rice', 'pasta'],
-    },
-    {
-      id: 'L002',
-      name: 'Salad Bar',
-      category: 'lunch',
-      avgDailyDemand: 90,
-      prepTimeMinutes: 60,
-      wastageRate: 0.20,
-      ingredients: ['lettuce', 'vegetables', 'dressings'],
+      costPerServing: 12,
+      ingredients: [
+        { item: 'Chicken/Beef', qty: '15 lbs' },
+        { item: 'Vegetables', qty: '8 lbs' },
+        { item: 'Rice/Pasta', qty: '10 lbs' },
+      ],
     },
     {
       id: 'D001',
@@ -81,16 +107,70 @@ export default function KitchenOperationsDemo() {
       avgDailyDemand: 150,
       prepTimeMinutes: 240,
       wastageRate: 0.10,
-      ingredients: ['meat', 'seafood', 'vegetables', 'sides'],
+      costPerServing: 18,
+      ingredients: [
+        { item: 'Premium meat/Seafood', qty: '20 lbs' },
+        { item: 'Vegetables', qty: '10 lbs' },
+        { item: 'Sides', qty: '8 lbs' },
+      ],
+    },
+  ]);
+
+  const [historicalData] = useState<HistoricalRecord[]>([
+    {
+      date: '2024-01-19',
+      dayType: 'Friday',
+      occupancy: 78,
+      hasEvent: false,
+      predicted: 88,
+      prepped: 97,
+      actual: 93,
+      wasted: 4,
+      accuracy: 95,
     },
     {
-      id: 'D002',
-      name: 'Dessert Station',
-      category: 'dinner',
-      avgDailyDemand: 100,
-      prepTimeMinutes: 90,
-      wastageRate: 0.18,
-      ingredients: ['flour', 'sugar', 'dairy', 'fruits'],
+      date: '2024-01-18',
+      dayType: 'Thursday',
+      occupancy: 72,
+      hasEvent: false,
+      predicted: 82,
+      prepped: 90,
+      actual: 79,
+      wasted: 11,
+      accuracy: 96,
+    },
+    {
+      date: '2024-01-17',
+      dayType: 'Wednesday',
+      occupancy: 68,
+      hasEvent: true,
+      predicted: 102,
+      prepped: 112,
+      actual: 108,
+      wasted: 4,
+      accuracy: 94,
+    },
+    {
+      date: '2024-01-16',
+      dayType: 'Tuesday',
+      occupancy: 65,
+      hasEvent: false,
+      predicted: 75,
+      prepped: 83,
+      actual: 71,
+      wasted: 12,
+      accuracy: 95,
+    },
+    {
+      date: '2024-01-15',
+      dayType: 'Monday',
+      occupancy: 60,
+      hasEvent: false,
+      predicted: 68,
+      prepped: 75,
+      actual: 64,
+      wasted: 11,
+      accuracy: 94,
     },
   ]);
 
@@ -99,52 +179,57 @@ export default function KitchenOperationsDemo() {
   const [specialEvent, setSpecialEvent] = useState(false);
   const [result, setResult] = useState<OptimizationResult | null>(null);
   const [isOptimizing, setIsOptimizing] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('chef');
 
   const optimizeKitchenOperations = async () => {
     setIsOptimizing(true);
     const startTime = performance.now();
 
-    // Simulate ML forecasting
     await new Promise((resolve) => setTimeout(resolve, 600));
 
-    // Demand forecasting with seasonality
     const weekendMultiplier = dayOfWeek === 'weekend' ? 1.25 : 1.0;
     const eventMultiplier = specialEvent ? 1.4 : 1.0;
     const occupancyMultiplier = occupancyRate / 75;
 
     const forecasts: ForecastResult[] = menuItems.map((item) => {
-      // Predict demand based on factors
       const baseDemand = item.avgDailyDemand;
       const predictedDemand = Math.round(
         baseDemand * occupancyMultiplier * weekendMultiplier * eventMultiplier
       );
 
-      // Recommended prep quantity (add safety buffer to reduce stockouts)
       const safetyBuffer = 1.1;
       const recommendedPrepQty = Math.round(predictedDemand * safetyBuffer);
 
-      // Estimate waste reduction
-      const traditionalPrepQty = Math.round(baseDemand * 1.3); // Over-prep by 30%
+      const traditionalPrepQty = Math.round(baseDemand * 1.3);
       const optimizedWaste = recommendedPrepQty * item.wastageRate;
       const traditionalWaste = traditionalPrepQty * item.wastageRate;
       const wasteReduction = traditionalWaste - optimizedWaste;
 
-      // Calculate prep start time (backwards from service time)
       const serviceTime: Record<string, number> = {
-        breakfast: 7, // 7 AM
-        lunch: 12, // 12 PM
-        dinner: 18, // 6 PM
+        breakfast: 7,
+        lunch: 12,
+        dinner: 18,
       };
       const prepStartHour = serviceTime[item.category] - item.prepTimeMinutes / 60;
-      const prepStartTime = `${Math.floor(prepStartHour)}:${Math.round((prepStartHour % 1) * 60)
-        .toString()
-        .padStart(2, '0')} ${prepStartHour < 12 ? 'AM' : 'PM'}`;
+      const hour = Math.floor(prepStartHour);
+      const minute = Math.round((prepStartHour % 1) * 60);
+      const ampm = hour < 12 ? 'AM' : 'PM';
+      const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+      const prepStartTime = `${displayHour}:${minute.toString().padStart(2, '0')} ${ampm}`;
 
-      // Staff required (1 staff per 60 min of prep, rounded up)
       const staffRequired = Math.ceil(item.prepTimeMinutes / 60);
+      const costSavings = wasteReduction * item.costPerServing;
 
-      // Cost savings (assume $5 per serving wastage)
-      const costSavings = wasteReduction * 5;
+      // Generate historical context
+      const lastSimilarDay = dayOfWeek === 'weekend' ? 'Saturday' : 'Thursday';
+      const historicalConsumption = Math.round(predictedDemand * (0.95 + Math.random() * 0.1));
+      const historicalNote = `Last ${lastSimilarDay}: ${historicalConsumption} consumed, 92% accuracy`;
+
+      // Calculate confidence based on factors
+      const baseConfidence = 90;
+      const occupancyVariance = Math.abs(occupancyRate - 75) / 75;
+      const confidenceAdjustment = occupancyVariance * 10;
+      const confidence = Math.max(75, Math.min(98, baseConfidence - confidenceAdjustment));
 
       return {
         menuItem: item.name,
@@ -154,14 +239,16 @@ export default function KitchenOperationsDemo() {
         prepStartTime,
         staffRequired,
         costSavings,
+        ingredients: item.ingredients,
+        confidence: Math.round(confidence),
+        historicalNote,
       };
     });
 
-    // Calculate overall metrics
-    const totalWasteReduction =
-      forecasts.reduce((sum, f) => sum + f.costSavings, 0) / menuItems.length;
+    const totalWasteReduction = 28; // Average 28% reduction from 30% buffer to 10%
     const totalCostSavings = forecasts.reduce((sum, f) => sum + f.costSavings, 0);
-    const staffEfficiency = 85 + Math.random() * 10; // 85-95% efficiency
+    const staffEfficiency = 85 + Math.random() * 10;
+    const systemAccuracy = 92;
 
     const endTime = performance.now();
 
@@ -171,21 +258,28 @@ export default function KitchenOperationsDemo() {
       totalCostSavings,
       staffEfficiency,
       executionTime: endTime - startTime,
+      systemAccuracy,
     });
 
     setIsOptimizing(false);
   };
 
+  const getTodayDate = () => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const today = new Date();
+    return `${days[today.getDay()]}, ${today.toLocaleDateString()}`;
+  };
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'breakfast':
-        return 'text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900';
+        return 'bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300';
       case 'lunch':
-        return 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900';
+        return 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300';
       case 'dinner':
-        return 'text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900';
+        return 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300';
       default:
-        return 'text-slate-600 bg-slate-100';
+        return 'bg-slate-100 text-slate-700';
     }
   };
 
@@ -204,57 +298,55 @@ export default function KitchenOperationsDemo() {
             🍽️ Kitchen Operations Optimization
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
-            Demand forecasting, waste reduction, and staff scheduling using statistical ML
+            Chef-focused prep sheets, waste tracking, and ROI analysis
           </p>
         </div>
 
-        {/* Key Benefits */}
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            🎯 Why Traditional ML (NOT LLMs)
-          </h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                Time Series Forecasting (Correct Tool)
-              </h3>
-              <ul className="text-slate-600 dark:text-slate-300 space-y-1">
-                <li>• 85-90% accuracy for demand prediction</li>
-                <li>• &lt;1 second execution time</li>
-                <li>• Uses historical patterns + seasonality</li>
-                <li>• $0/month cost (statistical methods)</li>
-                <li>• Deterministic, explainable results</li>
-                <li>
-                  • <strong>This is forecasting, not generation!</strong>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                LLM-Based Forecasting (Wrong Tool!)
-              </h3>
-              <ul className="text-slate-600 dark:text-slate-300 space-y-1">
-                <li>• 60-70% accuracy (hallucinations)</li>
-                <li>• 2-5 seconds per request</li>
-                <li>• Requires expensive API calls</li>
-                <li>• $200-$500/month for forecasting</li>
-                <li>• Unpredictable outputs</li>
-                <li>• Overkill for numerical prediction</li>
-              </ul>
-            </div>
+        {/* View Mode Tabs */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-2 mb-8">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode('chef')}
+              className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-colors ${
+                viewMode === 'chef'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+              }`}
+            >
+              👨‍🍳 Chef&apos;s View
+            </button>
+            <button
+              onClick={() => setViewMode('manager')}
+              className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-colors ${
+                viewMode === 'manager'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+              }`}
+            >
+              📊 Manager&apos;s View
+            </button>
+            <button
+              onClick={() => setViewMode('historical')}
+              className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-colors ${
+                viewMode === 'historical'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+              }`}
+            >
+              📈 Historical Tracking
+            </button>
           </div>
         </div>
 
-        {/* Demo Area */}
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
-          {/* Input - Configuration */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Configuration
-            </h2>
+        {/* Configuration Panel */}
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Today&apos;s Factors
+          </h2>
 
-            {/* Occupancy Rate */}
-            <div className="mb-6">
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Occupancy */}
+            <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Expected Occupancy: {occupancyRate}%
               </label>
@@ -266,14 +358,21 @@ export default function KitchenOperationsDemo() {
                 onChange={(e) => setOccupancyRate(Number(e.target.value))}
                 className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer"
               />
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                {occupancyRate > 85
+                  ? 'High occupancy - prep more'
+                  : occupancyRate < 60
+                  ? 'Low occupancy - prep less'
+                  : 'Normal occupancy'}
+              </div>
             </div>
 
-            {/* Day of Week */}
-            <div className="mb-6">
+            {/* Day Type */}
+            <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Day Type
               </label>
-              <div className="flex gap-4">
+              <div className="flex gap-2">
                 <button
                   onClick={() => setDayOfWeek('weekday')}
                   className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
@@ -295,11 +394,17 @@ export default function KitchenOperationsDemo() {
                   Weekend
                 </button>
               </div>
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                {dayOfWeek === 'weekend' ? '+25% demand expected' : 'Normal weekday pattern'}
+              </div>
             </div>
 
             {/* Special Event */}
-            <div className="mb-6">
-              <label className="flex items-center cursor-pointer">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Special Event
+              </label>
+              <label className="flex items-center cursor-pointer bg-slate-100 dark:bg-slate-700 px-4 py-2 rounded-lg">
                 <input
                   type="checkbox"
                   checked={specialEvent}
@@ -307,180 +412,509 @@ export default function KitchenOperationsDemo() {
                   className="w-4 h-4 text-blue-600 bg-slate-100 border-slate-300 rounded focus:ring-blue-500"
                 />
                 <span className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Special Event (+40% demand)
+                  Conference/Event Today
                 </span>
               </label>
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                {specialEvent ? '+40% demand expected' : 'No special events'}
+              </div>
             </div>
+          </div>
 
-            {/* Menu Items */}
-            <div className="mb-6">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                Menu Items ({menuItems.length})
-              </h3>
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {menuItems.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center justify-between bg-slate-50 dark:bg-slate-700 px-3 py-2 rounded-lg"
-                  >
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white text-sm">
-                        {item.name}
-                      </div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">
-                        Avg: {item.avgDailyDemand} servings • Prep: {item.prepTimeMinutes} min
+          <button
+            onClick={optimizeKitchenOperations}
+            disabled={isOptimizing}
+            className="w-full mt-6 py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
+          >
+            {isOptimizing ? 'Generating Prep Sheet...' : '🎯 Generate Prep Sheet'}
+          </button>
+        </div>
+
+        {/* Content Views */}
+        {result && (
+          <>
+            {/* CHEF'S VIEW */}
+            {viewMode === 'chef' && (
+              <div className="space-y-6">
+                {/* Daily Brief */}
+                <div className="bg-blue-50 dark:bg-blue-900/30 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-6">
+                  <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-4">
+                    📋 Daily Prep Sheet - {getTodayDate()}
+                  </h2>
+                  <div className="grid md:grid-cols-4 gap-4 mb-4">
+                    <div className="bg-white dark:bg-slate-800 rounded-lg p-3">
+                      <div className="text-sm text-slate-600 dark:text-slate-400">Occupancy</div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {occupancyRate}%
                       </div>
                     </div>
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-semibold ${getCategoryColor(item.category)}`}
-                    >
-                      {item.category.toUpperCase()}
-                    </span>
+                    <div className="bg-white dark:bg-slate-800 rounded-lg p-3">
+                      <div className="text-sm text-slate-600 dark:text-slate-400">Day Type</div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white capitalize">
+                        {dayOfWeek}
+                      </div>
+                    </div>
+                    <div className="bg-white dark:bg-slate-800 rounded-lg p-3">
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        Special Event
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {specialEvent ? 'Yes' : 'No'}
+                      </div>
+                    </div>
+                    <div className="bg-white dark:bg-slate-800 rounded-lg p-3">
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        System Accuracy
+                      </div>
+                      <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                        {result.systemAccuracy}%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Prep Instructions */}
+                {result.forecasts.map((forecast, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 border-l-4 border-blue-600"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                          {forecast.menuItem}
+                        </h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                          {forecast.historicalNote}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm text-slate-600 dark:text-slate-400">
+                          Confidence
+                        </div>
+                        <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                          {forecast.confidence}%
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* Prep Details */}
+                      <div>
+                        <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                          📊 Prep Requirements
+                        </h4>
+                        <div className="space-y-2 bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                          <div className="flex justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Predicted Demand:
+                            </span>
+                            <span className="font-semibold text-gray-900 dark:text-white">
+                              {forecast.predictedDemand} servings
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-lg font-bold">
+                            <span className="text-blue-600 dark:text-blue-400">
+                              → PREP QUANTITY:
+                            </span>
+                            <span className="text-blue-600 dark:text-blue-400">
+                              {forecast.recommendedPrepQty} servings
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Safety buffer:
+                            </span>
+                            <span className="text-green-600 dark:text-green-400 font-semibold">
+                              10% (vs 30% traditional)
+                            </span>
+                          </div>
+                          <div className="border-t border-slate-200 dark:border-slate-600 pt-2 mt-2">
+                            <div className="flex justify-between">
+                              <span className="text-slate-600 dark:text-slate-400">
+                                Start prep at:
+                              </span>
+                              <span className="font-semibold text-gray-900 dark:text-white">
+                                {forecast.prepStartTime}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-slate-600 dark:text-slate-400">
+                                Staff required:
+                              </span>
+                              <span className="font-semibold text-gray-900 dark:text-white">
+                                {forecast.staffRequired} person
+                                {forecast.staffRequired > 1 ? 's' : ''}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Ingredients */}
+                      <div>
+                        <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                          🥘 Ingredients Needed
+                        </h4>
+                        <div className="space-y-2 bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                          {forecast.ingredients.map((ing, i) => (
+                            <div key={i} className="flex justify-between items-center">
+                              <span className="text-gray-900 dark:text-white">{ing.item}</span>
+                              <span className="font-mono font-semibold text-blue-600 dark:text-blue-400">
+                                {ing.qty}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                          <div className="text-sm text-green-700 dark:text-green-300">
+                            💰 Expected savings vs over-prep:
+                          </div>
+                          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                            +${forecast.costSavings.toFixed(0)}/day
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Safety Note */}
+                    <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                      <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                        <strong>⚠️ Safety Backup:</strong> If you run low during service, emergency
+                        batch takes 15-20 minutes. System tracks consumption vs prep for continuous
+                        improvement.
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
+            )}
 
-            <button
-              onClick={optimizeKitchenOperations}
-              disabled={isOptimizing}
-              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
-            >
-              {isOptimizing ? 'Optimizing...' : 'Optimize Kitchen Operations'}
-            </button>
-          </div>
-
-          {/* Results - Forecasts */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Optimization Results
-            </h2>
-
-            {result ? (
+            {/* MANAGER'S VIEW */}
+            {viewMode === 'manager' && (
               <div className="space-y-6">
-                {/* Overall Metrics */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-green-50 dark:bg-green-900 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                      ${result.totalCostSavings.toFixed(0)}
-                    </div>
-                    <div className="text-xs text-green-700 dark:text-green-300">Daily Savings</div>
-                  </div>
-                  <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                      {result.totalWasteReduction.toFixed(1)}%
-                    </div>
-                    <div className="text-xs text-blue-700 dark:text-blue-300">Waste Reduction</div>
-                  </div>
-                  <div className="bg-purple-50 dark:bg-purple-900 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                      {result.staffEfficiency.toFixed(0)}%
-                    </div>
-                    <div className="text-xs text-purple-700 dark:text-purple-300">
-                      Staff Efficiency
-                    </div>
-                  </div>
-                </div>
+                {/* ROI Overview */}
+                <div className="bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-800 dark:to-emerald-800 rounded-xl shadow-lg p-8 text-white">
+                  <h2 className="text-3xl font-bold mb-6">Monthly Performance Report</h2>
 
-                {/* Forecast Details */}
-                <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {result.forecasts.map((forecast, idx) => (
-                    <div key={idx} className="bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
-                          {forecast.menuItem}
-                        </h3>
-                        <span className="text-green-600 dark:text-green-400 font-semibold text-sm">
-                          +${forecast.costSavings.toFixed(0)}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                          <span className="text-slate-500 dark:text-slate-400">
-                            Predicted Demand:
-                          </span>
-                          <span className="ml-1 font-semibold text-gray-900 dark:text-white">
-                            {forecast.predictedDemand}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-slate-500 dark:text-slate-400">Prep Qty:</span>
-                          <span className="ml-1 font-semibold text-gray-900 dark:text-white">
-                            {forecast.recommendedPrepQty}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-slate-500 dark:text-slate-400">Start Time:</span>
-                          <span className="ml-1 font-semibold text-gray-900 dark:text-white">
-                            {forecast.prepStartTime}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-slate-500 dark:text-slate-400">Staff:</span>
-                          <span className="ml-1 font-semibold text-gray-900 dark:text-white">
-                            {forecast.staffRequired}
-                          </span>
-                        </div>
+                  <div className="grid md:grid-cols-4 gap-6 mb-6">
+                    <div>
+                      <div className="text-green-100 mb-1">Daily Cost Savings</div>
+                      <div className="text-4xl font-bold">
+                        ${result.totalCostSavings.toFixed(0)}
                       </div>
                     </div>
-                  ))}
+                    <div>
+                      <div className="text-green-100 mb-1">Monthly Projection</div>
+                      <div className="text-4xl font-bold">
+                        ${(result.totalCostSavings * 30).toFixed(0)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-green-100 mb-1">Annual Projection</div>
+                      <div className="text-4xl font-bold">
+                        ${(result.totalCostSavings * 365).toFixed(0)}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-green-100 mb-1">System Cost</div>
+                      <div className="text-4xl font-bold">$0</div>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-green-500 pt-4">
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div>
+                        <div className="text-green-100 mb-1">Waste Reduction</div>
+                        <div className="text-2xl font-bold">
+                          {result.totalWasteReduction.toFixed(0)}%
+                        </div>
+                        <div className="text-sm text-green-200">
+                          Down from 30% to {(30 - result.totalWasteReduction).toFixed(0)}%
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-green-100 mb-1">System Accuracy</div>
+                        <div className="text-2xl font-bold">{result.systemAccuracy}%</div>
+                        <div className="text-sm text-green-200">Within ±10% of actual</div>
+                      </div>
+                      <div>
+                        <div className="text-green-100 mb-1">Stockout Events</div>
+                        <div className="text-2xl font-bold">0</div>
+                        <div className="text-sm text-green-200">Never ran out of food</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Performance Metrics */}
-                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">Execution Time:</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">
-                      {result.executionTime.toFixed(0)}ms
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center mt-2 text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">Algorithm:</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">
-                      Time Series Forecast
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center mt-2 text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">Cost:</span>
-                    <span className="font-semibold text-green-600 dark:text-green-400">$0.00</span>
+                {/* Detailed Breakdown */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    Cost Savings Breakdown
+                  </h3>
+                  <div className="space-y-4">
+                    {result.forecasts.map((forecast, idx) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                      >
+                        <div>
+                          <div className="font-semibold text-gray-900 dark:text-white">
+                            {forecast.menuItem}
+                          </div>
+                          <div className="text-sm text-slate-600 dark:text-slate-400">
+                            Prep: {forecast.recommendedPrepQty} servings (10% buffer)
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                            +${forecast.costSavings.toFixed(0)}
+                          </div>
+                          <div className="text-sm text-slate-600 dark:text-slate-400">per day</div>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="border-t-2 border-slate-300 dark:border-slate-600 pt-4">
+                      <div className="flex justify-between items-center">
+                        <div className="text-xl font-bold text-gray-900 dark:text-white">
+                          Total Daily Savings
+                        </div>
+                        <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                          ${result.totalCostSavings.toFixed(0)}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="text-center py-12 text-slate-400">
-                <p>Configure parameters and click &quot;Optimize&quot; to see forecasts</p>
+
+                {/* Comparison: Traditional vs Optimized */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    Traditional vs Optimized Approach
+                  </h3>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                      <h4 className="font-semibold text-red-900 dark:text-red-300 mb-3">
+                        ❌ Traditional Kitchen (Before)
+                      </h4>
+                      <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                        <li>• Over-prep by 30-40% "to be safe"</li>
+                        <li>• No data tracking or accountability</li>
+                        <li>• Chef blamed for waste (defensive over-prep)</li>
+                        <li>• No historical analysis or trends</li>
+                        <li>• Monthly waste cost: ~$4,200</li>
+                      </ul>
+                    </div>
+                    <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                      <h4 className="font-semibold text-green-900 dark:text-green-300 mb-3">
+                        ✅ Optimized System (After)
+                      </h4>
+                      <ul className="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                        <li>• Smart buffer: Only 10-15% over predicted</li>
+                        <li>• Full tracking: Predicted vs actual daily</li>
+                        <li>• Data protects chef from blame</li>
+                        <li>• Continuous learning from history</li>
+                        <li>• Monthly waste cost: ~$1,800 (save $2,400)</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
-          </div>
-        </div>
 
-        {/* ROI Section */}
-        <div className="bg-gradient-to-r from-orange-600 to-red-600 dark:from-orange-800 dark:to-red-800 rounded-xl shadow-lg p-8 text-white">
-          <h2 className="text-3xl font-bold mb-4">Expected ROI</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div>
-              <div className="text-4xl font-bold">$0</div>
-              <div className="text-orange-200">Monthly Cost</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold">25-40%</div>
-              <div className="text-orange-200">Waste Reduction</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold">$24K-$36K</div>
-              <div className="text-orange-200">Annual Savings</div>
-            </div>
-          </div>
-          <div className="mt-6 pt-6 border-t border-orange-700">
-            <p className="text-orange-100">
-              <strong>Use Case:</strong> Forecast daily demand for all menu items. Reduce food waste
-              by 25-40% through accurate prep quantities. Optimize staff schedules based on prep
-              times. Save $2K-$3K/month on food costs alone. This uses statistical forecasting (moving
-              averages + seasonality), not expensive LLMs!
+            {/* HISTORICAL TRACKING */}
+            {viewMode === 'historical' && (
+              <div className="space-y-6">
+                {/* Accuracy Metrics */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    System Performance - Last 7 Days
+                  </h2>
+                  <div className="grid md:grid-cols-4 gap-4 mb-6">
+                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        Average Accuracy
+                      </div>
+                      <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                        94.8%
+                      </div>
+                    </div>
+                    <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        Total Servings Saved
+                      </div>
+                      <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                        42
+                      </div>
+                    </div>
+                    <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        Cost Savings (7 days)
+                      </div>
+                      <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                        $336
+                      </div>
+                    </div>
+                    <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        Stockout Events
+                      </div>
+                      <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+                        0
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Historical Table */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-100 dark:bg-slate-700">
+                        <tr>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">
+                            Date
+                          </th>
+                          <th className="px-4 py-3 text-left font-semibold text-gray-900 dark:text-white">
+                            Day
+                          </th>
+                          <th className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white">
+                            Occupancy
+                          </th>
+                          <th className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white">
+                            Event
+                          </th>
+                          <th className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white">
+                            Predicted
+                          </th>
+                          <th className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white">
+                            Prepped
+                          </th>
+                          <th className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white">
+                            Actual
+                          </th>
+                          <th className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white">
+                            Wasted
+                          </th>
+                          <th className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white">
+                            Accuracy
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                        {historicalData.map((record, idx) => (
+                          <tr
+                            key={idx}
+                            className="hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                          >
+                            <td className="px-4 py-3 text-gray-900 dark:text-white">
+                              {record.date}
+                            </td>
+                            <td className="px-4 py-3 text-gray-900 dark:text-white">
+                              {record.dayType}
+                            </td>
+                            <td className="px-4 py-3 text-center text-gray-900 dark:text-white">
+                              {record.occupancy}%
+                            </td>
+                            <td className="px-4 py-3 text-center">
+                              {record.hasEvent ? (
+                                <span className="text-orange-600 dark:text-orange-400">✓</span>
+                              ) : (
+                                <span className="text-slate-400">—</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-center font-semibold text-blue-600 dark:text-blue-400">
+                              {record.predicted}
+                            </td>
+                            <td className="px-4 py-3 text-center text-gray-900 dark:text-white">
+                              {record.prepped}
+                            </td>
+                            <td className="px-4 py-3 text-center font-semibold text-green-600 dark:text-green-400">
+                              {record.actual}
+                            </td>
+                            <td className="px-4 py-3 text-center text-red-600 dark:text-red-400">
+                              {record.wasted}
+                            </td>
+                            <td className="px-4 py-3 text-center">
+                              <span
+                                className={`font-semibold ${
+                                  record.accuracy >= 90
+                                    ? 'text-green-600 dark:text-green-400'
+                                    : record.accuracy >= 80
+                                    ? 'text-yellow-600 dark:text-yellow-400'
+                                    : 'text-red-600 dark:text-red-400'
+                                }`}
+                              >
+                                {record.accuracy}%
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Insights */}
+                  <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
+                      💡 System Insights
+                    </h4>
+                    <ul className="space-y-1 text-sm text-slate-700 dark:text-slate-300">
+                      <li>
+                        • <strong>Friday pattern detected:</strong> +8% demand vs weekday average
+                        (93 vs 86)
+                      </li>
+                      <li>
+                        • <strong>Event accuracy improved:</strong> 94% on Wednesday (was 89% last
+                        month)
+                      </li>
+                      <li>
+                        • <strong>Waste trend:</strong> Average 8 servings/day wasted (vs 25
+                        traditional)
+                      </li>
+                      <li>
+                        • <strong>Best day:</strong> Thursday (96% accuracy, only 11 wasted)
+                      </li>
+                      <li>
+                        • <strong>Recommendation:</strong> System confidence high - reduce buffer
+                        to 8% for breakfast
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Trend Chart (Placeholder) */}
+                <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    Prediction Accuracy Trend
+                  </h3>
+                  <div className="h-64 flex items-center justify-center bg-slate-50 dark:bg-slate-700 rounded-lg">
+                    <div className="text-center text-slate-500 dark:text-slate-400">
+                      <div className="text-4xl mb-2">📈</div>
+                      <div className="text-sm">
+                        Chart visualization would show:
+                        <br />
+                        Predicted vs Actual consumption over time
+                        <br />
+                        Accuracy trending upward (82% → 95%)
+                        <br />
+                        Waste reduction (25 servings → 8 servings/day)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {!result && (
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-12 text-center">
+            <div className="text-6xl mb-4">👨‍🍳</div>
+            <p className="text-xl text-slate-600 dark:text-slate-400">
+              Configure today&apos;s factors and click &quot;Generate Prep Sheet&quot; to see
+              chef-focused recommendations
             </p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
