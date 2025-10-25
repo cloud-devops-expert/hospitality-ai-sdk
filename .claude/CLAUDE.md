@@ -270,6 +270,72 @@ When adding new features:
   - Update `CLAUDE.md` if the change affects development guidelines, hard rules, or workflows
   - NO exceptions - documentation is part of the change, not an afterthought
 
+### Financial Analysis & ROI Presentation
+
+- **RULE 26**: **ALWAYS present ROI and financial projections per-hotel/per-customer, NEVER in aggregate**
+  - ❌ **BAD**: "Save $2.9M over 3 years" (too abstract, hard to understand)
+  - ✅ **GOOD**: "Save $2,616/year per hotel" (concrete, relatable)
+
+  **Required format for financial analysis**:
+
+  1. **Customer Perspective (What One Hotel Pays/Saves)**:
+     - One-time costs (hardware, setup)
+     - Monthly/annual recurring costs
+     - Total Year 1, Year 2, Year 3 costs
+     - Comparison to alternative (cloud-heavy, traditional)
+     - Net savings per year
+
+  2. **Our Company Perspective (Revenue per Hotel)**:
+     - What we charge (subscription pricing)
+     - Our costs per hotel (hardware, AWS, support)
+     - Our profit per hotel
+     - Our margin (percentage)
+
+  3. **Use Simple Tables**:
+     ```
+     | Scenario | Year 1 Cost | Annual Savings | Net Benefit |
+     |----------|-------------|----------------|-------------|
+     | Do Nothing | $2,880 | $0 | -$2,880 |
+     | Use Our Platform | $1,852 | $1,028 | +$1,028 |
+     ```
+
+  4. **Show Concrete ROI**:
+     - "For every $1 they pay us, they save $60-$95"
+     - "86% ROI in Year 1"
+     - NOT "849% ROI over 3 years for 300 properties"
+
+  5. **Break Down Operational Savings**:
+     - List each feature's savings separately
+     - Show total at the end
+     - Use realistic ranges (e.g., $24K-$36K/year)
+
+  **Example Structure**:
+  ```
+  ## ROI Per Hotel (Single Property)
+
+  ### Customer Perspective: What One Hotel Saves
+  - Our solution: $664 Year 1, $264 Year 2+
+  - Traditional cloud: $2,880/year
+  - Savings: $2,216 Year 1, $2,616 Year 2+
+
+  ### Our Company Perspective
+  - Revenue: $1,188/year
+  - Costs: $664 Year 1, $264 Year 2+
+  - Profit: $524 Year 1, $924 Year 2+
+  - Margin: 44% Year 1, 78% Year 2+
+
+  ### Bottom Line
+  - What hotels pay us: ~$100/month
+  - What hotels save: $70K-$115K/year
+  - For every $1 they pay us, they save $60-$95
+  ```
+
+  **Why This Matters**:
+  - Decision-makers think per-unit, not aggregate
+  - Per-hotel numbers are easier to verify and justify
+  - Helps with budgeting and approval processes
+  - More honest and transparent
+
 ## Performance Targets (Market-Segmented)
 
 **Small Hotels (60% of market) - Cloud-First:**
