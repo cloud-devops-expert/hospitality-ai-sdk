@@ -109,7 +109,7 @@ export function predictNoShowLogisticRegression(booking: Booking): NoShowPredict
   }
 
   // Determine risk level
-  let riskLevel: NoShowPrediction['riskLevel'];
+  let riskLevel: NoShowPrediction['risk'];
   if (probability < 0.35) {
     riskLevel = 'low';
     recommendedActions.push('Standard confirmation');
@@ -127,7 +127,7 @@ export function predictNoShowLogisticRegression(booking: Booking): NoShowPredict
   return {
     bookingId: booking.id,
     probability,
-    riskLevel,
+    risk: riskLevel,
     confidence: 0.85,
     reasons,
     recommendedActions,
@@ -177,7 +177,7 @@ export function predictNoShowGradientBoosting(booking: Booking): NoShowPredictio
   }
 
   // Determine risk level
-  let riskLevel: NoShowPrediction['riskLevel'];
+  let riskLevel: NoShowPrediction['risk'];
   if (probability < 0.3) {
     riskLevel = 'low';
     recommendedActions.push('Standard confirmation process');
@@ -196,7 +196,7 @@ export function predictNoShowGradientBoosting(booking: Booking): NoShowPredictio
   return {
     bookingId: booking.id,
     probability,
-    riskLevel,
+    risk: riskLevel,
     confidence: 0.92,
     reasons,
     recommendedActions,
