@@ -150,7 +150,7 @@ export async function generateTimeline(
     if (
       booking.checkInDate >= startDate &&
       booking.checkInDate <= endDate &&
-      (booking.roomType === 'Suite' || booking.previousStays > 5) &&
+      (booking.roomType === 'suite' || booking.previousStays > 5) &&
       (!filter?.types || filter.types.includes('vip_arrival'))
     ) {
       events.push({
@@ -420,9 +420,9 @@ function generateSyntheticBookings(count: number) {
     'David Martinez',
     'Olivia Anderson',
   ];
-  const roomTypes = ['Standard', 'Deluxe', 'Suite'];
-  const sources = ['direct', 'ota', 'agent'] as const;
-  const payments = ['credit_card', 'cash', 'invoice'] as const;
+  const roomTypes = ['single', 'double', 'suite', 'deluxe'] as const;
+  const bookingChannels = ['direct', 'ota', 'phone', 'email', 'corporate'] as const;
+  const paymentMethods = ['prepaid', 'pay-at-property', 'corporate-billing'] as const;
   const now = Date.now();
 
   return Array.from({ length: count }, (_, i) => {
@@ -437,15 +437,19 @@ function generateSyntheticBookings(count: number) {
       checkInDate: new Date(now + checkInOffset),
       checkOutDate: new Date(now + checkInOffset + Math.random() * 7 * 24 * 60 * 60 * 1000),
       bookedAt: new Date(now + bookedOffset),
+      totalAmount: 100 + Math.random() * 200,
+      bookingChannel: bookingChannels[Math.floor(Math.random() * bookingChannels.length)],
+      leadTimeDays: Math.floor(Math.abs(bookedOffset / (24 * 60 * 60 * 1000))),
+      paymentMethod: paymentMethods[Math.floor(Math.random() * paymentMethods.length)],
+      hasSpecialRequests: Math.random() > 0.7,
+      guestHistory: Math.random() > 0.5 ? {
+        totalStays: Math.floor(Math.random() * 10) + 1,
+        noShowCount: Math.floor(Math.random() * 2),
+        cancellationCount: Math.floor(Math.random() * 2),
+      } : undefined,
+      // Additional fields used by timeline (not in standard Booking type)
       roomRate: 100 + Math.random() * 200,
-      daysBeforeArrival: Math.abs(checkInOffset / (24 * 60 * 60 * 1000)),
-      leadTime: Math.abs(bookedOffset / (24 * 60 * 60 * 1000)),
       previousStays: Math.floor(Math.random() * 10),
-      previousNoShows: Math.floor(Math.random() * 2),
-      hasDeposit: Math.random() > 0.4,
-      source: sources[Math.floor(Math.random() * sources.length)],
-      paymentMethod: payments[Math.floor(Math.random() * payments.length)],
-      seasonalIndex: 0.5 + Math.random() * 0.5,
-    };
+    } as any; // Use any to allow extra properties
   });
 }

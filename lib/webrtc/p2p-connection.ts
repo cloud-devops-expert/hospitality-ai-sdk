@@ -455,21 +455,24 @@ export class P2PConnection {
 
       // Handle connection state changes
       pc.onconnectionstatechange = () => {
-        this.log(`Connection state for ${message.peerId}:`, pc.connectionState);
+        const connection = this.peerConnections.get(message.peerId);
+        if (!connection) return;
+
+        this.log(`Connection state for ${message.peerId}:`, connection.connectionState);
 
         const peerInfo = this.peers.get(message.peerId);
         if (peerInfo) {
-          peerInfo.connectionState = pc.connectionState as any;
+          peerInfo.connectionState = connection.connectionState as any;
         }
 
-        this.emit('connection-state-changed', pc.connectionState);
+        this.emit('connection-state-changed', connection.connectionState);
 
-        if (pc.connectionState === 'connected') {
+        if (connection.connectionState === 'connected') {
           const peer = this.peers.get(message.peerId)!;
           this.emit('connected', peer);
           // Detect network topology
           this.getNetworkTopology(message.peerId);
-        } else if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
+        } else if (connection.connectionState === 'failed' || connection.connectionState === 'disconnected') {
           this.emit('disconnected', message.peerId);
         }
       };
