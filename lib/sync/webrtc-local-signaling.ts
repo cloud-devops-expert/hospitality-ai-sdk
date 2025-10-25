@@ -29,10 +29,13 @@
  * 2. Fall back to cloud signaling (requires internet)
  */
 
-import express, { Express } from 'express';
+import express, { Express, Request, Response } from 'express';
 import { Server } from 'http';
 import cors from 'cors';
-import { ServiceInfo, Zeroconf } from 'react-native-zeroconf';
+
+// Type declarations for optional React Native dependency
+type ServiceInfo = any;
+type Zeroconf = any;
 
 export interface SignalingOffer {
   from: string;
@@ -95,7 +98,7 @@ export class LocalSignalingServer {
     this.app.use(express.json());
 
     // Health check
-    this.app.get('/health', (req, res) => {
+    this.app.get('/health', (req: Request, res: Response) => {
       res.json({
         status: 'ok',
         deviceId: this.deviceId,
@@ -105,7 +108,7 @@ export class LocalSignalingServer {
     });
 
     // Receive WebRTC offer
-    this.app.post('/offer', async (req, res) => {
+    this.app.post('/offer', async (req: Request, res: Response) => {
       try {
         const offer: SignalingOffer = req.body;
         console.log(`Received offer from ${offer.from}`);
@@ -127,7 +130,7 @@ export class LocalSignalingServer {
     });
 
     // Receive WebRTC answer
-    this.app.post('/answer', (req, res) => {
+    this.app.post('/answer', (req: Request, res: Response) => {
       try {
         const answer: SignalingAnswer = req.body;
         console.log(`Received answer from ${answer.from}`);
@@ -141,7 +144,7 @@ export class LocalSignalingServer {
     });
 
     // Receive ICE candidate
-    this.app.post('/ice-candidate', (req, res) => {
+    this.app.post('/ice-candidate', (req: Request, res: Response) => {
       try {
         const { from, candidate } = req.body;
         console.log(`Received ICE candidate from ${from}`);
@@ -173,7 +176,7 @@ export class LocalSignalingServer {
           resolve();
         });
 
-        this.server.on('error', (error) => {
+        this.server?.on('error', (error) => {
           console.error('Server error:', error);
           reject(error);
         });

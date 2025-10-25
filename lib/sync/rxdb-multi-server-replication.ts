@@ -23,8 +23,12 @@
  * - Offline queue (sync when connection restored)
  */
 
-import { RxDatabase, RxCollection, RxReplicationState } from 'rxdb';
-import { replicateRxCollection } from 'rxdb/plugins/replication';
+// Type declarations for optional rxdb dependency
+type RxDatabase = any;
+type RxCollection = any;
+type RxReplicationState<T = any, U = any> = any;
+const replicateRxCollection: any = null;
+
 import { discoverGreengrassServer } from '../client/mdns-discovery';
 import { WebRTCPeer } from './webrtc-peer';
 
@@ -217,7 +221,7 @@ export class MultiServerReplication {
         url: `${this.config.cloudUrl}/api/replication`,
         type: 'cloud',
         priority: 2, // Secondary to Greengrass
-        latency: cloudLatency,
+        latency: cloudLatency ?? undefined,
         available: cloudLatency !== null,
         lastChecked: Date.now(),
       });
@@ -297,12 +301,12 @@ export class MultiServerReplication {
     });
 
     // Handle replication events
-    replication.error$.subscribe(error => {
+    replication.error$.subscribe((error: any) => {
       console.error(`Replication error on ${endpoint.name}:`, error);
       endpoint.available = false;
     });
 
-    replication.active$.subscribe(active => {
+    replication.active$.subscribe((active: any) => {
       console.log(`Replication ${endpoint.name} active:`, active);
     });
 

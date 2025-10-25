@@ -103,11 +103,11 @@ export class NetworkDetector {
 
     // 4. Estimate bandwidth and latency
     if (networkInfo.isOnPropertyNetwork) {
-      networkInfo.bandwidth = await this.estimateBandwidth('http://greengrass.local:8000');
-      networkInfo.latency = await this.measureLatency('http://greengrass.local:8000');
+      networkInfo.bandwidth = (await this.estimateBandwidth('http://greengrass.local:8000')) ?? undefined;
+      networkInfo.latency = (await this.measureLatency('http://greengrass.local:8000')) ?? undefined;
     } else if (networkInfo.hasInternet) {
-      networkInfo.bandwidth = await this.estimateBandwidth('https://api.hospitality-ai.com');
-      networkInfo.latency = await this.measureLatency('https://api.hospitality-ai.com');
+      networkInfo.bandwidth = (await this.estimateBandwidth('https://api.hospitality-ai.com')) ?? undefined;
+      networkInfo.latency = (await this.measureLatency('https://api.hospitality-ai.com')) ?? undefined;
     }
 
     this.lastNetworkInfo = networkInfo;
