@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 import { withPayload } from '@payloadcms/next/withPayload';
 import webpack from 'webpack';
+import path from 'path';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -27,10 +28,11 @@ const nextConfig: NextConfig = {
       // Replace sharp with a mock module for browser builds
       // Sharp is a Node.js native module used by Transformers.js for image processing
       // We only use text models, so we provide a mock to prevent bundling errors
+      const sharpMockPath = path.join(__dirname, 'lib', 'ml', 'mocks', 'sharp.js');
       config.plugins.push(
         new webpack.NormalModuleReplacementPlugin(
           /^sharp$/,
-          require.resolve('./lib/ml/mocks/sharp.js')
+          sharpMockPath
         )
       );
     }
