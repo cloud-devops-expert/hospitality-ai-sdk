@@ -19,8 +19,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Run classification on server
-    const result = await classifyText(text, labels);
+    // Run classification on server with multi-label and hypothesis template
+    // Multi-label allows text to be in multiple categories (e.g., complaint + housekeeping)
+    // Hypothesis template improves accuracy by providing context
+    const result = await classifyText(
+      text,
+      labels,
+      true, // Enable multi-label classification
+      'This guest message is about {}.' // Better hypothesis template
+    );
 
     return NextResponse.json(result);
   } catch (error: any) {

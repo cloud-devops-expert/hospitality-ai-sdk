@@ -13,7 +13,7 @@ interface ZeroShotClassificationResult {
 
 export default function ZeroShotClassificationDemo() {
   const [text, setText] = useState('');
-  const [customLabels, setCustomLabels] = useState('booking, complaint, inquiry, housekeeping');
+  const [customLabels, setCustomLabels] = useState('guest complaint, housekeeping request, new booking, general question');
   const [result, setResult] = useState<ZeroShotClassificationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'custom' | 'guest-request' | 'department' | 'urgency'>('custom');
@@ -199,7 +199,7 @@ export default function ZeroShotClassificationDemo() {
                   value={customLabels}
                   onChange={(e) => setCustomLabels(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="e.g., booking, complaint, inquiry"
+                  placeholder="e.g., guest complaint, housekeeping request, new booking"
                 />
               </div>
             )}
