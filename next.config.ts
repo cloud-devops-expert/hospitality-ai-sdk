@@ -9,32 +9,30 @@ const nextConfig: NextConfig = {
     reactCompiler: false,
   },
   webpack: (config, { isServer }) => {
-    // Handle optional brain.js peer dependency (gpu.js)
-    // gpu.js is only needed for GPU-accelerated training, which we don't use
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'gpu.js': false,
-    };
-
     // Handle other optional native dependencies for client-side builds
     if (!isServer) {
+      // Use webpack aliases to replace modules for browser builds
+      const sharpMockPath = path.join(__dirname, 'lib', 'ml', 'mocks', 'sharp.js');
+
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'gpu.js': false,
+        // Replace sharp with our mock for browser builds
+        'sharp': sharpMockPath,
+      };
+
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
         net: false,
         tls: false,
       };
-
-      // Replace sharp with a mock module for browser builds
-      // Sharp is a Node.js native module used by Transformers.js for image processing
-      // We only use text models, so we provide a mock to prevent bundling errors
-      const sharpMockPath = path.join(__dirname, 'lib', 'ml', 'mocks', 'sharp.js');
-      config.plugins.push(
-        new webpack.NormalModuleReplacementPlugin(
-          /^sharp$/,
-          sharpMockPath
-        )
-      );
+    } else {
+      // Server-side: keep gpu.js disabled
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'gpu.js': false,
+      };
     }
 
     return config;
