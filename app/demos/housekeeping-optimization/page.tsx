@@ -251,7 +251,7 @@ export default function HousekeepingDemo() {
           >
             ← Back to ML Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             🧹 Housekeeping Optimization
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -261,12 +261,12 @@ export default function HousekeepingDemo() {
 
         {/* Key Benefits */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             ✅ Why Constraint Solving (NOT ML)
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Constraint Solver (Timefold-style)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -279,7 +279,7 @@ export default function HousekeepingDemo() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 ML-Based Optimization (Wrong Tool!)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -298,7 +298,7 @@ export default function HousekeepingDemo() {
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Input - Rooms */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Rooms to Clean ({rooms.length})
             </h2>
 
@@ -309,7 +309,7 @@ export default function HousekeepingDemo() {
                   className="flex items-center justify-between bg-slate-50 dark:bg-slate-700 px-4 py-3 rounded-lg"
                 >
                   <div>
-                    <div className="font-semibold text-navy-900 dark:text-white">
+                    <div className="font-semibold text-gray-900 dark:text-white">
                       Room {room.id}
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">
@@ -334,7 +334,7 @@ export default function HousekeepingDemo() {
             </div>
 
             <div className="border-t border-slate-200 dark:border-slate-700 pt-4 mb-4">
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-3">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
                 Staff Available ({staff.length})
               </h3>
               <div className="space-y-2">
@@ -344,7 +344,7 @@ export default function HousekeepingDemo() {
                     className="bg-slate-50 dark:bg-slate-700 px-4 py-2 rounded-lg"
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-semibold text-navy-900 dark:text-white">{s.name}</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{s.name}</span>
                       <span className="text-xs text-slate-500 dark:text-slate-400">
                         {s.shiftStart} - {s.shiftEnd}
                       </span>
@@ -360,7 +360,7 @@ export default function HousekeepingDemo() {
             <button
               onClick={optimizeAssignments}
               disabled={isOptimizing}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 dark:hover:bg-navy-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
             >
               {isOptimizing ? 'Optimizing...' : 'Optimize Assignments'}
             </button>
@@ -368,7 +368,7 @@ export default function HousekeepingDemo() {
 
           {/* Results - Assignments */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Optimized Assignments
             </h2>
 
@@ -402,7 +402,7 @@ export default function HousekeepingDemo() {
                       className="bg-slate-50 dark:bg-slate-700 rounded-lg p-4"
                     >
                       <div className="flex justify-between items-center mb-3">
-                        <h3 className="font-semibold text-navy-900 dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
                           {assignment.staff}
                         </h3>
                         <div className="text-sm text-slate-600 dark:text-slate-400">
@@ -435,13 +435,13 @@ export default function HousekeepingDemo() {
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
                   <div className="flex justify-between items-center">
                     <span className="text-slate-600 dark:text-slate-400">Execution Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.executionTime.toFixed(0)}ms
                     </span>
                   </div>
                   <div className="flex justify-between items-center mt-2">
                     <span className="text-slate-600 dark:text-slate-400">Algorithm:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white text-sm">
+                    <span className="font-semibold text-gray-900 dark:text-white text-sm">
                       Constraint Solver
                     </span>
                   </div>
@@ -462,7 +462,7 @@ export default function HousekeepingDemo() {
         </div>
 
         {/* ROI Section */}
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-4">Expected ROI</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div>

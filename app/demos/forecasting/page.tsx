@@ -110,7 +110,7 @@ export default function ForecastingDemo() {
           >
             ← Back to ML Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             📈 Demand Forecasting
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -120,12 +120,12 @@ export default function ForecastingDemo() {
 
         {/* Key Benefits */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             ✅ Why LightGBM (NOT TimesFM/Transformers)
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 LightGBM (Gradient Boosting)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -138,7 +138,7 @@ export default function ForecastingDemo() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 TimesFM (Transformers)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -157,7 +157,7 @@ export default function ForecastingDemo() {
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Input */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Forecast Settings
             </h2>
 
@@ -213,20 +213,20 @@ export default function ForecastingDemo() {
             <button
               onClick={generateForecast}
               disabled={isForecasting}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 dark:hover:bg-navy-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
             >
               {isForecasting ? 'Generating Forecast...' : 'Generate Forecast'}
             </button>
 
             {result && (
               <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
-                <h3 className="font-semibold text-navy-900 dark:text-white mb-3">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
                   Model Performance:
                 </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Model:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white text-sm">
+                    <span className="font-semibold text-gray-900 dark:text-white text-sm">
                       {result.modelType}
                     </span>
                   </div>
@@ -238,7 +238,7 @@ export default function ForecastingDemo() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Execution Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.executionTime.toFixed(0)}ms
                     </span>
                   </div>
@@ -255,7 +255,7 @@ export default function ForecastingDemo() {
 
           {/* Forecast Chart */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Forecast Results
             </h2>
 
@@ -276,7 +276,7 @@ export default function ForecastingDemo() {
                             className={`w-full rounded-t transition-all ${
                               isWeekend
                                 ? 'bg-blue-500 dark:bg-blue-400'
-                                : 'bg-navy-900 dark:bg-navy-700'
+                                : 'bg-blue-900 dark:bg-blue-700'
                             }`}
                             style={{ height: `${heightPercent}%` }}
                             title={`${day.predicted} ${getItemLabel(itemType)}`}
@@ -293,7 +293,7 @@ export default function ForecastingDemo() {
 
                 {/* Detailed Forecast Table */}
                 <div className="space-y-2">
-                  <h3 className="font-semibold text-navy-900 dark:text-white mb-3">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
                     Detailed Forecast:
                   </h3>
                   {result.forecast.map((day, idx) => (
@@ -302,7 +302,7 @@ export default function ForecastingDemo() {
                       className="flex items-center justify-between bg-slate-50 dark:bg-slate-700 px-4 py-3 rounded-lg"
                     >
                       <div>
-                        <div className="font-semibold text-navy-900 dark:text-white">
+                        <div className="font-semibold text-gray-900 dark:text-white">
                           {day.dayOfWeek}
                         </div>
                         <div className="text-xs text-slate-500 dark:text-slate-400">
@@ -310,7 +310,7 @@ export default function ForecastingDemo() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-bold text-navy-900 dark:text-white">
+                        <div className="text-xl font-bold text-gray-900 dark:text-white">
                           {day.predicted}
                         </div>
                         <div className="text-xs text-slate-500 dark:text-slate-400">
@@ -330,7 +330,7 @@ export default function ForecastingDemo() {
         </div>
 
         {/* ROI Section */}
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-4">Expected ROI</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div>

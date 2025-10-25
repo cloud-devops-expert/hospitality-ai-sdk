@@ -102,7 +102,7 @@ export default function InventoryDemoPage() {
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
             📦 Inventory Forecasting Demo
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -120,11 +120,11 @@ export default function InventoryDemoPage() {
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
             <div className="text-sm text-slate-500 dark:text-slate-400 mb-2">Implementation</div>
-            <div className="text-3xl font-bold text-navy-900 dark:text-white">2-4 hours</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">2-4 hours</div>
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
             <div className="text-sm text-slate-500 dark:text-slate-400 mb-2">Accuracy</div>
-            <div className="text-3xl font-bold text-navy-900 dark:text-white">75-80%</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">75-80%</div>
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
             <div className="text-sm text-slate-500 dark:text-slate-400 mb-2">Cost</div>
@@ -134,7 +134,7 @@ export default function InventoryDemoPage() {
 
         {/* Interactive Controls */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 mb-12">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             🎛️ Adjust Parameters
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
@@ -146,7 +146,7 @@ export default function InventoryDemoPage() {
                 type="number"
                 value={currentStock}
                 onChange={(e) => setCurrentStock(Number(e.target.value))}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-navy-900 dark:text-white"
+                className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
               />
             </div>
             <div>
@@ -158,7 +158,7 @@ export default function InventoryDemoPage() {
                 step="0.1"
                 value={costPerUnit}
                 onChange={(e) => setCostPerUnit(Number(e.target.value))}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-navy-900 dark:text-white"
+                className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
               />
             </div>
             <div>
@@ -169,7 +169,7 @@ export default function InventoryDemoPage() {
                 type="number"
                 value={shelfLifeDays}
                 onChange={(e) => setShelfLifeDays(Number(e.target.value))}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-navy-900 dark:text-white"
+                className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
               />
             </div>
             <div>
@@ -199,13 +199,13 @@ export default function InventoryDemoPage() {
                 max="14"
                 value={forecastDays}
                 onChange={(e) => setForecastDays(Number(e.target.value))}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-navy-900 dark:text-white"
+                className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
               />
             </div>
           </div>
           <button
             onClick={runForecast}
-            className="w-full md:w-auto px-8 py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg hover:bg-navy-800 dark:hover:bg-navy-600 transition-colors font-semibold"
+            className="w-full md:w-auto px-8 py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-800 dark:hover:bg-blue-600 transition-colors font-semibold"
           >
             Run Forecast
           </button>
@@ -216,7 +216,7 @@ export default function InventoryDemoPage() {
           <>
             {/* Demand Forecast */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 mb-12">
-              <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 📈 Demand Forecast
               </h2>
               <div className="grid md:grid-cols-2 gap-8">
@@ -240,7 +240,7 @@ export default function InventoryDemoPage() {
                           </span>
                           <div className="flex-1 bg-slate-200 dark:bg-slate-700 rounded-full h-8 overflow-hidden">
                             <div
-                              className="bg-navy-900 dark:bg-navy-600 h-full rounded-full flex items-center justify-end pr-3"
+                              className="bg-blue-900 dark:bg-blue-600 h-full rounded-full flex items-center justify-end pr-3"
                               style={{ width: `${(qty / maxQty) * 100}%` }}
                             >
                               <span className="text-sm font-semibold text-white">
@@ -258,7 +258,7 @@ export default function InventoryDemoPage() {
                     <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
                       Total Forecasted Usage
                     </div>
-                    <div className="text-3xl font-bold text-navy-900 dark:text-white">
+                    <div className="text-3xl font-bold text-gray-900 dark:text-white">
                       {forecastResult.forecast.reduce((sum, f) => sum + f, 0)} units
                     </div>
                   </div>
@@ -266,7 +266,7 @@ export default function InventoryDemoPage() {
                     <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
                       Average Daily Usage
                     </div>
-                    <div className="text-3xl font-bold text-navy-900 dark:text-white">
+                    <div className="text-3xl font-bold text-gray-900 dark:text-white">
                       {(
                         forecastResult.forecast.reduce((sum, f) => sum + f, 0) /
                         forecastResult.forecast.length
@@ -289,7 +289,7 @@ export default function InventoryDemoPage() {
             {/* Reorder Analysis */}
             {reorderResult && (
               <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 mb-12">
-                <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                   🔔 Automatic Reorder
                 </h2>
                 <div className="grid md:grid-cols-3 gap-6">
@@ -317,7 +317,7 @@ export default function InventoryDemoPage() {
                     <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
                       Days of Stock
                     </div>
-                    <div className="text-4xl font-bold text-navy-900 dark:text-white">
+                    <div className="text-4xl font-bold text-gray-900 dark:text-white">
                       {reorderResult.daysOfStockRemaining.toFixed(1)}
                     </div>
                   </div>
@@ -352,7 +352,7 @@ export default function InventoryDemoPage() {
                         <span className="text-slate-600 dark:text-slate-400">
                           Recommended Order:
                         </span>
-                        <span className="text-xl font-bold text-navy-900 dark:text-white">
+                        <span className="text-xl font-bold text-gray-900 dark:text-white">
                           {reorderResult.quantity} units ($
                           {(reorderResult.quantity * costPerUnit).toFixed(2)})
                         </span>
@@ -366,7 +366,7 @@ export default function InventoryDemoPage() {
             {/* Waste Prediction */}
             {wasteResult && (
               <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 mb-12">
-                <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                   🗑️ Waste Prediction
                 </h2>
                 <div className="grid md:grid-cols-3 gap-6">
@@ -374,7 +374,7 @@ export default function InventoryDemoPage() {
                     <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
                       Expected Waste
                     </div>
-                    <div className="text-4xl font-bold text-navy-900 dark:text-white">
+                    <div className="text-4xl font-bold text-gray-900 dark:text-white">
                       {wasteResult.wasteQuantity} units
                     </div>
                   </div>
@@ -382,7 +382,7 @@ export default function InventoryDemoPage() {
                     <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
                       Waste Value
                     </div>
-                    <div className="text-4xl font-bold text-navy-900 dark:text-white">
+                    <div className="text-4xl font-bold text-gray-900 dark:text-white">
                       ${wasteResult.wasteValue.toFixed(2)}
                     </div>
                   </div>
@@ -424,7 +424,7 @@ export default function InventoryDemoPage() {
             )}
 
             {/* Performance */}
-            <div className="bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8">
+            <div className="bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8">
               <h2 className="text-2xl font-bold text-white mb-6">⚡ Performance Metrics</h2>
               <div className="grid md:grid-cols-4 gap-6">
                 <div className="bg-white/10 backdrop-blur rounded-lg p-4">

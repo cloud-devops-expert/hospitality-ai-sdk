@@ -186,7 +186,7 @@ Nous sommes impatients de vous accueillir!`,
           >
             ← Back to ML Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             🌍 Translation (NLLB-200)
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -196,12 +196,12 @@ Nous sommes impatients de vous accueillir!`,
 
         {/* Key Benefits */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             ✅ Why NLLB-200 (FREE!)
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 NLLB-200 (Open Source)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -214,7 +214,7 @@ Nous sommes impatients de vous accueillir!`,
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Commercial APIs
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -280,7 +280,7 @@ Nous sommes impatients de vous accueillir!`,
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Input */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Source Text
             </h2>
 
@@ -294,7 +294,7 @@ Nous sommes impatients de vous accueillir!`,
             <button
               onClick={translateText}
               disabled={!sourceText.trim() || isTranslating}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 dark:hover:bg-navy-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors mb-4"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors mb-4"
             >
               {isTranslating ? 'Translating...' : 'Translate'}
             </button>
@@ -337,7 +337,7 @@ Nous sommes impatients de vous accueillir!`,
 
           {/* Output */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">Translation</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Translation</h2>
 
             {result ? (
               <div className="space-y-4">
@@ -350,7 +350,7 @@ Nous sommes impatients de vous accueillir!`,
                 <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Translation:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.sourceLanguage} → {result.targetLanguage}
                     </span>
                   </div>
@@ -362,19 +362,19 @@ Nous sommes impatients de vous accueillir!`,
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Characters:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.characterCount}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Processing Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.executionTime.toFixed(0)}ms
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Model:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white text-sm">
+                    <span className="font-semibold text-gray-900 dark:text-white text-sm">
                       {result.modelUsed}
                     </span>
                   </div>
@@ -402,7 +402,7 @@ Nous sommes impatients de vous accueillir!`,
         </div>
 
         {/* ROI Section */}
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-4">Expected ROI - All 21 Industries</h2>
           <div className="grid md:grid-cols-4 gap-6 mb-6">
             <div>

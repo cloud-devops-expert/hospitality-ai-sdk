@@ -224,7 +224,7 @@ export default function FraudDetectionDemo() {
           >
             ← Back to ML Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             🚨 Fraud Detection
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -234,12 +234,12 @@ export default function FraudDetectionDemo() {
 
         {/* Key Benefits */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             ✅ Why Isolation Forest (NOT LLMs)
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Isolation Forest
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -252,7 +252,7 @@ export default function FraudDetectionDemo() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 LLMs (Can&apos;t Do This!)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -271,7 +271,7 @@ export default function FraudDetectionDemo() {
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Input */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Booking Details
             </h2>
 
@@ -396,7 +396,7 @@ export default function FraudDetectionDemo() {
             <button
               onClick={detectFraud}
               disabled={isAnalyzing}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 dark:hover:bg-navy-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
             >
               {isAnalyzing ? 'Analyzing...' : 'Detect Fraud'}
             </button>
@@ -419,7 +419,7 @@ export default function FraudDetectionDemo() {
 
           {/* Results */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">Results</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Results</h2>
 
             {result ? (
               <div className="space-y-6">
@@ -436,7 +436,7 @@ export default function FraudDetectionDemo() {
 
                 {/* Risk Factors */}
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <h3 className="font-semibold text-navy-900 dark:text-white mb-3">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
                     Risk Factors:
                   </h3>
                   <div className="space-y-2">
@@ -453,7 +453,7 @@ export default function FraudDetectionDemo() {
 
                 {/* Recommendation */}
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                     Recommendation:
                   </h3>
                   <p className="text-slate-700 dark:text-slate-300">{result.recommendation}</p>
@@ -463,13 +463,13 @@ export default function FraudDetectionDemo() {
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Confidence:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {(result.confidence * 100).toFixed(1)}%
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Execution Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.executionTime.toFixed(0)}ms
                     </span>
                   </div>
@@ -490,7 +490,7 @@ export default function FraudDetectionDemo() {
         </div>
 
         {/* ROI Section */}
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-4">Expected ROI</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div>

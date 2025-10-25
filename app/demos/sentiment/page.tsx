@@ -112,7 +112,7 @@ export default function SentimentDemo() {
           >
             ← Back to Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             🤖 BERT Sentiment Analysis
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -122,12 +122,12 @@ export default function SentimentDemo() {
 
         {/* Key Benefits */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             ✅ Why BERT (NOT GPT-4)
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">BERT Sentiment</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">BERT Sentiment</h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
                 <li>• 85-90% accuracy</li>
                 <li>• ~50ms per review</li>
@@ -138,7 +138,7 @@ export default function SentimentDemo() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 GPT-4 (Overkill!)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -157,7 +157,7 @@ export default function SentimentDemo() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Input */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Enter Review
             </h2>
 
@@ -171,7 +171,7 @@ export default function SentimentDemo() {
             <button
               onClick={analyzeSentiment}
               disabled={!reviewText.trim() || isAnalyzing}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 dark:hover:bg-navy-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
             >
               {isAnalyzing ? 'Analyzing...' : 'Analyze Sentiment'}
             </button>
@@ -194,14 +194,14 @@ export default function SentimentDemo() {
 
           {/* Results */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">Results</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Results</h2>
 
             {result ? (
               <div className="space-y-6">
                 {/* Sentiment Score */}
                 <div className="text-center">
                   <div className="text-8xl mb-4">{sentimentEmoji(result.sentiment)}</div>
-                  <div className="text-3xl font-bold text-navy-900 dark:text-white mb-2">
+                  <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                     {result.stars} Stars
                   </div>
                   <div className="text-xl text-slate-600 dark:text-slate-400 capitalize">
@@ -227,13 +227,13 @@ export default function SentimentDemo() {
                 <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Confidence:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {(result.score * 100).toFixed(1)}%
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Execution Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.executionTime.toFixed(0)}ms
                     </span>
                   </div>
@@ -256,7 +256,7 @@ export default function SentimentDemo() {
         </div>
 
         {/* ROI Section */}
-        <div className="mt-8 bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
+        <div className="mt-8 bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-4">Expected ROI</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div>

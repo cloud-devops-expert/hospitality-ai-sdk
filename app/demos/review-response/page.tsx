@@ -211,7 +211,7 @@ The Management Team
           >
             ← Back to ML Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             ✨ Review Response (LLM)
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -221,12 +221,12 @@ The Management Team
 
         {/* Key Benefits */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             ✅ THIS is Where LLMs Excel!
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 LLMs (GPT-4o-mini / Claude)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -241,7 +241,7 @@ The Management Team
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Templates (Old Way)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -260,7 +260,7 @@ The Management Team
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Input */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Guest Review
             </h2>
 
@@ -328,7 +328,7 @@ The Management Team
             <button
               onClick={generateResponse}
               disabled={!review.reviewText.trim() || isGenerating}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 dark:hover:bg-navy-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
             >
               {isGenerating ? 'Generating Response...' : 'Generate Response'}
             </button>
@@ -351,7 +351,7 @@ The Management Team
 
           {/* Generated Response */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Generated Response
             </h2>
 
@@ -368,7 +368,7 @@ The Management Team
                 <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                   <div className="flex justify-between items-center">
                     <span className="text-slate-600 dark:text-slate-400">Tone:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.tone}
                     </span>
                   </div>
@@ -389,7 +389,7 @@ The Management Team
 
                   <div className="flex justify-between items-center">
                     <span className="text-slate-600 dark:text-slate-400">Execution Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.executionTime.toFixed(0)}ms
                     </span>
                   </div>
@@ -424,7 +424,7 @@ The Management Team
         </div>
 
         {/* ROI Section */}
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-4">Expected ROI</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div>

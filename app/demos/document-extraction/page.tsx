@@ -160,7 +160,7 @@ export default function DocumentExtractionDemo() {
           >
             ← Back to ML Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             📄 Document Extraction (LayoutLMv3)
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -171,12 +171,12 @@ export default function DocumentExtractionDemo() {
 
         {/* Key Benefits */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             ✅ Why LayoutLMv3 (FREE!)
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 LayoutLMv3 (Open Source)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -189,7 +189,7 @@ export default function DocumentExtractionDemo() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Commercial APIs
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -208,7 +208,7 @@ export default function DocumentExtractionDemo() {
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Input */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Upload Document
             </h2>
 
@@ -224,8 +224,8 @@ export default function DocumentExtractionDemo() {
                       onClick={() => setSelectedDocument(type.id)}
                       className={`p-3 rounded-lg border-2 transition-all ${
                         selectedDocument === type.id
-                          ? 'border-navy-900 dark:border-navy-600 bg-navy-50 dark:bg-navy-900'
-                          : 'border-slate-200 dark:border-slate-700 hover:border-navy-400'
+                          ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-blue-400'
                       }`}
                     >
                       <div className="text-2xl mb-1">{type.icon}</div>
@@ -281,7 +281,7 @@ export default function DocumentExtractionDemo() {
             <button
               onClick={extractDocument}
               disabled={isExtracting}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 dark:hover:bg-navy-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
             >
               {isExtracting ? 'Extracting Data...' : 'Extract Document'}
             </button>
@@ -302,7 +302,7 @@ export default function DocumentExtractionDemo() {
 
           {/* Results */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Extracted Data
             </h2>
 
@@ -313,7 +313,7 @@ export default function DocumentExtractionDemo() {
                   <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">
                     Document Type:
                   </div>
-                  <div className="text-xl font-bold text-navy-900 dark:text-white">
+                  <div className="text-xl font-bold text-gray-900 dark:text-white">
                     {result.documentType}
                   </div>
                 </div>
@@ -335,7 +335,7 @@ export default function DocumentExtractionDemo() {
                           {(field.confidence * 100).toFixed(0)}%
                         </div>
                       </div>
-                      <div className="text-lg font-semibold text-navy-900 dark:text-white">
+                      <div className="text-lg font-semibold text-gray-900 dark:text-white">
                         {field.value}
                       </div>
                     </div>
@@ -346,19 +346,19 @@ export default function DocumentExtractionDemo() {
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Fields Extracted:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.totalFields}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Execution Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.executionTime.toFixed(0)}ms
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Model:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white text-sm">
+                    <span className="font-semibold text-gray-900 dark:text-white text-sm">
                       {result.modelUsed}
                     </span>
                   </div>
@@ -379,7 +379,7 @@ export default function DocumentExtractionDemo() {
         </div>
 
         {/* ROI Section */}
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-4">Expected ROI - All 21 Industries</h2>
           <div className="grid md:grid-cols-4 gap-6 mb-6">
             <div>

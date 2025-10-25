@@ -76,7 +76,7 @@ export default function DemosPage() {
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
             🏨 Hotel Operations ML Demos
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -85,13 +85,13 @@ export default function DemosPage() {
           <div className="mt-6 flex flex-wrap justify-center gap-4">
             <div className="bg-white dark:bg-slate-800 rounded-lg px-6 py-3 shadow-md">
               <div className="text-sm text-slate-500 dark:text-slate-400">Total Savings</div>
-              <div className="text-2xl font-bold text-navy-900 dark:text-white">
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 $84K-$140K/year
               </div>
             </div>
             <div className="bg-white dark:bg-slate-800 rounded-lg px-6 py-3 shadow-md">
               <div className="text-sm text-slate-500 dark:text-slate-400">Implementation</div>
-              <div className="text-2xl font-bold text-navy-900 dark:text-white">2 days</div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">2 days</div>
             </div>
             <div className="bg-white dark:bg-slate-800 rounded-lg px-6 py-3 shadow-md">
               <div className="text-sm text-slate-500 dark:text-slate-400">Cost</div>
@@ -106,13 +106,13 @@ export default function DemosPage() {
 
         {/* Key Benefits */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 mb-12">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             🎯 Local-First Benefits
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div>
               <div className="text-3xl mb-2">⚡</div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Instant Results
               </h3>
               <p className="text-slate-600 dark:text-slate-300">
@@ -121,7 +121,7 @@ export default function DemosPage() {
             </div>
             <div>
               <div className="text-3xl mb-2">🔒</div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Complete Privacy
               </h3>
               <p className="text-slate-600 dark:text-slate-300">
@@ -130,7 +130,7 @@ export default function DemosPage() {
             </div>
             <div>
               <div className="text-3xl mb-2">📴</div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">Works Offline</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Works Offline</h3>
               <p className="text-slate-600 dark:text-slate-300">
                 No internet required. 99.99% reliability with zero dependencies.
               </p>
@@ -140,7 +140,7 @@ export default function DemosPage() {
 
         {/* NEW: Free Hugging Face Models Section */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold text-navy-900 dark:text-white mb-6">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
             🆕 Free AI Models (Hugging Face)
           </h2>
           <div className="bg-gradient-to-r from-green-600 to-teal-600 dark:from-green-800 dark:to-teal-800 rounded-xl shadow-2xl p-8 text-white mb-6">
@@ -178,56 +178,56 @@ export default function DemosPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <Link href="/demos/zero-shot-classification" className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow hover:shadow-lg transition-shadow">
               <div className="text-3xl mb-2">🎯</div>
-              <h4 className="font-bold text-navy-900 dark:text-white mb-1">Zero-Shot Classification</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-1">Zero-Shot Classification</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400">Classify into ANY categories without training</p>
               <div className="mt-2 text-green-600 dark:text-green-400 font-semibold text-sm">$0 cost, 90%+ accuracy</div>
             </Link>
 
             <Link href="/demos/question-answering" className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow hover:shadow-lg transition-shadow">
               <div className="text-3xl mb-2">❓</div>
-              <h4 className="font-bold text-navy-900 dark:text-white mb-1">Question Answering</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-1">Question Answering</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400">Answer guest questions from hotel policies</p>
               <div className="mt-2 text-green-600 dark:text-green-400 font-semibold text-sm">Save $2.4K/year</div>
             </Link>
 
             <Link href="/demos/text-summarization" className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow hover:shadow-lg transition-shadow">
               <div className="text-3xl mb-2">📝</div>
-              <h4 className="font-bold text-navy-900 dark:text-white mb-1">Text Summarization</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-1">Text Summarization</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400">Auto-summarize reviews and reports</p>
               <div className="mt-2 text-green-600 dark:text-green-400 font-semibold text-sm">Save 10+ hrs/week</div>
             </Link>
 
             <Link href="/demos/semantic-search" className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow hover:shadow-lg transition-shadow">
               <div className="text-3xl mb-2">🔍</div>
-              <h4 className="font-bold text-navy-900 dark:text-white mb-1">Semantic Search</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-1">Semantic Search</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400">Find similar text by meaning, not keywords</p>
               <div className="mt-2 text-green-600 dark:text-green-400 font-semibold text-sm">80% less calls</div>
             </Link>
 
             <Link href="/demos/translation" className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow hover:shadow-lg transition-shadow">
               <div className="text-3xl mb-2">🌍</div>
-              <h4 className="font-bold text-navy-900 dark:text-white mb-1">Universal Translation</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-1">Universal Translation</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400">200 languages in one model (NLLB-200)</p>
               <div className="mt-2 text-green-600 dark:text-green-400 font-semibold text-sm">Save $24K/year</div>
             </Link>
 
             <Link href="/demos/sentiment" className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow hover:shadow-lg transition-shadow">
               <div className="text-3xl mb-2">😊</div>
-              <h4 className="font-bold text-navy-900 dark:text-white mb-1">Sentiment Analysis</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-1">Sentiment Analysis</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400">Multi-language review sentiment (BERT)</p>
               <div className="mt-2 text-green-600 dark:text-green-400 font-semibold text-sm">85-90% accuracy</div>
             </Link>
 
             <Link href="/demos/food-recognition" className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow hover:shadow-lg transition-shadow">
               <div className="text-3xl mb-2">🍽️</div>
-              <h4 className="font-bold text-navy-900 dark:text-white mb-1">Food Recognition</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-1">Food Recognition</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400">Identify 101 food items from photos</p>
               <div className="mt-2 text-green-600 dark:text-green-400 font-semibold text-sm">85% accuracy</div>
             </Link>
 
             <Link href="/demos/speech-transcription" className="bg-white dark:bg-slate-800 rounded-lg p-4 shadow hover:shadow-lg transition-shadow">
               <div className="text-3xl mb-2">🎤</div>
-              <h4 className="font-bold text-navy-900 dark:text-white mb-1">Speech Transcription</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-1">Speech Transcription</h4>
               <p className="text-xs text-slate-600 dark:text-slate-400">Voice to text in 99 languages (Whisper)</p>
               <div className="mt-2 text-green-600 dark:text-green-400 font-semibold text-sm">96% accuracy</div>
             </Link>
@@ -236,7 +236,7 @@ export default function DemosPage() {
 
         {/* Featured Demo - ML Suite */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold text-navy-900 dark:text-white mb-6">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
             ⭐ Featured: Complete ML Stack
           </h2>
           <div className="bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-800 dark:to-blue-800 rounded-xl shadow-2xl overflow-hidden">
@@ -282,7 +282,7 @@ export default function DemosPage() {
                     </span>
                   )}
                 </div>
-                <h3 className="text-xl font-bold text-navy-900 dark:text-white mb-2">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                   {demo.title}
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 mb-4">{demo.description}</p>
@@ -293,7 +293,7 @@ export default function DemosPage() {
                   {demo.implemented ? (
                     <Link
                       href={demo.path}
-                      className="px-4 py-2 bg-navy-900 dark:bg-navy-700 text-white rounded-lg hover:bg-navy-800 dark:hover:bg-navy-600 transition-colors"
+                      className="px-4 py-2 bg-blue-900 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-800 dark:hover:bg-blue-600 transition-colors"
                     >
                       Try Demo →
                     </Link>
@@ -312,7 +312,7 @@ export default function DemosPage() {
         </div>
 
         {/* Call to Action */}
-        <div className="mt-12 bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-center">
+        <div className="mt-12 bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">Ready to Get Started?</h2>
           <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
             All demos use the same local-first approach: zero API calls, zero cost, instant results.
@@ -321,7 +321,7 @@ export default function DemosPage() {
           <div className="flex justify-center gap-4">
             <Link
               href="/demos/operations-roi"
-              className="px-6 py-3 bg-white text-navy-900 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
+              className="px-6 py-3 bg-white text-gray-900 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
             >
               View Complete ROI
             </Link>

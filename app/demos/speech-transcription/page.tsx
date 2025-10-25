@@ -173,7 +173,7 @@ Muchas gracias por su ayuda.
           >
             ← Back to ML Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             🎙️ Speech Transcription (Whisper)
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -183,12 +183,12 @@ Muchas gracias por su ayuda.
 
         {/* Key Benefits */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             ✅ Why Whisper (FREE!)
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Whisper (Open Source)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -201,7 +201,7 @@ Muchas gracias por su ayuda.
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Commercial APIs
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -220,7 +220,7 @@ Muchas gracias por su ayuda.
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           {/* Input */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Audio Settings
             </h2>
 
@@ -236,13 +236,13 @@ Muchas gracias por su ayuda.
                       onClick={() => setSelectedModel(model.id)}
                       className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
                         selectedModel === model.id
-                          ? 'border-navy-900 dark:border-navy-600 bg-navy-50 dark:bg-navy-900'
-                          : 'border-slate-200 dark:border-slate-700 hover:border-navy-400'
+                          ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-blue-400'
                       }`}
                     >
                       <div className="flex justify-between items-center">
                         <div>
-                          <div className="font-semibold text-navy-900 dark:text-white">
+                          <div className="font-semibold text-gray-900 dark:text-white">
                             {model.name}
                           </div>
                           <div className="text-xs text-slate-600 dark:text-slate-400">
@@ -274,8 +274,8 @@ Muchas gracias por su ayuda.
                       onClick={() => setSelectedScenario(scenario.id)}
                       className={`p-3 rounded-lg border-2 transition-all ${
                         selectedScenario === scenario.id
-                          ? 'border-navy-900 dark:border-navy-600 bg-navy-50 dark:bg-navy-900'
-                          : 'border-slate-200 dark:border-slate-700 hover:border-navy-400'
+                          ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-blue-400'
                       }`}
                     >
                       <div className="text-2xl mb-1">{scenario.icon}</div>
@@ -307,7 +307,7 @@ Muchas gracias por su ayuda.
             <button
               onClick={transcribeAudio}
               disabled={isTranscribing || isRecording}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 dark:hover:bg-navy-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 dark:hover:bg-blue-600 disabled:bg-slate-300 dark:disabled:bg-slate-600 disabled:cursor-not-allowed transition-colors"
             >
               {isTranscribing ? 'Transcribing...' : 'Transcribe Audio'}
             </button>
@@ -328,7 +328,7 @@ Muchas gracias por su ayuda.
 
           {/* Results */}
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Transcription
             </h2>
 
@@ -345,7 +345,7 @@ Muchas gracias por su ayuda.
                 <div className="space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Language Detected:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.language}
                     </span>
                   </div>
@@ -357,25 +357,25 @@ Muchas gracias por su ayuda.
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Word Count:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.wordCount} words
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Audio Duration:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.duration}s
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Processing Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.executionTime.toFixed(0)}ms
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Model:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white text-sm">
+                    <span className="font-semibold text-gray-900 dark:text-white text-sm">
                       {result.modelUsed}
                     </span>
                   </div>
@@ -406,7 +406,7 @@ Muchas gracias por su ayuda.
         </div>
 
         {/* ROI Section */}
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-4">Expected ROI - All 21 Industries</h2>
           <div className="grid md:grid-cols-4 gap-6 mb-6">
             <div>

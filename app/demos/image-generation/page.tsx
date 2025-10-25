@@ -139,7 +139,7 @@ export default function ImageGenerationDemo() {
           >
             ← Back to ML Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             🎨 Image Generation (SDXL)
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -148,12 +148,12 @@ export default function ImageGenerationDemo() {
         </div>
 
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             ✅ Why SDXL (FREE!)
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Stable Diffusion XL
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -166,7 +166,7 @@ export default function ImageGenerationDemo() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Commercial Services
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -183,7 +183,7 @@ export default function ImageGenerationDemo() {
 
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Select Template
             </h2>
 
@@ -197,8 +197,8 @@ export default function ImageGenerationDemo() {
                   }}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     selectedTemplate === template.id
-                      ? 'border-navy-900 dark:border-navy-600 bg-navy-50 dark:bg-navy-900'
-                      : 'border-slate-200 dark:border-slate-700 hover:border-navy-400'
+                      ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900'
+                      : 'border-slate-200 dark:border-slate-700 hover:border-blue-400'
                   }`}
                 >
                   <div className="text-4xl mb-2">{template.icon}</div>
@@ -213,7 +213,7 @@ export default function ImageGenerationDemo() {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-navy-900 dark:text-white mb-2">
+              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                 Custom Prompt (Optional)
               </label>
               <textarea
@@ -226,7 +226,7 @@ export default function ImageGenerationDemo() {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-navy-900 dark:text-white mb-2">
+              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                 Quality Level
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -237,7 +237,7 @@ export default function ImageGenerationDemo() {
                     className={`p-3 rounded-lg border-2 transition-all ${
                       quality === q
                         ? getQualityColor(q)
-                        : 'border-slate-200 dark:border-slate-700 hover:border-navy-400'
+                        : 'border-slate-200 dark:border-slate-700 hover:border-blue-400'
                     }`}
                   >
                     <div className="text-sm font-semibold text-slate-700 dark:text-slate-300 capitalize">
@@ -254,7 +254,7 @@ export default function ImageGenerationDemo() {
             <button
               onClick={generateImage}
               disabled={isGenerating}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 disabled:bg-slate-300 transition-colors"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 disabled:bg-slate-300 transition-colors"
             >
               {isGenerating ? 'Generating...' : 'Generate Image'}
             </button>
@@ -274,7 +274,7 @@ export default function ImageGenerationDemo() {
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Generation Details
             </h2>
 
@@ -291,14 +291,14 @@ export default function ImageGenerationDemo() {
                 </div>
 
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <h3 className="font-semibold text-navy-900 dark:text-white mb-3">Prompt:</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Prompt:</h3>
                   <div className="bg-blue-50 dark:bg-blue-900 px-3 py-2 rounded text-sm text-blue-800 dark:text-blue-200">
                     {result.prompt}
                   </div>
                 </div>
 
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <h3 className="font-semibold text-navy-900 dark:text-white mb-3">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
                     Negative Prompt:
                   </h3>
                   <div className="bg-red-50 dark:bg-red-900 px-3 py-2 rounded text-sm text-red-800 dark:text-red-200">
@@ -309,49 +309,49 @@ export default function ImageGenerationDemo() {
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Style:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.style}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Quality:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white capitalize">
+                    <span className="font-semibold text-gray-900 dark:text-white capitalize">
                       {result.quality}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Dimensions:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.dimensions}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Steps:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.steps}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Guidance Scale:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.guidance}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Seed:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.seed}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Generation Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.generationTime.toFixed(0)}ms
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Model:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white text-xs">
+                    <span className="font-semibold text-gray-900 dark:text-white text-xs">
                       {result.modelUsed}
                     </span>
                   </div>
@@ -381,7 +381,7 @@ export default function ImageGenerationDemo() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 rounded-xl shadow-lg p-8 text-white mb-8">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 rounded-xl shadow-lg p-8 text-white mb-8">
           <h2 className="text-3xl font-bold mb-4">Expected ROI</h2>
           <div className="grid md:grid-cols-4 gap-6">
             <div>
@@ -408,7 +408,7 @@ export default function ImageGenerationDemo() {
         </div>
 
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             📊 Cost Comparison
           </h2>
           <div className="overflow-x-auto">
@@ -431,7 +431,7 @@ export default function ImageGenerationDemo() {
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                 <tr className="bg-green-50 dark:bg-green-900">
-                  <td className="px-4 py-3 font-semibold text-navy-900 dark:text-white">
+                  <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white">
                     SDXL (Self-Hosted)
                   </td>
                   <td className="px-4 py-3 text-green-600 dark:text-green-400 font-bold">$0.00</td>

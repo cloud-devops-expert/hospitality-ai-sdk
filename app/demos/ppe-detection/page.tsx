@@ -152,7 +152,7 @@ export default function PPEDetectionDemo() {
           <Link href="/demos/ml" className="text-blue-600 dark:text-blue-400 hover:underline mb-4 inline-block">
             ← Back to ML Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             🦺 PPE Detection (Safety Compliance)
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -161,10 +161,10 @@ export default function PPEDetectionDemo() {
         </div>
 
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">✅ Why YOLOv8 (FREE!)</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">✅ Why YOLOv8 (FREE!)</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">YOLOv8 PPE Detection</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">YOLOv8 PPE Detection</h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
                 <li>• 85-92% detection accuracy</li>
                 <li>• Real-time processing (&lt;100ms)</li>
@@ -174,7 +174,7 @@ export default function PPEDetectionDemo() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">Commercial Systems</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Commercial Systems</h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
                 <li>• 88-95% accuracy</li>
                 <li>• Cloud processing delays</li>
@@ -188,7 +188,7 @@ export default function PPEDetectionDemo() {
 
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">Select Scenario</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Select Scenario</h2>
 
             <div className="grid grid-cols-2 gap-3 mb-6">
               {scenarios.map((scenario) => (
@@ -197,8 +197,8 @@ export default function PPEDetectionDemo() {
                   onClick={() => setSelectedScenario(scenario.id)}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     selectedScenario === scenario.id
-                      ? 'border-navy-900 dark:border-navy-600 bg-navy-50 dark:bg-navy-900'
-                      : 'border-slate-200 dark:border-slate-700 hover:border-navy-400'
+                      ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900'
+                      : 'border-slate-200 dark:border-slate-700 hover:border-blue-400'
                   }`}
                 >
                   <div className="text-4xl mb-2">{scenario.icon}</div>
@@ -213,7 +213,7 @@ export default function PPEDetectionDemo() {
             <button
               onClick={detectPPE}
               disabled={isDetecting}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 disabled:bg-slate-300 transition-colors"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 disabled:bg-slate-300 transition-colors"
             >
               {isDetecting ? 'Detecting...' : 'Detect PPE'}
             </button>
@@ -230,7 +230,7 @@ export default function PPEDetectionDemo() {
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">Detection Results</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Detection Results</h2>
 
             {result ? (
               <div className="space-y-6">
@@ -245,7 +245,7 @@ export default function PPEDetectionDemo() {
                 </div>
 
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <h3 className="font-semibold text-navy-900 dark:text-white mb-3">✓ Detected PPE:</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">✓ Detected PPE:</h3>
                   <div className="space-y-2">
                     {result.detected.map((item, idx) => (
                       <div key={idx} className="bg-green-50 dark:bg-green-900 px-3 py-2 rounded text-green-800 dark:text-green-200 text-sm">
@@ -257,7 +257,7 @@ export default function PPEDetectionDemo() {
 
                 {result.missing.length > 0 && (
                   <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                    <h3 className="font-semibold text-navy-900 dark:text-white mb-3">✗ Missing PPE:</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">✗ Missing PPE:</h3>
                     <div className="space-y-2">
                       {result.missing.map((item, idx) => (
                         <div key={idx} className="bg-red-50 dark:bg-red-900 px-3 py-2 rounded text-red-800 dark:text-red-200 text-sm">
@@ -275,7 +275,7 @@ export default function PPEDetectionDemo() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Processing Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">{result.executionTime.toFixed(0)}ms</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{result.executionTime.toFixed(0)}ms</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Method:</span>
@@ -297,7 +297,7 @@ export default function PPEDetectionDemo() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 rounded-xl shadow-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 rounded-xl shadow-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-4">Expected ROI</h2>
           <div className="grid md:grid-cols-4 gap-6">
             <div>

@@ -228,7 +228,7 @@ export default function MLDemosPage() {
           >
             ← Back to All Demos
           </Link>
-          <h1 className="text-5xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
             🤖 Battle-Tested ML Demos
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl">
@@ -238,7 +238,7 @@ export default function MLDemosPage() {
         </div>
 
         {/* Key Principle */}
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 mb-12 text-white">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 mb-12 text-white">
           <h2 className="text-3xl font-bold mb-4">💡 Core Principle</h2>
           <p className="text-xl text-blue-100 mb-6">
             "Use the right AI for the job, not the easy one."
@@ -266,7 +266,7 @@ export default function MLDemosPage() {
           return (
             <div key={category} className="mb-12">
               <div className="mb-6">
-                <h2 className="text-3xl font-bold text-navy-900 dark:text-white mb-2">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                   {info.title}
                 </h2>
                 <p className="text-lg text-slate-600 dark:text-slate-300">{info.description}</p>
@@ -292,7 +292,7 @@ export default function MLDemosPage() {
                         )}
                       </div>
 
-                      <h3 className="text-xl font-bold text-navy-900 dark:text-white mb-2">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                         {demo.title}
                       </h3>
 
@@ -303,7 +303,7 @@ export default function MLDemosPage() {
                       <div className="space-y-2 mb-4 text-sm">
                         <div className="flex justify-between">
                           <span className="text-slate-500 dark:text-slate-400">Technology:</span>
-                          <span className="font-semibold text-navy-900 dark:text-white">
+                          <span className="font-semibold text-gray-900 dark:text-white">
                             {demo.technology}
                           </span>
                         </div>
@@ -315,7 +315,7 @@ export default function MLDemosPage() {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-slate-500 dark:text-slate-400">Cost:</span>
-                          <span className="font-semibold text-navy-900 dark:text-white">
+                          <span className="font-semibold text-gray-900 dark:text-white">
                             {demo.cost}
                           </span>
                         </div>
@@ -324,7 +324,7 @@ export default function MLDemosPage() {
                       {demo.implemented ? (
                         <Link
                           href={demo.path}
-                          className="block w-full text-center px-4 py-2 bg-navy-900 dark:bg-navy-700 text-white rounded-lg hover:bg-navy-800 dark:hover:bg-navy-600 transition-colors"
+                          className="block w-full text-center px-4 py-2 bg-blue-900 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-800 dark:hover:bg-blue-600 transition-colors"
                         >
                           Try Demo →
                         </Link>
@@ -346,12 +346,12 @@ export default function MLDemosPage() {
 
         {/* Call to Action */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8">
-          <h2 className="text-3xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
             📚 Documentation
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">Strategic Docs</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Strategic Docs</h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-2">
                 <li>• Battle-Tested ML Models Guide</li>
                 <li>• ML Without Generative AI Case Studies</li>
@@ -359,7 +359,7 @@ export default function MLDemosPage() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">CLI Demos</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">CLI Demos</h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-2">
                 <li>• npm run demo:bert-sentiment</li>
                 <li>• npm run demo:entity-extraction</li>

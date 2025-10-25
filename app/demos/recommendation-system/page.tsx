@@ -368,7 +368,7 @@ export default function RecommendationSystemDemo() {
           >
             ← Back to ML Demos
           </Link>
-          <h1 className="text-4xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             🎯 Recommendation System
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -377,12 +377,12 @@ export default function RecommendationSystemDemo() {
         </div>
 
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             ✅ Why Hybrid Recommendations (FREE!)
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Hybrid Approach (Open-Source)
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -395,7 +395,7 @@ export default function RecommendationSystemDemo() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-2">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                 Commercial Systems
               </h3>
               <ul className="text-slate-600 dark:text-slate-300 space-y-1">
@@ -412,12 +412,12 @@ export default function RecommendationSystemDemo() {
 
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Select Scenario
             </h2>
 
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-navy-900 dark:text-white mb-2">
+              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                 What to Recommend?
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -427,8 +427,8 @@ export default function RecommendationSystemDemo() {
                     onClick={() => setSelectedScenario(scenario.id)}
                     className={`p-4 rounded-lg border-2 transition-all ${
                       selectedScenario === scenario.id
-                        ? 'border-navy-900 dark:border-navy-600 bg-navy-50 dark:bg-navy-900'
-                        : 'border-slate-200 dark:border-slate-700 hover:border-navy-400'
+                        ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900'
+                        : 'border-slate-200 dark:border-slate-700 hover:border-blue-400'
                     }`}
                   >
                     <div className="text-4xl mb-2">{scenario.icon}</div>
@@ -444,7 +444,7 @@ export default function RecommendationSystemDemo() {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-navy-900 dark:text-white mb-2">
+              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
                 User Profile
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -454,8 +454,8 @@ export default function RecommendationSystemDemo() {
                     onClick={() => setUserProfile(profile.id)}
                     className={`p-3 rounded-lg border-2 transition-all ${
                       userProfile === profile.id
-                        ? 'border-navy-900 dark:border-navy-600 bg-navy-50 dark:bg-navy-900'
-                        : 'border-slate-200 dark:border-slate-700 hover:border-navy-400'
+                        ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900'
+                        : 'border-slate-200 dark:border-slate-700 hover:border-blue-400'
                     }`}
                   >
                     <div className="text-2xl mb-1">{profile.icon}</div>
@@ -470,7 +470,7 @@ export default function RecommendationSystemDemo() {
             <button
               onClick={generateRecommendations}
               disabled={isComputing}
-              className="w-full py-3 bg-navy-900 dark:bg-navy-700 text-white rounded-lg font-semibold hover:bg-navy-800 disabled:bg-slate-300 transition-colors"
+              className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 disabled:bg-slate-300 transition-colors"
             >
               {isComputing ? 'Computing...' : 'Get Recommendations'}
             </button>
@@ -489,7 +489,7 @@ export default function RecommendationSystemDemo() {
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Recommendations
             </h2>
 
@@ -497,7 +497,7 @@ export default function RecommendationSystemDemo() {
               <div className="space-y-6">
                 <div className="text-center pb-4 border-b border-slate-200 dark:border-slate-700">
                   <div className="text-5xl mb-2">🎯</div>
-                  <div className="text-2xl font-bold text-navy-900 dark:text-white mb-1">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
                     {result.recommendations.length} Recommendations
                   </div>
                   <div className="text-sm text-slate-600 dark:text-slate-400">
@@ -509,13 +509,13 @@ export default function RecommendationSystemDemo() {
                   {result.recommendations.map((rec, idx) => (
                     <div
                       key={rec.id}
-                      className="border-2 border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:border-navy-400 transition-colors"
+                      className="border-2 border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:border-blue-400 transition-colors"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-3">
                           <div className="text-3xl">{rec.icon}</div>
                           <div>
-                            <div className="font-bold text-navy-900 dark:text-white">
+                            <div className="font-bold text-gray-900 dark:text-white">
                               {rec.name}
                             </div>
                             <div className="text-sm text-slate-600 dark:text-slate-400">
@@ -530,7 +530,7 @@ export default function RecommendationSystemDemo() {
                             {(rec.score * 100).toFixed(0)}% Match
                           </div>
                           {rec.price && (
-                            <div className="text-sm font-semibold text-navy-900 dark:text-white mt-1">
+                            <div className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                               {rec.price}
                             </div>
                           )}
@@ -558,19 +558,19 @@ export default function RecommendationSystemDemo() {
                 <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Algorithm:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white text-xs">
+                    <span className="font-semibold text-gray-900 dark:text-white text-xs">
                       {result.algorithm}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Items Considered:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.totalConsidered}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Processing Time:</span>
-                    <span className="font-semibold text-navy-900 dark:text-white">
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {result.executionTime.toFixed(0)}ms
                     </span>
                   </div>
@@ -590,7 +590,7 @@ export default function RecommendationSystemDemo() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 rounded-xl shadow-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 rounded-xl shadow-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-4">Expected ROI</h2>
           <div className="grid md:grid-cols-4 gap-6">
             <div>

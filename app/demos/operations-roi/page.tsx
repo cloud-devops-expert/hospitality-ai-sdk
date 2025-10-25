@@ -141,7 +141,7 @@ export default function OperationsROIPage() {
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-navy-900 dark:text-white mb-4">
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
             💰 Operations ROI Calculator
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
@@ -169,7 +169,7 @@ export default function OperationsROIPage() {
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
             <div className="text-sm text-slate-500 dark:text-slate-400 mb-2">Implementation</div>
-            <div className="text-3xl font-bold text-navy-900 dark:text-white">
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">
               {totalHours} hours
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -187,20 +187,20 @@ export default function OperationsROIPage() {
 
         {/* Operations Breakdown */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 mb-12">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             5 Operational Areas
           </h2>
           <div className="space-y-4">
             {operations.map((op, index) => (
               <div
                 key={op.name}
-                className="border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:border-navy-500 dark:hover:border-navy-400 transition-colors"
+                className="border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:border-navy-500 dark:hover:border-blue-400 transition-colors"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="text-3xl">{op.icon}</div>
                     <div>
-                      <h3 className="text-xl font-bold text-navy-900 dark:text-white">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
                         {index + 1}. {op.name}
                       </h3>
                       <p className="text-slate-600 dark:text-slate-300">{op.description}</p>
@@ -217,25 +217,25 @@ export default function OperationsROIPage() {
                 <div className="grid md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <span className="text-slate-500 dark:text-slate-400">Algorithm:</span>
-                    <div className="font-semibold text-navy-900 dark:text-white">
+                    <div className="font-semibold text-gray-900 dark:text-white">
                       {op.algorithm}
                     </div>
                   </div>
                   <div>
                     <span className="text-slate-500 dark:text-slate-400">Accuracy:</span>
-                    <div className="font-semibold text-navy-900 dark:text-white">
+                    <div className="font-semibold text-gray-900 dark:text-white">
                       {op.accuracy}
                     </div>
                   </div>
                   <div>
                     <span className="text-slate-500 dark:text-slate-400">Lines of Code:</span>
-                    <div className="font-semibold text-navy-900 dark:text-white">
+                    <div className="font-semibold text-gray-900 dark:text-white">
                       {op.implementationLines}
                     </div>
                   </div>
                   <div>
                     <span className="text-slate-500 dark:text-slate-400">Dev Time:</span>
-                    <div className="font-semibold text-navy-900 dark:text-white">
+                    <div className="font-semibold text-gray-900 dark:text-white">
                       {op.implementationHours} hours
                     </div>
                   </div>
@@ -246,7 +246,7 @@ export default function OperationsROIPage() {
         </div>
 
         {/* Live Demo */}
-        <div className="bg-gradient-to-r from-navy-900 to-blue-800 dark:from-navy-800 dark:to-blue-900 rounded-xl shadow-lg p-8 mb-12">
+        <div className="bg-gradient-to-r from-blue-900 to-blue-800 dark:from-blue-800 dark:to-blue-900 rounded-xl shadow-lg p-8 mb-12">
           <h2 className="text-2xl font-bold text-white mb-4">⚡ Live Algorithm Demo</h2>
           <p className="text-blue-100 mb-6">
             Watch the inventory forecasting algorithm run in real-time. This executes entirely in
@@ -311,7 +311,7 @@ export default function OperationsROIPage() {
           <button
             onClick={runLiveDemo}
             disabled={isRunning}
-            className="px-6 py-3 bg-white text-navy-900 rounded-lg font-semibold hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-white text-gray-900 rounded-lg font-semibold hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isRunning ? 'Running...' : 'Run Demo Again'}
           </button>
@@ -319,7 +319,7 @@ export default function OperationsROIPage() {
 
         {/* Comparison */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8 mb-12">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             📊 Local-First vs AI/Cloud
           </h2>
           <div className="overflow-x-auto">
@@ -329,7 +329,7 @@ export default function OperationsROIPage() {
                   <th className="text-left py-3 px-4 text-slate-600 dark:text-slate-400">
                     Metric
                   </th>
-                  <th className="text-left py-3 px-4 text-navy-900 dark:text-white">
+                  <th className="text-left py-3 px-4 text-gray-900 dark:text-white">
                     Local-First (Ours)
                   </th>
                   <th className="text-left py-3 px-4 text-slate-600 dark:text-slate-400">
@@ -347,7 +347,7 @@ export default function OperationsROIPage() {
                 </tr>
                 <tr>
                   <td className="py-3 px-4 text-slate-600 dark:text-slate-400">Accuracy</td>
-                  <td className="py-3 px-4 font-semibold text-navy-900 dark:text-white">
+                  <td className="py-3 px-4 font-semibold text-gray-900 dark:text-white">
                     75-80%
                   </td>
                   <td className="py-3 px-4">85-95%</td>
@@ -392,7 +392,7 @@ export default function OperationsROIPage() {
             </table>
           </div>
           <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <p className="text-navy-900 dark:text-white font-semibold mb-2">💡 Recommendation:</p>
+            <p className="text-gray-900 dark:text-white font-semibold mb-2">💡 Recommendation:</p>
             <p className="text-slate-600 dark:text-slate-300">
               Start with local-first (75-80% accuracy, $0 cost). Only consider AI enhancement for
               hotels &gt;100 rooms where 10-15% accuracy improvement justifies $2.4K-$6K/year cost.
@@ -402,21 +402,21 @@ export default function OperationsROIPage() {
 
         {/* Implementation Guide */}
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-navy-900 dark:text-white mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
             🚀 2-Day Implementation Plan
           </h2>
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-3">Day 1</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Day 1</h3>
               <div className="space-y-3">
                 <div className="flex gap-3">
-                  <div className="text-navy-900 dark:text-white font-semibold">Morning:</div>
+                  <div className="text-gray-900 dark:text-white font-semibold">Morning:</div>
                   <div className="text-slate-600 dark:text-slate-300">
                     Implement inventory & kitchen forecasters (4 hours)
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="text-navy-900 dark:text-white font-semibold">Afternoon:</div>
+                  <div className="text-gray-900 dark:text-white font-semibold">Afternoon:</div>
                   <div className="text-slate-600 dark:text-slate-300">
                     Implement laundry & maintenance (4 hours)
                   </div>
@@ -424,16 +424,16 @@ export default function OperationsROIPage() {
               </div>
             </div>
             <div>
-              <h3 className="font-semibold text-navy-900 dark:text-white mb-3">Day 2</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Day 2</h3>
               <div className="space-y-3">
                 <div className="flex gap-3">
-                  <div className="text-navy-900 dark:text-white font-semibold">Morning:</div>
+                  <div className="text-gray-900 dark:text-white font-semibold">Morning:</div>
                   <div className="text-slate-600 dark:text-slate-300">
                     Implement housekeeping & integrate with PMS (4 hours)
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <div className="text-navy-900 dark:text-white font-semibold">Afternoon:</div>
+                  <div className="text-gray-900 dark:text-white font-semibold">Afternoon:</div>
                   <div className="text-slate-600 dark:text-slate-300">
                     Test with real data & deploy (2 hours)
                   </div>
@@ -442,7 +442,7 @@ export default function OperationsROIPage() {
             </div>
           </div>
           <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-            <p className="text-navy-900 dark:text-white font-semibold mb-2">✅ What You Get:</p>
+            <p className="text-gray-900 dark:text-white font-semibold mb-2">✅ What You Get:</p>
             <ul className="list-disc list-inside text-slate-600 dark:text-slate-300 space-y-1">
               <li>910 lines of production-ready TypeScript</li>
               <li>Zero dependencies (pure algorithms)</li>
