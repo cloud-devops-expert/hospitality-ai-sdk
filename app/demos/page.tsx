@@ -43,7 +43,7 @@ export default function DemosPage() {
       path: '/demos/kitchen',
       icon: '🍽️',
       savings: '$24K-$36K/year',
-      implemented: false,
+      implemented: true,
     },
     {
       title: 'Laundry Optimization',
@@ -51,7 +51,7 @@ export default function DemosPage() {
       path: '/demos/laundry',
       icon: '🧺',
       savings: '$9.6K-$14.4K/year',
-      implemented: false,
+      implemented: true,
     },
     {
       title: 'Predictive Maintenance',
@@ -59,15 +59,15 @@ export default function DemosPage() {
       path: '/demos/maintenance',
       icon: '🔧',
       savings: '$18K-$36K/year',
-      implemented: false,
+      implemented: true,
     },
     {
       title: 'Housekeeping Optimization',
       description: 'Room prioritization, staff assignment, and route optimization.',
-      path: '/demos/housekeeping',
+      path: '/demos/housekeeping-optimization',
       icon: '🧹',
       savings: '$14.4K-$24K/year',
-      implemented: false,
+      implemented: true,
     },
   ];
 
