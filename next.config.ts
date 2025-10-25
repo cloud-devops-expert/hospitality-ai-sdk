@@ -21,7 +21,16 @@ const nextConfig: NextConfig = {
         fs: false,
         net: false,
         tls: false,
+        // Sharp is a Node.js native module used by Transformers.js for image processing
+        // It should not be bundled for the browser (we only use text models)
+        sharp: false,
       };
+
+      // Add sharp as an external to prevent webpack from trying to bundle it
+      config.externals = config.externals || [];
+      config.externals.push({
+        sharp: 'commonjs sharp',
+      });
     }
 
     return config;
