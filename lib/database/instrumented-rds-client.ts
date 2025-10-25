@@ -288,10 +288,10 @@ export class InstrumentedRDSClient {
     try {
       return await this.db.transaction(async (tx) => {
         // Set session variables
-        await this.setSessionVariables(tx, context);
+        await this.setSessionVariables(tx as any, context);
 
         // Execute user's queries
-        const result = await callback(tx);
+        const result = await callback(tx as any);
 
         return result;
       });
@@ -313,11 +313,11 @@ export class InstrumentedRDSClient {
 
     try {
       return await this.db.transaction(async (tx) => {
-        await this.setSessionVariables(tx, context);
+        await this.setSessionVariables(tx as any, context);
 
         const results: T[] = [];
         for (const operation of operations) {
-          results.push(await operation(tx));
+          results.push(await operation(tx as any));
         }
         return results;
       });

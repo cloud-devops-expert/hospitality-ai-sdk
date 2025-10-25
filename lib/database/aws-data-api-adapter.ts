@@ -158,7 +158,7 @@ export function createDataApiAdapter(config: DataApiConfig) {
   // Wrap execute method for performance tracking
   const originalExecute = db.execute.bind(db);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  db.execute = async function (query: any) {
+  (db.execute as any) = async function (query: any) {
     const startTime = Date.now();
     metrics.totalQueries++;
 

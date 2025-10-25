@@ -22,7 +22,9 @@
  */
 
 import { InstrumentedRDSClient } from './instrumented-rds-client';
-import type { DatabaseAdapter } from 'payload/database';
+
+// Type declaration for optional PayloadCMS dependency
+type DatabaseAdapter = any;
 
 export interface PayloadInstrumentedAdapterArgs {
   resourceArn: string;

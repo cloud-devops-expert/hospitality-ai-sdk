@@ -217,10 +217,10 @@ export class DrizzleRLSClient {
       return await this.db.transaction(async (tx) => {
         // Set session variables at the start of transaction
         // Using SET LOCAL ensures they're transaction-scoped
-        await this.setSessionVariables(tx, context);
+        await this.setSessionVariables(tx as any, context);
 
         // Execute user's queries within RLS context
-        const result = await callback(tx);
+        const result = await callback(tx as any);
 
         return result;
       });
@@ -258,12 +258,12 @@ export class DrizzleRLSClient {
 
     return this.db.transaction(async (tx) => {
       // Set RLS context once for all operations
-      await this.setSessionVariables(tx, context);
+      await this.setSessionVariables(tx as any, context);
 
       // Execute all operations in order
       const results: T[] = [];
       for (const operation of operations) {
-        results.push(await operation(tx));
+        results.push(await operation(tx as any));
       }
       return results;
     });
