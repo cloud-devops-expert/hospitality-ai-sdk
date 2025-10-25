@@ -119,7 +119,7 @@ async function recognizeFoodTransformers(
   const results = await classifier(input.imageData, { topk: 5 });
 
   // Process results
-  const topResult = results[0];
+  const topResult = results[0] as any;
   const foodItem = topResult.label;
   const confidence = topResult.score;
 

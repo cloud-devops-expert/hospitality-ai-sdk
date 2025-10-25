@@ -82,8 +82,7 @@ export class GradientBoostingForecaster {
     // Train Random Forest (proxy for gradient boosting)
     this.model = new RandomForestRegression({
       nEstimators: 100, // Number of trees
-      maxDepth: 10,
-      minNumSamples: 5,
+      // maxDepth and minNumSamples are not supported by ml-random-forest library
       seed: 42,
     });
 

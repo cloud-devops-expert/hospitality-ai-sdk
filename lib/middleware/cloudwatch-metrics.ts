@@ -34,7 +34,7 @@ export function withCloudWatchMetrics(handler: NextRouteHandler): NextRouteHandl
 
     // Extract tenant context
     try {
-      tenantContext = extractRLSContext(req);
+      tenantContext = extractRLSContext(req as any);
     } catch {
       // Skip tracking for public endpoints
     }

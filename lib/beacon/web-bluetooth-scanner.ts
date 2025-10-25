@@ -15,6 +15,13 @@
  * - Works offline (beacons are local)
  */
 
+// Type declaration for Web Bluetooth API
+declare global {
+  interface Navigator {
+    bluetooth?: any;
+  }
+}
+
 import type {
   BeaconDetection,
   BeaconScannerConfig,
@@ -41,7 +48,7 @@ export class WebBluetoothBeaconScanner {
       signalSmoothingWindow: config.signalSmoothingWindow || 5,
       minRssi: config.minRssi ?? -90,
       maxDistance: config.maxDistance ?? 50,
-      zones: config.zones || undefined,
+      zones: config.zones || [],
       onBeaconDetected: config.onBeaconDetected || (() => {}),
       onBeaconLost: config.onBeaconLost || (() => {}),
       onClosestBeaconChanged: config.onClosestBeaconChanged || (() => {}),

@@ -161,7 +161,7 @@ export class MiddlewareSyncOrchestrator {
       if (location) {
         console.log(`   ✓ Guest is in: ${location.zone.toUpperCase()}`);
         console.log(`   ✓ Area: ${location.area}`);
-        console.log(`   ✓ Signal: ${location.signal} dBm`);
+        console.log(`   ✓ Signal: ${(location as any).signal ?? 'N/A'} dBm`);
 
         // Show location-aware menu
         if (location.zone === 'restaurant' || location.zone === 'lobby') {

@@ -373,7 +373,7 @@ export function detectBookingIntent(transcription: string): BookingIntent {
 
   // Ready to book?
   const readyIndicators = ['book', 'reserve', 'confirm', 'yes', 'proceed', 'go ahead'];
-  const readyToBook = intentType === 'new-booking' &&
+  const readyToBook = (intentType as string) === 'new-booking' &&
     readyIndicators.some(word => text.includes(word)) &&
     (detectedDates.length > 0 || detectedRoomTypes.length > 0);
 

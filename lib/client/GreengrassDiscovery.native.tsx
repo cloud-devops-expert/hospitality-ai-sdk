@@ -10,15 +10,7 @@
 
 import React, { useState, useEffect } from 'react';
 // @ts-ignore - react-native is optional dependency for mobile apps
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-  StyleSheet,
-  Alert,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet, Alert } from 'react-native';
 import {
   discoverGreengrassServer,
   isOnPropertyNetwork,

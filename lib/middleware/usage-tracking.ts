@@ -34,7 +34,7 @@ export function withUsageTracking(handler: NextRouteHandler): NextRouteHandler {
 
     // Extract tenant context (if available)
     try {
-      tenantContext = extractRLSContext(req);
+      tenantContext = extractRLSContext(req as any);
     } catch {
       // If extraction fails, skip tracking (e.g., public endpoints)
     }

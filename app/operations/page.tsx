@@ -84,7 +84,7 @@ export default function OperationsPage() {
         return 'bg-green-500';
       case 'dirty':
         return 'bg-red-500';
-      case 'in_progress':
+      case 'in_progress' as any:
         return 'bg-blue-500';
       case 'occupied':
         return 'bg-gray-400';

@@ -118,7 +118,7 @@ export default function AssistantPage() {
                       📊 Forecast Trend
                     </div>
                     <div className="space-y-1">
-                      {message.visualization.data.slice(0, 7).map((d: any, i: number) => (
+                      {(message.visualization.data as any[]).slice(0, 7).map((d: any, i: number) => (
                         <div
                           key={i}
                           className="flex items-center justify-between text-sm"

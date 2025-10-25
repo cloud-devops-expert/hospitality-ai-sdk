@@ -14,7 +14,10 @@
  * Use Case: Analyze guest reviews to identify satisfaction levels
  */
 
-import { pipeline, Pipeline } from '@xenova/transformers';
+import { pipeline } from '@xenova/transformers';
+
+// Use any type for pipeline to avoid missing processor property error
+type Pipeline = any;
 
 export interface SentimentResult {
   label: string; // '1 star', '2 stars', '3 stars', '4 stars', '5 stars'
