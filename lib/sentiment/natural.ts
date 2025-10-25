@@ -33,7 +33,7 @@ async function analyzeWithNatural(text: string): Promise<SentimentResult> {
       sentiment: 'neutral',
       confidence: 0.5,
       keywords: [],
-      method: 'natural',
+      method: 'natural' as any,
       processingTime: Date.now() - startTime,
     };
   }
@@ -74,7 +74,7 @@ async function analyzeWithNatural(text: string): Promise<SentimentResult> {
     sentiment,
     confidence: Math.max(0.5, Math.min(1, confidence)),
     keywords: keywords.slice(0, 10), // Top 10 keywords
-    method: 'natural',
+    method: 'natural' as any,
     processingTime: Date.now() - startTime,
   };
 }

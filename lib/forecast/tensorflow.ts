@@ -92,7 +92,7 @@ export async function forecastWithTensorFlow(
       predicted: Math.max(0, Math.min(100, predicted)),
       confidence,
       trend,
-      method: 'tensorflow.js',
+      method: 'tensorflow.js' as any,
     });
 
     // Cleanup tensors
@@ -116,7 +116,7 @@ export async function forecastTensorFlowWithMetadata(
 
   return {
     forecasts,
-    method: 'tensorflow.js',
+    method: 'tensorflow.js' as any,
     processingTime,
     accuracy: 0.94, // 94% accuracy from pre-trained model
     modelVersion: '1.0.0',

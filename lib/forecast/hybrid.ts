@@ -95,7 +95,7 @@ async function forecastWithBrainJS(
       predicted: Math.max(0, Math.min(100, predicted)),
       confidence,
       trend,
-      method: 'brain.js',
+      method: 'brain.js' as any,
     });
   }
 
