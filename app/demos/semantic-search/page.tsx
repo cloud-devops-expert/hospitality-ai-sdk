@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 import {
-  semanticSearch,
-  searchHotelFAQ,
   hotelFAQs,
-  calculateSimilarity,
+  getSimilarityColor,
+  getSimilarityBg,
   type SemanticSearchResult,
-} from '@/lib/ml/nlp/semantic-search';
+} from '@/lib/ml/nlp/semantic-search-constants';
 
 export default function SemanticSearchDemo() {
   const [query, setQuery] = useState('');
@@ -30,22 +29,37 @@ export default function SemanticSearchDemo() {
 
     setLoading(true);
     try {
-      if (mode === 'faq') {
-        const faqResults = await searchHotelFAQ(query, 5);
-        setResults(faqResults);
-      } else {
-        if (!customDocs.trim()) {
-          alert('Please add custom documents');
-          setLoading(false);
-          return;
-        }
-        const docs = customDocs.split('\n').filter((d) => d.trim());
-        const searchResults = await semanticSearch(query, docs, 5);
-        setResults(searchResults as any);
+      if (mode === 'custom' && !customDocs.trim()) {
+        alert('Please add custom documents');
+        setLoading(false);
+        return;
       }
-    } catch (error: any) {
+
+      const docs = mode === 'custom' ? customDocs.split('\n').filter((d) => d.trim()) : [];
+
+      // Call server-side semantic search API
+      const response = await fetch('/api/ml/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query,
+          documents: docs,
+          topK: 5,
+          useHotelFAQs: mode === 'faq',
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Search failed');
+      }
+
+      const data = await response.json();
+      setResults(data.results);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error('Search error:', error);
-      alert(`Error: ${error.message}`);
+      alert(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -56,17 +70,6 @@ export default function SemanticSearchDemo() {
     setMode('faq');
   };
 
-  const getSimilarityColor = (similarity: number) => {
-    if (similarity > 0.7) return 'text-green-600 dark:text-green-400';
-    if (similarity > 0.5) return 'text-yellow-600 dark:text-yellow-400';
-    return 'text-red-600 dark:text-red-400';
-  };
-
-  const getSimilarityBg = (similarity: number) => {
-    if (similarity > 0.7) return 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800';
-    if (similarity > 0.5) return 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800';
-    return 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600';
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
@@ -173,7 +176,7 @@ export default function SemanticSearchDemo() {
               disabled={loading || !query.trim()}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
             >
-              {loading ? 'Searching...' : '🔍 Search'}
+              {loading ? '⏳ Processing (first use may take 30s)...' : '🔍 Search'}
             </button>
 
             {/* Example Queries */}

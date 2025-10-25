@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 import {
-  answerQuestion,
-  answerHotelQuestion,
   hotelPolicies,
+  getConfidenceColor,
   type QuestionAnswerResult,
-} from '@/lib/ml/nlp/question-answering';
+} from '@/lib/ml/nlp/question-answering-constants';
 
 export default function QuestionAnsweringDemo() {
   const [question, setQuestion] = useState('');
@@ -30,23 +29,34 @@ export default function QuestionAnsweringDemo() {
 
     setLoading(true);
     try {
-      let answerResult: QuestionAnswerResult | null;
-
-      if (mode === 'hotel-policies') {
-        answerResult = await answerHotelQuestion(question);
-      } else {
-        if (!context.trim()) {
-          alert('Please provide context for custom questions');
-          setLoading(false);
-          return;
-        }
-        answerResult = await answerQuestion(question, context);
+      if (mode === 'custom' && !context.trim()) {
+        alert('Please provide context for custom questions');
+        setLoading(false);
+        return;
       }
 
+      // Call server-side QA API
+      const response = await fetch('/api/ml/qa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question,
+          context: mode === 'custom' ? context : undefined,
+          useHotelPolicies: mode === 'hotel-policies',
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Question answering failed');
+      }
+
+      const answerResult = await response.json();
       setResult(answerResult);
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error('Question answering error:', error);
-      alert(`Error: ${error.message}`);
+      alert(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -57,18 +67,6 @@ export default function QuestionAnsweringDemo() {
     setMode('hotel-policies');
   };
 
-  const getConfidenceColor = (confidence: string) => {
-    switch (confidence) {
-      case 'high':
-        return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20';
-      case 'medium':
-        return 'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20';
-      case 'low':
-        return 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20';
-      default:
-        return 'text-gray-600 dark:text-gray-400';
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
@@ -175,7 +173,7 @@ export default function QuestionAnsweringDemo() {
               disabled={loading || !question.trim()}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
             >
-              {loading ? 'Finding Answer...' : '❓ Ask Question'}
+              {loading ? '⏳ Processing (first use may take 30s)...' : '❓ Ask Question'}
             </button>
 
             {/* Example Questions */}

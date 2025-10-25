@@ -2,11 +2,9 @@
 
 import { useState } from 'react';
 import {
-  summarizeText,
-  summarizeReview,
   sampleReviews,
   type SummarizationResult,
-} from '@/lib/ml/nlp/text-summarizer';
+} from '@/lib/ml/nlp/text-summarization-constants';
 
 export default function TextSummarizationDemo() {
   const [text, setText] = useState('');
@@ -19,11 +17,28 @@ export default function TextSummarizationDemo() {
 
     setLoading(true);
     try {
-      const summaryResult = await summarizeText(text, { maxLength });
+      // Call server-side summarization API
+      const response = await fetch('/api/ml/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          maxLength,
+          minLength: 30,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Summarization failed');
+      }
+
+      const summaryResult = await response.json();
       setResult(summaryResult);
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.error('Summarization error:', error);
-      alert(`Error: ${error.message}`);
+      alert(`Error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -116,7 +131,7 @@ export default function TextSummarizationDemo() {
               disabled={loading || !text.trim() || text.length < 100}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
             >
-              {loading ? 'Summarizing...' : '📝 Summarize Text'}
+              {loading ? '⏳ Processing (first use may take 30s)...' : '📝 Summarize Text'}
             </button>
 
             {/* Example Reviews */}
