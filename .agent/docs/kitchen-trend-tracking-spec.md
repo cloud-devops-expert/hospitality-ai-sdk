@@ -23,11 +23,18 @@ The kitchen forecasting system generates predictions, but without tracking **act
 Daily Flow:
 1. System predicts: "Breakfast Buffet: 85 servings"
 2. Chef preps: 94 servings (85 × 1.1 buffer)
-3. After service: Staff records actual consumption: 93 servings
-4. System calculates: Wasted = 94 - 93 = 1 serving (1% waste!)
+3. After service: Staff records leftovers: 1 serving (count what's LEFT in pan)
+4. System calculates: Consumed = 94 - 1 = 93 servings
 5. System updates: Accuracy = |85 - 93| / 93 = 91% accuracy
 6. Next day: System learns from this data
 ```
+
+**Why Record Leftovers (Not Consumption)?**
+- ✅ **Easier for staff**: Count what's left in the pan/tray (visible)
+- ✅ **More accurate**: No need to track who ate what
+- ✅ **Faster data entry**: Single count per menu item
+- ✅ **Natural workflow**: Staff already check leftovers for disposal
+- ❌ **Tracking consumption** is hard: Requires counting every guest served
 
 ---
 
@@ -85,9 +92,9 @@ interface DailyForecastRecord {
     menuItemId: string;          // "B001"
 
     // Actual values (recorded by staff)
-    actualConsumption: number;   // 93 servings (REAL consumption)
+    actualLeftovers: number;     // 1 serving (WHAT STAFF RECORDS - count what's in pan)
     actualPrepQty: number;       // 94 servings (what chef prepped)
-    actualWasted: number;        // 1 serving (94 - 93)
+    actualConsumption: number;   // 93 servings (CALCULATED: 94 - 1 = 93)
 
     // Stockout tracking
     stockoutOccurred: boolean;   // false (never ran out)
@@ -98,6 +105,9 @@ interface DailyForecastRecord {
     staffNotes?: string;         // "Ran low at 9:30 AM but didn't stockout"
     guestComplaints?: number;    // 0
   }[];
+
+  // NOTE: Staff records actualLeftovers (easy: count what's left).
+  //       System calculates actualConsumption = actualPrepQty - actualLeftovers
 
   // Calculated metrics (auto-generated after actuals are recorded)
   metrics: {
@@ -193,7 +203,7 @@ async function generateDailyForecast() {
 
 **Who**: Kitchen staff or manager
 
-**UI**: Simple form:
+**UI**: Simple form (staff records what's LEFT, not consumed):
 
 ```
 POST-SERVICE DATA ENTRY
@@ -201,24 +211,30 @@ POST-SERVICE DATA ENTRY
 Date: Friday, January 19, 2024
 Meal: Breakfast
 
+📝 Instructions: Count what's LEFT in each pan/tray
+
 Breakfast Buffet:
   Predicted: 85 servings
   Prepped: 94 servings
 
-  👉 Actual Consumed: [____93___] servings
+  👉 Leftovers (count what's in pan): [____1___] servings
+  System will calculate: Consumed = 94 - 1 = 93 servings ✓
   👉 Did you run out? [No ✓] [Yes]
-  👉 Notes (optional): [Busy morning, ran low at 9:30 AM_____]
+  👉 Notes (optional): [Ran low at 9:30 AM but didn't stockout_____]
 
 Omelette Station:
   Predicted: 45 servings
   Prepped: 50 servings
 
-  👉 Actual Consumed: [____47___] servings
+  👉 Leftovers (count what's in pan): [____3___] servings
+  System will calculate: Consumed = 50 - 3 = 47 servings ✓
   👉 Did you run out? [No ✓] [Yes]
   👉 Notes: [________________________________]
 
 [Submit Data] [Save Draft]
 ```
+
+**Key Advantage**: Staff just counts what's LEFT in the pan (easy, visible), not what was consumed (hard, requires tracking guests).
 
 **Backend**:
 
@@ -232,15 +248,20 @@ async function recordActualConsumption(date: string, actuals: ActualData[]) {
     throw new Error(`No forecast found for ${date}`);
   }
 
-  // Add actuals
-  record.actuals = actuals.map(a => ({
-    menuItemId: a.menuItemId,
-    actualConsumption: a.actualConsumption,
-    actualPrepQty: record.forecasts.find(f => f.menuItemId === a.menuItemId)!.recommendedPrepQty,
-    actualWasted: a.actualPrepQty - a.actualConsumption,
-    stockoutOccurred: a.stockoutOccurred,
-    staffNotes: a.notes,
-  }));
+  // Add actuals (staff recorded leftovers, we calculate consumption)
+  record.actuals = actuals.map(a => {
+    const prepQty = record.forecasts.find(f => f.menuItemId === a.menuItemId)!.recommendedPrepQty;
+    const consumption = prepQty - a.actualLeftovers;  // Calculate consumption
+
+    return {
+      menuItemId: a.menuItemId,
+      actualLeftovers: a.actualLeftovers,        // What staff counted (in pan)
+      actualPrepQty: prepQty,                     // What chef prepped
+      actualConsumption: consumption,             // Calculated: prepped - leftovers
+      stockoutOccurred: a.stockoutOccurred,
+      staffNotes: a.notes,
+    };
+  });
 
   // Calculate metrics
   record.metrics = calculateMetrics(record.forecasts, record.actuals);
@@ -579,23 +600,25 @@ Response:
 }
 ```
 
-### Record Actual Consumption
+### Record Actual Leftovers (Post-Service)
 
 ```typescript
 POST /api/kitchen/forecasts/:id/actuals
 
-Request:
+Request (staff records what's LEFT in pan):
 {
   "actuals": [
     {
       "menuItemId": "B001",
-      "actualConsumption": 93,
+      "actualLeftovers": 1,        // Staff counted: 1 serving left in pan
       "stockoutOccurred": false,
       "notes": "Ran low at 9:30 AM but didn't stockout"
     },
     ...
   ]
 }
+
+NOTE: System calculates consumption: prepped - leftovers = 94 - 1 = 93
 
 Response:
 {
@@ -786,7 +809,8 @@ Before deploying to production:
 7:00 AM - Breakfast service begins
 
 10:00 AM - Breakfast service ends
-  → Staff records: 79 servings consumed, 15 wasted
+  → Staff records: 15 servings LEFT in pan (leftovers)
+  → System calculates: Consumed = 94 - 15 = 79 servings
   → System calculates: 93% accuracy, $120 wasted
 
 11:00 AM - System learns
@@ -801,7 +825,8 @@ Before deploying to production:
   → Uses Monday data: Predicts 83 servings
   → Chef preps 91 servings (83 × 1.1)
 
-10:00 AM - Staff records: 85 servings consumed, 6 wasted
+10:00 AM - Staff records: 6 servings LEFT in pan (leftovers)
+  → System calculates: Consumed = 91 - 6 = 85 servings
   → System: 98% accuracy, $48 wasted (vs $120 traditional)
 ```
 

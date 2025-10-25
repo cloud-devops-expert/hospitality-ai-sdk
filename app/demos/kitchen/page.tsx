@@ -48,8 +48,8 @@ interface HistoricalRecord {
   hasEvent: boolean;
   predicted: number;
   prepped: number;
-  actual: number;
-  wasted: number;
+  leftovers: number;  // What staff records (count what's left in pan)
+  consumed: number;   // Calculated: prepped - leftovers
   accuracy: number;
 }
 
@@ -124,8 +124,8 @@ export default function KitchenOperationsDemo() {
       hasEvent: false,
       predicted: 88,
       prepped: 97,
-      actual: 93,
-      wasted: 4,
+      leftovers: 4,      // Staff counted: 4 servings left in pan
+      consumed: 93,      // Calculated: 97 - 4 = 93
       accuracy: 95,
     },
     {
@@ -135,8 +135,8 @@ export default function KitchenOperationsDemo() {
       hasEvent: false,
       predicted: 82,
       prepped: 90,
-      actual: 79,
-      wasted: 11,
+      leftovers: 11,     // 11 servings left in pan
+      consumed: 79,      // 90 - 11 = 79
       accuracy: 96,
     },
     {
@@ -146,8 +146,8 @@ export default function KitchenOperationsDemo() {
       hasEvent: true,
       predicted: 102,
       prepped: 112,
-      actual: 108,
-      wasted: 4,
+      leftovers: 4,      // 4 servings left in pan
+      consumed: 108,     // 112 - 4 = 108
       accuracy: 94,
     },
     {
@@ -157,8 +157,8 @@ export default function KitchenOperationsDemo() {
       hasEvent: false,
       predicted: 75,
       prepped: 83,
-      actual: 71,
-      wasted: 12,
+      leftovers: 12,     // 12 servings left in pan
+      consumed: 71,      // 83 - 12 = 71
       accuracy: 95,
     },
     {
@@ -168,8 +168,8 @@ export default function KitchenOperationsDemo() {
       hasEvent: false,
       predicted: 68,
       prepped: 75,
-      actual: 64,
-      wasted: 11,
+      leftovers: 11,     // 11 servings left in pan
+      consumed: 64,      // 75 - 11 = 64
       accuracy: 94,
     },
   ]);
@@ -577,12 +577,19 @@ export default function KitchenOperationsDemo() {
                       </div>
                     </div>
 
-                    {/* Safety Note */}
-                    <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                      <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                        <strong>⚠️ Safety Backup:</strong> If you run low during service, emergency
-                        batch takes 15-20 minutes. System tracks consumption vs prep for continuous
-                        improvement.
+                    {/* Safety & Data Entry Notes */}
+                    <div className="mt-4 space-y-2">
+                      <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                        <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                          <strong>⚠️ Safety Backup:</strong> If you run low during service, emergency
+                          batch takes 15-20 minutes. No stockouts = 100% guest satisfaction.
+                        </div>
+                      </div>
+                      <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div className="text-sm text-blue-800 dark:text-blue-200">
+                          <strong>📝 After Service:</strong> Count what&apos;s LEFT in the pan/tray (not consumed).
+                          System calculates: Consumed = Prepped - Leftovers. Simpler than tracking who ate what!
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -789,10 +796,10 @@ export default function KitchenOperationsDemo() {
                             Prepped
                           </th>
                           <th className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white">
-                            Actual
+                            Leftovers
                           </th>
                           <th className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white">
-                            Wasted
+                            Consumed
                           </th>
                           <th className="px-4 py-3 text-center font-semibold text-gray-900 dark:text-white">
                             Accuracy
@@ -827,11 +834,11 @@ export default function KitchenOperationsDemo() {
                             <td className="px-4 py-3 text-center text-gray-900 dark:text-white">
                               {record.prepped}
                             </td>
-                            <td className="px-4 py-3 text-center font-semibold text-green-600 dark:text-green-400">
-                              {record.actual}
+                            <td className="px-4 py-3 text-center text-orange-600 dark:text-orange-400">
+                              {record.leftovers}
                             </td>
-                            <td className="px-4 py-3 text-center text-red-600 dark:text-red-400">
-                              {record.wasted}
+                            <td className="px-4 py-3 text-center font-semibold text-green-600 dark:text-green-400">
+                              {record.consumed}
                             </td>
                             <td className="px-4 py-3 text-center">
                               <span
@@ -860,22 +867,25 @@ export default function KitchenOperationsDemo() {
                     <ul className="space-y-1 text-sm text-slate-700 dark:text-slate-300">
                       <li>
                         • <strong>Friday pattern detected:</strong> +8% demand vs weekday average
-                        (93 vs 86)
+                        (93 consumed vs 86)
                       </li>
                       <li>
                         • <strong>Event accuracy improved:</strong> 94% on Wednesday (was 89% last
                         month)
                       </li>
                       <li>
-                        • <strong>Waste trend:</strong> Average 8 servings/day wasted (vs 25
+                        • <strong>Leftover trend:</strong> Average 8 servings/day left (vs 25
                         traditional)
                       </li>
                       <li>
-                        • <strong>Best day:</strong> Thursday (96% accuracy, only 11 wasted)
+                        • <strong>Best day:</strong> Thursday (96% accuracy, only 11 leftovers)
                       </li>
                       <li>
                         • <strong>Recommendation:</strong> System confidence high - reduce buffer
                         to 8% for breakfast
+                      </li>
+                      <li>
+                        • <strong>Data entry method:</strong> Staff counts leftovers in pan (simpler than tracking consumption)
                       </li>
                     </ul>
                   </div>
