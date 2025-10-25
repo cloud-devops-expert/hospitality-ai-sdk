@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { hotelPolicies } from '@/lib/ml/nlp/question-answering-constants';
+import { getCachedPipeline, MODELS } from '@/lib/ml/model-cache';
 
 // Import question answering function (will run on server)
 async function answerQuestionServer(
@@ -26,13 +27,10 @@ async function answerQuestionServer(
   const startTime = performance.now();
 
   try {
-    // Dynamically import Transformers.js on server
-    const { pipeline } = await import('@xenova/transformers');
-
-    // Load QA model
-    const qaModel = await pipeline(
-      'question-answering',
-      'Xenova/distilbert-base-cased-distilled-squad'
+    // Get cached QA model (loads once, reuses forever)
+    const qaModel = await getCachedPipeline(
+      MODELS.QUESTION_ANSWERING.task,
+      MODELS.QUESTION_ANSWERING.model
     );
 
     const finalContext = context || '';

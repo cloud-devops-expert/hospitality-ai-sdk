@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { getCachedPipeline, MODELS } from '@/lib/ml/model-cache';
 
 // Import summarization function (will run on server)
 async function summarizeTextServer(
@@ -23,13 +24,10 @@ async function summarizeTextServer(
   const startTime = performance.now();
 
   try {
-    // Dynamically import Transformers.js on server
-    const { pipeline } = await import('@xenova/transformers');
-
-    // Load summarization model
-    const summarizer = await pipeline(
-      'summarization',
-      'Xenova/distilbart-cnn-6-6'
+    // Get cached summarization model (loads once, reuses forever)
+    const summarizer = await getCachedPipeline(
+      MODELS.TEXT_SUMMARIZATION.task,
+      MODELS.TEXT_SUMMARIZATION.model
     );
 
     // Run summarization

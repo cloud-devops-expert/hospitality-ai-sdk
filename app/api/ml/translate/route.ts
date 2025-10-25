@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { getCachedPipeline, MODELS } from '@/lib/ml/model-cache';
 
 // Import translation function (will run on server)
 async function translateTextServer(
@@ -23,11 +24,11 @@ async function translateTextServer(
   const startTime = performance.now();
 
   try {
-    // Dynamically import Transformers.js on server
-    const { pipeline } = await import('@xenova/transformers');
-
-    // Load translation model (NLLB-200 distilled)
-    const translator = await pipeline('translation', 'Xenova/nllb-200-distilled-600M');
+    // Get cached translation model (loads once, reuses forever)
+    const translator = await getCachedPipeline(
+      MODELS.TRANSLATION.task,
+      MODELS.TRANSLATION.model
+    );
 
     // Run translation
     const result = await translator(text, {

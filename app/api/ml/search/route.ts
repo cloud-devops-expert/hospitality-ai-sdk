@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { hotelFAQs } from '@/lib/ml/nlp/semantic-search-constants';
+import { getCachedPipeline, MODELS } from '@/lib/ml/model-cache';
 
 // Cosine similarity helper
 function cosineSimilarity(vec1: number[], vec2: number[]): number {
@@ -38,13 +39,10 @@ async function semanticSearchServer(
   id?: number;
 }>> {
   try {
-    // Dynamically import Transformers.js on server
-    const { pipeline } = await import('@xenova/transformers');
-
-    // Load embedding model
-    const embedder = await pipeline(
-      'feature-extraction',
-      'Xenova/all-MiniLM-L6-v2'
+    // Get cached embedding model (loads once, reuses forever)
+    const embedder = await getCachedPipeline(
+      MODELS.EMBEDDINGS.task,
+      MODELS.EMBEDDINGS.model
     );
 
     // Generate query embedding
