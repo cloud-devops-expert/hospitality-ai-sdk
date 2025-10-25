@@ -22,18 +22,16 @@ const nextConfig: NextConfig = {
         fs: false,
         net: false,
         tls: false,
-        // Sharp is a Node.js native module used by Transformers.js for image processing
-        // It should not be bundled for the browser (we only use text models)
-        sharp: false,
       };
 
-      // Use IgnorePlugin to completely exclude sharp from the bundle
-      // This is more aggressive than externals and prevents webpack from even trying to resolve it
+      // Replace sharp with a mock module for browser builds
+      // Sharp is a Node.js native module used by Transformers.js for image processing
+      // We only use text models, so we provide a mock to prevent bundling errors
       config.plugins.push(
-        new webpack.IgnorePlugin({
-          resourceRegExp: /^sharp$/,
-          contextRegExp: /./,
-        })
+        new webpack.NormalModuleReplacementPlugin(
+          /^sharp$/,
+          require.resolve('./lib/ml/mocks/sharp.js')
+        )
       );
     }
 
