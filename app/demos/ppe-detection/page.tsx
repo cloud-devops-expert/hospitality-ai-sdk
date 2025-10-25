@@ -215,7 +215,7 @@ export default function PPEDetectionDemo() {
               disabled={isDetecting}
               className="w-full py-3 bg-blue-900 dark:bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 disabled:bg-slate-300 transition-colors"
             >
-              {isDetecting ? 'Detecting...' : 'Detect PPE'}
+              {isDetecting ? '⏳ Detecting (first use may take 30s)...' : '🦺 Detect PPE'}
             </button>
 
             <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">

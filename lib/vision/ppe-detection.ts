@@ -68,7 +68,7 @@ export interface ComplianceReport {
 // ============================================================================
 
 const USE_TENSORFLOW = process.env.NEXT_PUBLIC_USE_PPE_DETECTION === 'true';
-const TENSORFLOW_TIMEOUT = 2000; // 2 seconds
+const TENSORFLOW_TIMEOUT = 60000; // 60 seconds for first-time model download
 const DEFAULT_MODEL = 'coco-ssd'; // TensorFlow.js COCO-SSD for object detection
 
 // ============================================================================
@@ -112,20 +112,35 @@ async function detectPPETensorFlow(
 ): Promise<PPEDetectionResult> {
   const startTime = performance.now();
 
-  // Load TensorFlow.js model
+  // Load TensorFlow.js model and Node.js utilities
   const cocoSsd = await tensorflowLoader.load();
   const model = await cocoSsd.load();
+  const tf = await import('@tensorflow/tfjs-node');
 
-  // Create image element from data
-  const img = new Image();
-  img.src = input.imageData;
-  await new Promise((resolve, reject) => {
-    img.onload = resolve;
-    img.onerror = reject;
-  });
+  // Convert base64 data URL to image tensor for server-side processing
+  let imageTensor;
+  try {
+    if (input.imageData.startsWith('data:')) {
+      // Extract base64 string from data URL
+      const [header, base64Data] = input.imageData.split(',');
+      if (!base64Data) {
+        throw new Error('Invalid data URL format');
+      }
 
-  // Run object detection
-  const predictions = await model.detect(img);
+      // Convert to buffer and decode with TensorFlow.js Node
+      const buffer = Buffer.from(base64Data, 'base64');
+      imageTensor = tf.node.decodeImage(buffer);
+    } else {
+      // Assume it's a file path or URL - fetch and decode
+      const fetch = (await import('node-fetch')).default;
+      const response = await fetch(input.imageData);
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      imageTensor = tf.node.decodeImage(buffer);
+    }
+
+    // Run object detection
+    const predictions = await model.detect(imageTensor);
 
   // Get required PPE for scenario
   const requiredPPE = input.requiredPPE || scenarioRequirements[input.scenario] || [];
@@ -163,22 +178,28 @@ async function detectPPETensorFlow(
   const status: PPEDetectionResult['status'] =
     complianceScore === 100 ? 'compliant' : complianceScore >= 66.7 ? 'warning' : 'violation';
 
-  const recommendations = generateRecommendations(missing, status);
+    const recommendations = generateRecommendations(missing, status);
 
-  const executionTime = performance.now() - startTime;
+    const executionTime = performance.now() - startTime;
 
-  return {
-    detected,
-    missing,
-    complianceScore: Math.round(complianceScore * 10) / 10,
-    violationCount,
-    executionTime,
-    modelUsed: DEFAULT_MODEL,
-    status,
-    method: 'tensorflow.js',
-    detections,
-    recommendations,
-  };
+    return {
+      detected,
+      missing,
+      complianceScore: Math.round(complianceScore * 10) / 10,
+      violationCount,
+      executionTime,
+      modelUsed: DEFAULT_MODEL,
+      status,
+      method: 'tensorflow.js',
+      detections,
+      recommendations,
+    };
+  } finally {
+    // Clean up tensor to prevent memory leaks
+    if (imageTensor) {
+      imageTensor.dispose();
+    }
+  }
 }
 
 // ============================================================================

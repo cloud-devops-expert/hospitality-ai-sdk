@@ -111,44 +111,88 @@ async function recognizeFoodTransformers(
 ): Promise<FoodRecognitionResult> {
   const startTime = performance.now();
 
-  // Load Transformers.js pipeline
+  // Load Transformers.js pipeline and dependencies
+  const { RawImage } = await import('@xenova/transformers');
+  const fs = await import('fs/promises');
+  const path = await import('path');
+  const os = await import('os');
+
   const pipelineFn = await transformersLoader.load();
   const classifier = await pipelineFn('image-classification', DEFAULT_MODEL);
 
-  // Run inference
-  const results = await classifier(input.imageData, { topk: 5 });
+  // Convert base64 data URL to image file for processing
+  let imageInput;
+  let tempFilePath: string | null = null;
 
-  // Process results
-  const topResult = results[0] as any;
-  const foodItem = topResult.label;
-  const confidence = topResult.score;
+  try {
+    if (input.imageData.startsWith('data:')) {
+      // Extract base64 string and mime type from data URL
+      const [header, base64Data] = input.imageData.split(',');
+      if (!base64Data) {
+        throw new Error('Invalid data URL format');
+      }
 
-  // Map to category
-  const category = getCategoryForFood(foodItem);
+      // Determine file extension from mime type
+      const mimeType = header.match(/data:(.*?);base64/)?.[1] || 'image/jpeg';
+      const ext = mimeType.split('/')[1] || 'jpg';
 
-  // Get nutrition info
-  const nutrition = getNutritionForFood(foodItem);
+      // Write to temporary file
+      tempFilePath = path.join(os.tmpdir(), `food-${Date.now()}.${ext}`);
+      const buffer = Buffer.from(base64Data, 'base64');
+      await fs.writeFile(tempFilePath, buffer);
 
-  // Detect waste (low confidence or unclear results)
-  const wasteDetected = confidence < 0.5;
+      // Load image from temporary file
+      imageInput = await RawImage.read(tempFilePath);
+    } else {
+      // Assume it's a URL
+      imageInput = await RawImage.read(input.imageData);
+    }
 
-  const executionTime = performance.now() - startTime;
+    // Run inference
+    const results = await classifier(imageInput, { topk: 5 });
 
-  return {
-    foodItem,
-    category,
-    confidence,
-    calories: nutrition?.calories,
-    portionSize: '1 serving',
-    executionTime,
-    modelUsed: DEFAULT_MODEL,
-    wasteDetected,
-    method: 'transformers.js',
-    alternativeLabels: results.slice(1, 5).map((r: any) => ({
-      label: r.label,
-      confidence: r.score,
-    })),
-  };
+    // Process results
+    const topResult = results[0] as any;
+    const foodItem = topResult.label;
+    const confidence = topResult.score;
+
+    // Map to category
+    const category = getCategoryForFood(foodItem);
+
+    // Get nutrition info
+    const nutrition = getNutritionForFood(foodItem);
+
+    // Detect waste (low confidence or unclear results)
+    const wasteDetected = confidence < 0.5;
+
+    const executionTime = performance.now() - startTime;
+
+    return {
+      foodItem,
+      category,
+      confidence,
+      calories: nutrition?.calories,
+      portionSize: '1 serving',
+      executionTime,
+      modelUsed: DEFAULT_MODEL,
+      wasteDetected,
+      method: 'transformers.js',
+      alternativeLabels: results.slice(1, 5).map((r: any) => ({
+        label: r.label,
+        confidence: r.score,
+      })),
+    };
+  } finally {
+    // Clean up temporary file
+    if (tempFilePath) {
+      try {
+        const fs = await import('fs/promises');
+        await fs.unlink(tempFilePath);
+      } catch (err) {
+        console.warn('Failed to clean up temp file:', err);
+      }
+    }
+  }
 }
 
 // ============================================================================
