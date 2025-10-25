@@ -8,10 +8,18 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { detectPPE as detectPPEML, PPEDetectionResult } from '@/lib/vision/ppe-detection';
 
-// Use the real ML result type
-type DetectionResult = Omit<PPEDetectionResult, 'detections' | 'recommendations'>;
+// Detection result type
+type DetectionResult = {
+  detected: string[];
+  missing: string[];
+  complianceScore: number;
+  violationCount: number;
+  executionTime: number;
+  modelUsed: string;
+  status: 'compliant' | 'warning' | 'violation';
+  method: 'tensorflow.js' | 'transformers.js' | 'mock';
+};
 
 export default function PPEDetectionDemo() {
   const [selectedScenario, setSelectedScenario] = useState<string>('kitchen');
@@ -72,16 +80,27 @@ export default function PPEDetectionDemo() {
     setIsDetecting(true);
 
     try {
-      // Use real ML model
+      // Use mock base64 for selected scenario
       const imageData = `data:image/png;base64,${selectedScenario}`;
 
-      const mlResult = await detectPPEML({
-        imageData,
-        scenario: selectedScenario as 'kitchen' | 'medical' | 'maintenance' | 'housekeeping',
-        imageId: `demo-${Date.now()}`,
-        location: 'Facility',
-        timestamp: new Date(),
+      // Call server-side API
+      const response = await fetch('/api/ml/detect-ppe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageData,
+          scenario: selectedScenario,
+          imageId: `demo-${Date.now()}`,
+          location: 'Facility',
+        }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'PPE detection failed');
+      }
+
+      const mlResult = await response.json();
 
       setResult({
         detected: mlResult.detected,
@@ -93,8 +112,9 @@ export default function PPEDetectionDemo() {
         status: mlResult.status,
         method: mlResult.method,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('PPE detection failed:', error);
+      alert(`Error: ${error.message}`);
       // Fallback to mock data on error
       const data = detectionData[selectedScenario];
       setResult({
@@ -102,9 +122,9 @@ export default function PPEDetectionDemo() {
         executionTime: 0,
         method: 'mock',
       });
+    } finally {
+      setIsDetecting(false);
     }
-
-    setIsDetecting(false);
   };
 
   const getStatusColor = (status: string) => {
