@@ -12,7 +12,7 @@
  * Cost: ~$1.00 per 1M metric events
  */
 
-import { getRawDataApiClient } from '@/lib/database/instance';
+import { getRawDataApiClient } from '@/lib/database/instrumented-rds-client';
 import { sql } from 'drizzle-orm';
 
 export interface MetricEvent {

@@ -17,7 +17,9 @@
  * - Android: Add INTERNET and ACCESS_NETWORK_STATE permissions
  */
 
+// @ts-ignore - react-native-zeroconf is optional dependency for mobile apps
 import Zeroconf from 'react-native-zeroconf';
+// @ts-ignore - @react-native-async-storage/async-storage is optional dependency
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface GreengrassServer {

@@ -12,7 +12,7 @@
  * Cost: ~$0.50 per 1M requests
  */
 
-import { getRawDataApiClient } from '@/lib/database/instance';
+import { getRawDataApiClient } from '@/lib/database/instrumented-rds-client';
 import { sql } from 'drizzle-orm';
 
 export interface UsageEvent {

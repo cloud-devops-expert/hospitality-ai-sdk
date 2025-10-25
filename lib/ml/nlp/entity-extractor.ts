@@ -15,7 +15,9 @@
  */
 
 import nlp from 'compromise';
+// @ts-ignore - compromise-dates doesn't have type definitions
 import dates from 'compromise-dates';
+// @ts-ignore - compromise-numbers doesn't have type definitions
 import numbers from 'compromise-numbers';
 
 // Extend compromise with plugins
