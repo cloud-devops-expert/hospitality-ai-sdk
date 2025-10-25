@@ -118,7 +118,7 @@ export class MiddlewareSyncOrchestrator {
       {
         roomNumber,
         reservationId,
-        pmsCust omerId: customer.id,
+        pmsCustomerId: customer.id,
       }
     );
     console.log(`   ✓ Stripe Customer: ${stripeCustomer.id}`);

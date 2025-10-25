@@ -276,7 +276,7 @@ export class WebRTCPeerWithFallback extends EventEmitter {
       if (event.candidate) {
         iceCandidates.push(event.candidate.toJSON());
       }
-    });
+    };
 
     // Create offer
     const offer = await pc.createOffer();

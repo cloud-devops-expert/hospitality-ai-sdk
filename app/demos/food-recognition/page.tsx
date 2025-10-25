@@ -40,6 +40,7 @@ export default function FoodRecognitionDemo() {
       executionTime: 0,
       modelUsed: 'Kaludi/Food-Classification',
       wasteDetected: false,
+      method: 'mock',
     },
     salad: {
       foodItem: 'Caesar Salad',
@@ -50,6 +51,7 @@ export default function FoodRecognitionDemo() {
       executionTime: 0,
       modelUsed: 'Kaludi/food-category-classification-v2.0',
       wasteDetected: false,
+      method: 'mock',
     },
     steak: {
       foodItem: 'Grilled Ribeye Steak',
@@ -60,6 +62,7 @@ export default function FoodRecognitionDemo() {
       executionTime: 0,
       modelUsed: 'Jacques7103/Food-Recognition',
       wasteDetected: false,
+      method: 'mock',
     },
     sushi: {
       foodItem: 'Assorted Sushi',
@@ -70,6 +73,7 @@ export default function FoodRecognitionDemo() {
       executionTime: 0,
       modelUsed: 'Kaludi/Food-Classification',
       wasteDetected: false,
+      method: 'mock',
     },
     breakfast: {
       foodItem: 'American Breakfast',
@@ -80,6 +84,7 @@ export default function FoodRecognitionDemo() {
       executionTime: 0,
       modelUsed: 'Kaludi/food-category-classification-v2.0',
       wasteDetected: false,
+      method: 'mock',
     },
     dessert: {
       foodItem: 'Chocolate Layer Cake',
@@ -90,6 +95,7 @@ export default function FoodRecognitionDemo() {
       executionTime: 0,
       modelUsed: 'Jacques7103/Food-Recognition',
       wasteDetected: false,
+      method: 'mock',
     },
     soup: {
       foodItem: 'Vegetable Soup',
@@ -100,6 +106,7 @@ export default function FoodRecognitionDemo() {
       executionTime: 0,
       modelUsed: 'Kaludi/Food-Classification',
       wasteDetected: false,
+      method: 'mock',
     },
     burger: {
       foodItem: 'Cheeseburger with Fries',
@@ -110,6 +117,7 @@ export default function FoodRecognitionDemo() {
       executionTime: 0,
       modelUsed: 'Kaludi/food-category-classification-v2.0',
       wasteDetected: false,
+      method: 'mock',
     },
   };
 

@@ -34,6 +34,7 @@ export default function PPEDetectionDemo() {
       executionTime: 0,
       modelUsed: 'keremberke/yolov8m-protective-equipment-detection',
       status: 'warning',
+      method: 'mock',
     },
     medical: {
       detected: ['Mask', 'Gloves', 'Gown'],
@@ -43,6 +44,7 @@ export default function PPEDetectionDemo() {
       executionTime: 0,
       modelUsed: 'keremberke/yolov8m-protective-equipment-detection',
       status: 'compliant',
+      method: 'mock',
     },
     maintenance: {
       detected: ['Safety Vest'],
@@ -52,6 +54,7 @@ export default function PPEDetectionDemo() {
       executionTime: 0,
       modelUsed: 'keremberke/yolov8m-protective-equipment-detection',
       status: 'violation',
+      method: 'mock',
     },
     housekeeping: {
       detected: ['Gloves', 'Uniform'],
@@ -61,6 +64,7 @@ export default function PPEDetectionDemo() {
       executionTime: 0,
       modelUsed: 'keremberke/yolov8m-protective-equipment-detection',
       status: 'compliant',
+      method: 'mock',
     },
   };
 

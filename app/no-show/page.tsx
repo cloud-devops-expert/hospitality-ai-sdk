@@ -288,9 +288,9 @@ const prediction = predictNoShowGradientBoosting(booking);
                 <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded mb-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Risk Level</p>
                   <p
-                    className={`text-3xl font-bold px-3 py-2 rounded inline-block ${getRiskColor(result.riskLevel)}`}
+                    className={`text-3xl font-bold px-3 py-2 rounded inline-block ${getRiskColor(result.risk)}`}
                   >
-                    {result.riskLevel.toUpperCase()}
+                    {result.risk.toUpperCase()}
                   </p>
                 </div>
 
