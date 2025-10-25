@@ -1,351 +1,811 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  hotelPolicies,
-  getConfidenceColor,
-  type QuestionAnswerResult,
-} from '@/lib/ml/nlp/question-answering-constants';
 
-export default function QuestionAnsweringDemo() {
-  const [question, setQuestion] = useState('');
-  const [context, setContext] = useState('');
-  const [result, setResult] = useState<QuestionAnswerResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<'custom' | 'hotel-policies'>('hotel-policies');
+// ============================================================================
+// TYPES
+// ============================================================================
 
-  const exampleQuestions = [
-    'What time is checkout?',
-    'Can I bring my pet?',
-    'Is breakfast included?',
-    'How much is parking?',
-    'What is the cancellation policy?',
-    'Do you have a pool?',
-    'Is there a shuttle to the airport?',
+type ConfidenceLevel = 'high' | 'medium' | 'low';
+
+interface QuestionAnswer {
+  id: string;
+  question: string;
+  answer: string;
+  confidence: number;
+  confidenceLevel: ConfidenceLevel;
+  source: string;
+  timestamp: string;
+  askedBy: string;
+  flagged?: boolean;
+  flagReason?: string;
+}
+
+interface DepartmentStats {
+  department: string;
+  questions: number;
+  percentage: number;
+  avgConfidence: number;
+  topTopics: string[];
+}
+
+interface KnowledgeGap {
+  topic: string;
+  questionsCount: number;
+  avgConfidence: number;
+  status: string;
+  recommendation: string;
+}
+
+interface DailyVolume {
+  date: string;
+  questions: number;
+  highConf: number;
+  medConf: number;
+  lowConf: number;
+}
+
+// ============================================================================
+// SAMPLE DATA
+// ============================================================================
+
+const RECENT_QUESTIONS: QuestionAnswer[] = [
+  {
+    id: '1',
+    question: 'What time is breakfast served on weekends?',
+    answer: '7:00 AM to 10:30 AM',
+    confidence: 0.94,
+    confidenceLevel: 'high',
+    source: 'Dining Services Policy',
+    timestamp: '2 minutes ago',
+    askedBy: 'Guest (Room 305)',
+  },
+  {
+    id: '2',
+    question: 'Can I get a late checkout without extra charge?',
+    answer: 'Late checkout until 2:00 PM is complimentary for loyalty members',
+    confidence: 0.67,
+    confidenceLevel: 'medium',
+    source: 'Check-in/Check-out Policy',
+    timestamp: '8 minutes ago',
+    askedBy: 'Front Desk Staff',
+    flagged: true,
+    flagReason: 'Medium confidence - verify loyalty member status policy',
+  },
+  {
+    id: '3',
+    question: 'Do you validate parking for restaurant guests?',
+    answer: 'No relevant information found',
+    confidence: 0.12,
+    confidenceLevel: 'low',
+    source: 'No matching policy',
+    timestamp: '15 minutes ago',
+    askedBy: 'Restaurant Host',
+    flagged: true,
+    flagReason: 'Knowledge gap - parking validation policy missing',
+  },
+  {
+    id: '4',
+    question: 'Is the pool heated year-round?',
+    answer: 'Yes, our outdoor pool is heated and open year-round',
+    confidence: 0.89,
+    confidenceLevel: 'high',
+    source: 'Amenities & Facilities',
+    timestamp: '22 minutes ago',
+    askedBy: 'Guest (Room 412)',
+  },
+  {
+    id: '5',
+    question: 'What is the pet fee for a 3-night stay?',
+    answer: '$75 per stay (non-refundable, covers up to 2 pets)',
+    confidence: 0.91,
+    confidenceLevel: 'high',
+    source: 'Pet Policy',
+    timestamp: '35 minutes ago',
+    askedBy: 'Reservations Staff',
+  },
+];
+
+const MONTHLY_STATS = {
+  totalQuestions: 2560,
+  automatedQuestions: 1869,
+  automationRate: 73.0,
+  avgConfidence: 81.3,
+  laborHoursSaved: 75,
+  monthlySavings: 620,
+};
+
+const CONFIDENCE_BREAKDOWN = {
+  high: { count: 1741, percentage: 68.0 },
+  medium: { count: 538, percentage: 21.0 },
+  low: { count: 281, percentage: 11.0 },
+};
+
+const DEPARTMENT_USAGE: DepartmentStats[] = [
+  {
+    department: 'Front Desk',
+    questions: 1240,
+    percentage: 48.4,
+    avgConfidence: 84.2,
+    topTopics: ['Check-in times', 'Room amenities', 'Parking rates'],
+  },
+  {
+    department: 'Reservations',
+    questions: 680,
+    percentage: 26.6,
+    avgConfidence: 82.1,
+    topTopics: ['Cancellation policy', 'Pet fees', 'Group bookings'],
+  },
+  {
+    department: 'Restaurant',
+    questions: 420,
+    percentage: 16.4,
+    avgConfidence: 78.5,
+    topTopics: ['Breakfast hours', 'Menu options', 'Dietary restrictions'],
+  },
+  {
+    department: 'Housekeeping',
+    questions: 180,
+    percentage: 7.0,
+    avgConfidence: 79.8,
+    topTopics: ['Towel requests', 'Room cleaning', 'Maintenance'],
+  },
+  {
+    department: 'Management',
+    questions: 40,
+    percentage: 1.6,
+    avgConfidence: 85.3,
+    topTopics: ['Policy updates', 'Staff procedures', 'Compliance'],
+  },
+];
+
+const DAILY_VOLUME: DailyVolume[] = [
+  { date: 'Mon 10/14', questions: 340, highConf: 235, medConf: 68, lowConf: 37 },
+  { date: 'Tue 10/15', questions: 380, highConf: 267, medConf: 81, lowConf: 32 },
+  { date: 'Wed 10/16', questions: 365, highConf: 251, medConf: 78, lowConf: 36 },
+  { date: 'Thu 10/17', questions: 372, highConf: 258, medConf: 75, lowConf: 39 },
+  { date: 'Fri 10/18', questions: 420, highConf: 295, medConf: 89, lowConf: 36 },
+  { date: 'Sat 10/19', questions: 298, highConf: 207, medConf: 62, lowConf: 29 },
+  { date: 'Sun 10/20', questions: 285, highConf: 198, medConf: 60, lowConf: 27 },
+];
+
+const KNOWLEDGE_GAPS: KnowledgeGap[] = [
+  {
+    topic: 'Parking Validation for Restaurant',
+    questionsCount: 47,
+    avgConfidence: 0.12,
+    status: 'Missing Policy',
+    recommendation: 'Add "Restaurant Parking Validation" section to Parking Policy',
+  },
+  {
+    topic: 'Early Check-in Availability',
+    questionsCount: 38,
+    avgConfidence: 0.58,
+    status: 'Ambiguous',
+    recommendation: 'Clarify early check-in rules (currently buried in long paragraph)',
+  },
+  {
+    topic: 'Pool Towel Return Policy',
+    questionsCount: 22,
+    avgConfidence: 0.45,
+    status: 'Conflicting Info',
+    recommendation: 'Pool policy says "return to room", Amenities says "drop at desk"',
+  },
+];
+
+const MONTHLY_INSIGHTS = [
+  {
+    insight: '"Parking validation" asked 47 times but not found in policy documents',
+    action: 'Add new policy section for restaurant/spa parking validation',
+    impact: 'Could improve automation rate from 73% to 75% (+2%)',
+  },
+  {
+    insight: 'Pet policy updated on 10/12 - confidence improved significantly',
+    action: 'Before: 62% avg confidence → After: 91% avg confidence (+47%)',
+    impact: 'Demonstrates value of clear, structured policy writing',
+  },
+  {
+    insight: 'Breakfast hours most-asked question (180 times this month)',
+    action: 'Feature prominently on website/app homepage',
+    impact: 'Reduce repetitive questions by 7% of total volume',
+  },
+];
+
+// ============================================================================
+// REUSABLE COMPONENTS
+// ============================================================================
+
+function ViewTabs({
+  activeView,
+  onViewChange,
+}: {
+  activeView: string;
+  onViewChange: (view: string) => void;
+}) {
+  const views = [
+    { id: 'query', label: 'Query Interface', icon: '❓' },
+    { id: 'performance', label: 'Performance & ROI', icon: '📊' },
+    { id: 'historical', label: 'Historical Analysis', icon: '📈' },
   ];
 
-  const handleAsk = async () => {
-    if (!question.trim()) return;
+  return (
+    <div className="flex space-x-2 mb-6 overflow-x-auto">
+      {views.map((view) => (
+        <button
+          key={view.id}
+          onClick={() => onViewChange(view.id)}
+          className={`px-6 py-3 rounded-lg font-medium transition-colors whitespace-nowrap ${
+            activeView === view.id
+              ? 'bg-blue-600 text-white'
+              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+          }`}
+        >
+          {view.icon} {view.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
-    setLoading(true);
-    try {
-      if (mode === 'custom' && !context.trim()) {
-        alert('Please provide context for custom questions');
-        setLoading(false);
-        return;
-      }
-
-      // Call server-side QA API
-      const response = await fetch('/api/ml/qa', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          question,
-          context: mode === 'custom' ? context : undefined,
-          useHotelPolicies: mode === 'hotel-policies',
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Question answering failed');
-      }
-
-      const answerResult = await response.json();
-      setResult(answerResult);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Question answering error:', error);
-      alert(`Error: ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
+function ROICard({
+  title,
+  value,
+  subtitle,
+  trend,
+  color = 'blue',
+}: {
+  title: string;
+  value: string;
+  subtitle: string;
+  trend?: string;
+  color?: 'blue' | 'green' | 'purple' | 'orange';
+}) {
+  const colorClasses = {
+    blue: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
+    green: 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400',
+    purple: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
+    orange: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400',
   };
 
-  const loadExample = (exampleQuestion: string) => {
-    setQuestion(exampleQuestion);
-    setMode('hotel-policies');
+  return (
+    <div className={`${colorClasses[color]} p-4 rounded-lg`}>
+      <div className="text-2xl font-bold">{value}</div>
+      <div className="text-sm opacity-80">{title}</div>
+      <div className="text-xs opacity-60 mt-1">{subtitle}</div>
+      {trend && <div className="text-xs font-semibold mt-1">{trend}</div>}
+    </div>
+  );
+}
+
+function StatusBadge({ level }: { level: ConfidenceLevel }) {
+  const styles = {
+    high: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400',
+    medium: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400',
+    low: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400',
   };
 
+  const labels = {
+    high: 'High (≥80%)',
+    medium: 'Medium (60-79%)',
+    low: 'Low (<60%)',
+  };
+
+  return (
+    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${styles[level]}`}>
+      {labels[level]}
+    </span>
+  );
+}
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
+export default function QuestionAnsweringDemo() {
+  const [activeView, setActiveView] = useState('query');
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            ❓ Question Answering System
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Answer guest questions from hotel policies automatically. Uses distilbert-base-cased-distilled-squad.
-          </p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Question Answering (RAG)
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Automated staff FAQ system using DistilBERT QA + FAISS vector search
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-sm text-gray-600 dark:text-gray-400">Monthly ROI</div>
+              <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                $620
+              </div>
+              <div className="text-xs text-gray-500">$7,440/year</div>
+            </div>
+          </div>
 
-          {/* Business Value */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
-            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">$0</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">API Cost</div>
-            </div>
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">24/7</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Availability</div>
-            </div>
-            <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">83%</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">F1 Accuracy</div>
-            </div>
-            <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg">
-              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">&lt;300ms</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Response Time</div>
-            </div>
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+            <ROICard
+              title="Automation Rate"
+              value="73%"
+              subtitle="1,869/2,560 questions"
+              color="green"
+            />
+            <ROICard
+              title="Avg Confidence"
+              value="81.3%"
+              subtitle="High accuracy"
+              trend="↑ +4% vs last month"
+              color="blue"
+            />
+            <ROICard
+              title="Labor Saved"
+              value="75 hrs"
+              subtitle="2.5 hours/day"
+              color="purple"
+            />
+            <ROICard
+              title="Response Time"
+              value="<280ms"
+              subtitle="CPU-only inference"
+              color="orange"
+            />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Input Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Ask a Question
-            </h2>
+        {/* View Tabs */}
+        <ViewTabs activeView={activeView} onViewChange={setActiveView} />
 
-            {/* Mode Selection */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Question Mode
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  onClick={() => setMode('hotel-policies')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    mode === 'hotel-policies'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                  }`}
-                >
-                  Hotel Policies
-                </button>
-                <button
-                  onClick={() => setMode('custom')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                    mode === 'custom'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
-                  }`}
-                >
-                  Custom Context
-                </button>
-              </div>
-            </div>
-
-            {/* Question Input */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Question
-              </label>
-              <input
-                type="text"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="What time is checkout?"
-              />
-            </div>
-
-            {/* Custom Context (only shown in custom mode) */}
-            {mode === 'custom' && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Context (Document, Policy, FAQ)
-                </label>
-                <textarea
-                  value={context}
-                  onChange={(e) => setContext(e.target.value)}
-                  rows={6}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="Paste your hotel policy, FAQ, or any document here..."
-                />
-              </div>
-            )}
-
-            {/* Ask Button */}
-            <button
-              onClick={handleAsk}
-              disabled={loading || !question.trim()}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-            >
-              {loading ? '⏳ Processing (first use may take 30s)...' : '❓ Ask Question'}
-            </button>
-
-            {/* Example Questions */}
-            <div className="mt-6">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Quick Examples:
-              </h3>
-              <div className="space-y-2">
-                {exampleQuestions.slice(0, 5).map((example, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => loadExample(example)}
-                    className="w-full text-left px-3 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-300 transition-colors"
+        {/* View 1: Query Interface */}
+        {activeView === 'query' && (
+          <div className="space-y-6">
+            {/* Recent Questions */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Recent Questions & Answers
+              </h2>
+              <div className="space-y-4">
+                {RECENT_QUESTIONS.map((qa) => (
+                  <div
+                    key={qa.id}
+                    className={`p-4 rounded-lg border-2 ${
+                      qa.flagged
+                        ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/10'
+                        : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50'
+                    }`}
                   >
-                    {example}
-                  </button>
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                          <span className="font-medium">{qa.askedBy}</span> • {qa.timestamp}
+                        </div>
+                        <div className="text-base font-medium text-gray-900 dark:text-white mb-2">
+                          Q: {qa.question}
+                        </div>
+                        <div className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-2">
+                          A: {qa.answer}
+                        </div>
+                      </div>
+                      <StatusBadge level={qa.confidenceLevel} />
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Source: {qa.source} • Confidence: {(qa.confidence * 100).toFixed(1)}%
+                      </span>
+                      {qa.flagged && (
+                        <span className="text-red-600 dark:text-red-400 font-medium">
+                          ⚠️ {qa.flagReason}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Results Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Answer
-            </h2>
-
-            {result ? (
-              <div className="space-y-4">
-                {/* Question */}
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                    Question:
-                  </div>
-                  <div className="text-lg font-medium text-gray-900 dark:text-white">
-                    {result.question}
-                  </div>
-                </div>
-
-                {/* Answer */}
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border-2 border-green-200 dark:border-green-800">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                    Answer:
-                  </div>
-                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    {result.answer}
-                  </div>
-                </div>
-
-                {/* Confidence */}
-                <div className={`p-4 rounded-lg ${getConfidenceColor(result.confidence)}`}>
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium capitalize">
-                      Confidence: {result.confidence}
-                    </span>
-                    <span className="font-semibold">
-                      {(result.score * 100).toFixed(1)}%
-                    </span>
-                  </div>
-                  <div className="mt-2 w-full bg-white/30 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full transition-all ${
-                        result.confidence === 'high'
-                          ? 'bg-green-600'
-                          : result.confidence === 'medium'
-                          ? 'bg-yellow-600'
-                          : 'bg-red-600'
-                      }`}
-                      style={{ width: `${result.score * 100}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Context (show excerpt) */}
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    Source Context:
-                  </div>
-                  <div className="text-sm text-gray-700 dark:text-gray-300 italic">
-                    ...{result.context.substring(Math.max(0, result.startIndex - 50), result.endIndex + 50)}...
-                  </div>
-                </div>
-
-                {/* Performance */}
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div className="text-sm text-gray-600 dark:text-gray-400">
-                    ⚡ Response Time: <span className="font-semibold">{result.executionTimeMs}ms</span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-                Ask a question to see the answer
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Available Policies Section */}
-        {mode === 'hotel-policies' && (
-          <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Available Hotel Policies
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {hotelPolicies.map((policy, idx) => (
-                <div
-                  key={idx}
-                  className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg"
-                >
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                    {policy.title}
-                  </h3>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-3">
-                    {policy.content.trim().substring(0, 100)}...
-                  </p>
-                </div>
-              ))}
+            {/* Action Items */}
+            <div className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                ⚡ Staff Action Items
+              </h2>
+              <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-2">🔴</span>
+                  <span>
+                    <strong>Review 3 low-confidence answers</strong> before sending to guests
+                    (Question #2, #3 flagged for manual verification)
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-orange-500 mr-2">🟠</span>
+                  <span>
+                    <strong>Update policy document</strong> for "parking validation" (47
+                    questions this month, no relevant policy found)
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-yellow-500 mr-2">🟡</span>
+                  <span>
+                    <strong>Verify answer accuracy</strong> for "late checkout fee" (conflicting
+                    information detected in policy docs)
+                  </span>
+                </li>
+              </ul>
             </div>
           </div>
         )}
 
-        {/* Business Value Section */}
-        <div className="mt-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            💼 Business Value
+        {/* View 2: Performance & ROI */}
+        {activeView === 'performance' && (
+          <div className="space-y-6">
+            {/* ROI Summary */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                ROI Summary (This Month)
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                  <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                    $620
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Monthly Savings</div>
+                  <div className="text-xs text-gray-500 mt-1">$7,440/year projected</div>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                    {MONTHLY_STATS.automatedQuestions.toLocaleString()}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Questions Automated
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {MONTHLY_STATS.automationRate}% of total
+                  </div>
+                </div>
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                    75 hrs
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Labor Hours Saved</div>
+                  <div className="text-xs text-gray-500 mt-1">2.5 hours/day average</div>
+                </div>
+                <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg">
+                  <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+                    24/7
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Availability</div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    vs. 9am-6pm manual coverage
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  <strong>Calculation:</strong> Before AI: 3.5 hr/day × 30 days × $22/hr =
+                  $2,310/month → After AI: 1 hr/day × 30 days × $22/hr = $660/month →{' '}
+                  <strong className="text-green-600 dark:text-green-400">
+                    Savings: $1,650/month - $30 infrastructure = $620/month net
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            {/* Accuracy Metrics */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Answer Accuracy Metrics
+              </h2>
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {CONFIDENCE_BREAKDOWN.high.count.toLocaleString()}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    High Confidence (≥80%)
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {CONFIDENCE_BREAKDOWN.high.percentage}% of total
+                  </div>
+                </div>
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
+                  <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+                    {CONFIDENCE_BREAKDOWN.medium.count.toLocaleString()}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Medium Confidence (60-79%)
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {CONFIDENCE_BREAKDOWN.medium.percentage}% of total
+                  </div>
+                </div>
+                <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
+                  <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+                    {CONFIDENCE_BREAKDOWN.low.count.toLocaleString()}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Low Confidence (&lt;60%)
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {CONFIDENCE_BREAKDOWN.low.percentage}% of total (needs review)
+                  </div>
+                </div>
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Average confidence: <strong>{MONTHLY_STATS.avgConfidence}%</strong> • F1 Score:{' '}
+                <strong>86.2%</strong> • Coverage: <strong>73%</strong> (rest escalated to staff)
+              </div>
+            </div>
+
+            {/* Department Usage */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Usage by Department ({MONTHLY_STATS.totalQuestions.toLocaleString()} questions
+                this month)
+              </h2>
+              <div className="space-y-4">
+                {DEPARTMENT_USAGE.map((dept, idx) => (
+                  <div key={idx} className="border-b border-gray-200 dark:border-gray-700 pb-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          {dept.department}
+                        </span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
+                          {dept.questions.toLocaleString()} questions ({dept.percentage}%)
+                        </span>
+                      </div>
+                      <div className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                        Avg: {dept.avgConfidence}%
+                      </div>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-2">
+                      <div
+                        className="bg-blue-600 h-2 rounded-full"
+                        style={{ width: `${dept.percentage}%` }}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400">
+                      Top topics: {dept.topTopics.join(', ')}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* View 3: Historical Analysis */}
+        {activeView === 'historical' && (
+          <div className="space-y-6">
+            {/* 7-Day Volume */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                7-Day Question Volume
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200 dark:border-gray-700">
+                      <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
+                        Date
+                      </th>
+                      <th className="text-right py-3 px-4 font-semibold text-gray-900 dark:text-white">
+                        Total
+                      </th>
+                      <th className="text-right py-3 px-4 font-semibold text-green-600 dark:text-green-400">
+                        High
+                      </th>
+                      <th className="text-right py-3 px-4 font-semibold text-yellow-600 dark:text-yellow-400">
+                        Medium
+                      </th>
+                      <th className="text-right py-3 px-4 font-semibold text-red-600 dark:text-red-400">
+                        Low
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {DAILY_VOLUME.map((day, idx) => (
+                      <tr
+                        key={idx}
+                        className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                      >
+                        <td className="py-3 px-4 text-gray-900 dark:text-white">{day.date}</td>
+                        <td className="py-3 px-4 text-right font-semibold text-gray-900 dark:text-white">
+                          {day.questions}
+                        </td>
+                        <td className="py-3 px-4 text-right text-green-600 dark:text-green-400">
+                          {day.highConf}
+                        </td>
+                        <td className="py-3 px-4 text-right text-yellow-600 dark:text-yellow-400">
+                          {day.medConf}
+                        </td>
+                        <td className="py-3 px-4 text-right text-red-600 dark:text-red-400">
+                          {day.lowConf}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t-2 border-gray-300 dark:border-gray-600">
+                      <td className="py-3 px-4 font-bold text-gray-900 dark:text-white">
+                        7-Day Total
+                      </td>
+                      <td className="py-3 px-4 text-right font-bold text-gray-900 dark:text-white">
+                        {DAILY_VOLUME.reduce((sum, d) => sum + d.questions, 0)}
+                      </td>
+                      <td className="py-3 px-4 text-right font-bold text-green-600 dark:text-green-400">
+                        {DAILY_VOLUME.reduce((sum, d) => sum + d.highConf, 0)}
+                      </td>
+                      <td className="py-3 px-4 text-right font-bold text-yellow-600 dark:text-yellow-400">
+                        {DAILY_VOLUME.reduce((sum, d) => sum + d.medConf, 0)}
+                      </td>
+                      <td className="py-3 px-4 text-right font-bold text-red-600 dark:text-red-400">
+                        {DAILY_VOLUME.reduce((sum, d) => sum + d.lowConf, 0)}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                Peak hours: 10am-12pm, 3pm-5pm • Weekend volume 15% lower than weekdays
+              </div>
+            </div>
+
+            {/* Knowledge Gap Analysis */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Knowledge Gap Analysis (Top 3)
+              </h2>
+              <div className="space-y-4">
+                {KNOWLEDGE_GAPS.map((gap, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 bg-red-50 dark:bg-red-900/10 border-2 border-red-200 dark:border-red-800 rounded-lg"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-900 dark:text-white mb-1">
+                          {gap.topic}
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          <span className="font-medium">{gap.questionsCount} questions</span> •
+                          Avg confidence:{' '}
+                          <span className="text-red-600 dark:text-red-400 font-semibold">
+                            {(gap.avgConfidence * 100).toFixed(0)}%
+                          </span>
+                        </div>
+                      </div>
+                      <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-xs font-semibold rounded-full">
+                        {gap.status}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border border-red-200 dark:border-red-800">
+                      <strong>Recommendation:</strong> {gap.recommendation}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Monthly Insights */}
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                📊 Monthly Insights & Actions
+              </h2>
+              <div className="space-y-4">
+                {MONTHLY_INSIGHTS.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-purple-200 dark:border-purple-800"
+                  >
+                    <div className="font-medium text-gray-900 dark:text-white mb-2">
+                      💡 {item.insight}
+                    </div>
+                    <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                      <strong>Action:</strong> {item.action}
+                    </div>
+                    <div className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                      <strong>Impact:</strong> {item.impact}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quality Trends */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Answer Quality Trends (30 Days)
+              </h2>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Avg Confidence
+                  </div>
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    78.1% → 81.3%
+                  </div>
+                  <div className="text-xs text-green-600 dark:text-green-400 font-semibold mt-1">
+                    ↑ +4% improvement
+                  </div>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Low-Confidence Rate
+                  </div>
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    15% → 11%
+                  </div>
+                  <div className="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-1">
+                    ↓ 27% reduction
+                  </div>
+                </div>
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                    Coverage Gaps
+                  </div>
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    8 → 3 topics
+                  </div>
+                  <div className="text-xs text-purple-600 dark:text-purple-400 font-semibold mt-1">
+                    ↓ 62% improvement
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Technology Details */}
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6 mt-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            🔧 Technology Stack
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                🤖 24/7 Automation
+                DistilBERT QA Model
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Answer guest questions instantly, any time of day. No need to wait for staff availability.
-              </p>
+              <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                <li>• 66M parameters</li>
+                <li>• 86.2% F1 Score on SQuAD</li>
+                <li>• 180-250ms CPU inference</li>
+                <li>• Extractive QA (finds answer in context)</li>
+              </ul>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                💰 $2,400/year Savings
+                FAISS Vector Search
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Reduce front desk calls by 30%. Save 4 hours/day at $25/hr = $2,400/year per property.
-              </p>
+              <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                <li>• Sentence-BERT embeddings (384 dims)</li>
+                <li>• 180 policy chunks indexed</li>
+                <li>• 2-5ms search time (CPU)</li>
+                <li>• IndexFlatL2 for exact search</li>
+              </ul>
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                📈 Better Guest Experience
+                Cost-Conscious Design
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Instant answers = happier guests. Boost satisfaction scores by 15-20 points.
-              </p>
+              <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                <li>• $0 API costs (fully local)</li>
+                <li>• CPU-only (no GPU needed)</li>
+                <li>• 24/7 availability</li>
+                <li>• $30/month shared hosting</li>
+              </ul>
             </div>
           </div>
-
-          <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              🎯 Use Cases:
-            </h3>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <li>✓ Automated FAQ on website/app</li>
-              <li>✓ Chatbot for policy questions</li>
-              <li>✓ Staff training assistant</li>
-              <li>✓ Email auto-responder</li>
-              <li>✓ Internal knowledge base search</li>
-              <li>✓ Pre-check-in question automation</li>
-            </ul>
-          </div>
-
-          <div className="mt-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+          <div className="mt-4 p-4 bg-white dark:bg-gray-800 rounded-lg">
             <p className="text-sm text-gray-700 dark:text-gray-300">
-              <strong>💡 Pro Tip:</strong> Keep your policy documents updated and well-organized.
-              The model extracts answers directly from your documents, so clear writing = better answers.
+              <strong>Why RAG?</strong> Retrieval-Augmented Generation combines vector search
+              (find relevant policy sections) with question answering (extract precise answer).
+              This approach provides accurate, source-cited answers without expensive LLM API
+              calls. Total latency &lt;280ms end-to-end on CPU.
             </p>
           </div>
         </div>
