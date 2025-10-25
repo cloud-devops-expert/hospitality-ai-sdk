@@ -8,10 +8,19 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { recognizeFood as recognizeFoodML, FoodRecognitionResult } from '@/lib/vision/food-recognition';
 
-// Use the real ML result type
-type RecognitionResult = Omit<FoodRecognitionResult, 'alternativeLabels'>;
+// Recognition result type
+type RecognitionResult = {
+  foodItem: string;
+  category: string;
+  confidence: number;
+  calories?: number;
+  portionSize?: string;
+  executionTime: number;
+  modelUsed: string;
+  wasteDetected: boolean;
+  method: 'transformers.js' | 'mock';
+};
 
 export default function FoodRecognitionDemo() {
   const [selectedImage, setSelectedImage] = useState<string>('pizza');
@@ -125,15 +134,26 @@ export default function FoodRecognitionDemo() {
     setIsRecognizing(true);
 
     try {
-      // Use real ML model or uploaded image
+      // Use uploaded image or mock base64 for selected image
       const imageData = uploadedImage || `data:image/png;base64,${selectedImage}`;
 
-      const mlResult = await recognizeFoodML({
-        imageData,
-        imageId: `demo-${Date.now()}`,
-        location: 'Restaurant Kitchen',
-        timestamp: new Date(),
+      // Call server-side API
+      const response = await fetch('/api/ml/recognize-food', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageData,
+          imageId: `demo-${Date.now()}`,
+          location: 'Restaurant Kitchen',
+        }),
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Recognition failed');
+      }
+
+      const mlResult = await response.json();
 
       setResult({
         foodItem: mlResult.foodItem,
@@ -146,8 +166,9 @@ export default function FoodRecognitionDemo() {
         wasteDetected: mlResult.wasteDetected,
         method: mlResult.method,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Recognition failed:', error);
+      alert(`Error: ${error.message}`);
       // Fallback to mock data on error
       const data = recognitionData[selectedImage];
       setResult({
@@ -155,9 +176,9 @@ export default function FoodRecognitionDemo() {
         executionTime: 0,
         method: 'mock',
       });
+    } finally {
+      setIsRecognizing(false);
     }
-
-    setIsRecognizing(false);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
